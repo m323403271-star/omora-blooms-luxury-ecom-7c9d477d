@@ -14,7 +14,87 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      inquiries: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          phone: string | null
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          phone?: string | null
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          phone?: string | null
+          subject?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          available: boolean
+          category: string
+          compare_at_price: number | null
+          created_at: string
+          description: string | null
+          featured: boolean
+          id: string
+          image_url: string
+          name: string
+          price: number
+          slug: string
+          sort_order: number
+          tagline: string | null
+          tags: string[] | null
+        }
+        Insert: {
+          available?: boolean
+          category: string
+          compare_at_price?: number | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          image_url: string
+          name: string
+          price?: number
+          slug: string
+          sort_order?: number
+          tagline?: string | null
+          tags?: string[] | null
+        }
+        Update: {
+          available?: boolean
+          category?: string
+          compare_at_price?: number | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          image_url?: string
+          name?: string
+          price?: number
+          slug?: string
+          sort_order?: number
+          tagline?: string | null
+          tags?: string[] | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
