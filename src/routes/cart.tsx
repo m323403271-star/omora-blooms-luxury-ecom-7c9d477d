@@ -93,7 +93,8 @@ function CartPage() {
                 <span>Total</span><span className="text-[color:var(--gold)]">{formatPrice(total)}</span>
               </div>
             </div>
-            <a href={whatsappLink(message)} target="_blank" rel="noopener noreferrer" className="btn-gold mt-6 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
+            {ref && <p className="mt-3 text-xs text-[color:var(--gold)]">Referral applied: {ref}</p>}
+            <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-gold mt-6 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
               <MessageCircle className="h-4 w-4" /> Checkout via WhatsApp
             </a>
             <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)] text-center">Secure order confirmation via WhatsApp with our concierge team.</p>
