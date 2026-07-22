@@ -44,6 +44,48 @@ export type Database = {
         }
         Relationships: []
       }
+      partners: {
+        Row: {
+          active: boolean
+          code: string
+          commission_rate: number
+          contact_email: string | null
+          contact_phone: string | null
+          created_at: string
+          id: string
+          name: string
+          partner_type: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          commission_rate?: number
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          partner_type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          commission_rate?: number
+          contact_email?: string | null
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          partner_type?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           available: boolean
@@ -95,15 +137,89 @@ export type Database = {
         }
         Relationships: []
       }
+      referred_orders: {
+        Row: {
+          commission_amount: number
+          commission_rate: number
+          created_at: string
+          customer_note: string | null
+          id: string
+          items: Json
+          partner_code: string
+          partner_id: string
+          status: string
+          total: number
+        }
+        Insert: {
+          commission_amount?: number
+          commission_rate?: number
+          created_at?: string
+          customer_note?: string | null
+          id?: string
+          items?: Json
+          partner_code: string
+          partner_id: string
+          status?: string
+          total?: number
+        }
+        Update: {
+          commission_amount?: number
+          commission_rate?: number
+          created_at?: string
+          customer_note?: string | null
+          id?: string
+          items?: Json
+          partner_code?: string
+          partner_id?: string
+          status?: string
+          total?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referred_orders_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "partner"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -230,6 +346,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "partner"],
+    },
   },
 } as const

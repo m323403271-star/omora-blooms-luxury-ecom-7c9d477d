@@ -3,6 +3,8 @@ import { MessageCircle, Minus, Plus, Trash2 } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
+import { getStoredRef } from "@/lib/referral";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Your Bag — OMORA BLOOMS" }] }),
@@ -11,10 +13,39 @@ export const Route = createFileRoute("/cart")({
 
 function CartPage() {
   const { items, total, setQuantity, remove } = useCart();
+  const ref = typeof window !== "undefined" ? getStoredRef() : null;
+  const refLine = ref ? `\n\nReferral code: ${ref}` : "";
 
   const message = items.length === 0
     ? ""
-    : `Hello OMORA BLOOMS! I'd like to order:\n\n${items.map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`).join("\n")}\n\nTotal: ${formatPrice(total)}\n\nPlease confirm.`;
+    : `Hello OMORA BLOOMS! I'd like to order:\n\n${items.map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`).join("\n")}\n\nTotal: ${formatPrice(total)}${refLine}\n\nPlease confirm.`;
+
+  async function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
+    if (!ref || items.length === 0) return;
+    e.preventDefault();
+    try {
+      const { data: partner } = await supabase
+        .from("partners")
+        .select("id, code, commission_rate, active")
+        .eq("code", ref)
+        .eq("active", true)
+        .maybeSingle();
+      if (partner) {
+        const rate = Number(partner.commission_rate);
+        await supabase.from("referred_orders").insert({
+          partner_id: partner.id,
+          partner_code: partner.code,
+          items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+          total,
+          commission_rate: rate,
+          commission_amount: Number(((total * rate) / 100).toFixed(2)),
+        });
+      }
+    } catch {
+      // ignore logging errors
+    }
+    window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
+  }
 
   return (
     <div className="container-luxe py-16 md:py-24">
@@ -62,7 +93,8 @@ function CartPage() {
                 <span>Total</span><span className="text-[color:var(--gold)]">{formatPrice(total)}</span>
               </div>
             </div>
-            <a href={whatsappLink(message)} target="_blank" rel="noopener noreferrer" className="btn-gold mt-6 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
+            {ref && <p className="mt-3 text-xs text-[color:var(--gold)]">Referral applied: {ref}</p>}
+            <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-gold mt-6 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
               <MessageCircle className="h-4 w-4" /> Checkout via WhatsApp
             </a>
             <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)] text-center">Secure order confirmation via WhatsApp with our concierge team.</p>

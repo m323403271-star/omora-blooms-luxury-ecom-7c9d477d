@@ -17,11 +17,15 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CartRouteImport } from './routes/cart'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
+import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
+import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -63,9 +67,18 @@ const CartRoute = CartRouteImport.update({
   path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -88,10 +101,22 @@ const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
   path: '/collections/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedPartnerRoute = AuthenticatedPartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminReferralsRoute =
+  AuthenticatedAdminReferralsRouteImport.update({
+    id: '/admin/referrals',
+    path: '/admin/referrals',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -100,13 +125,16 @@ export interface FileRoutesByFullPath {
   '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
+  '/partner': typeof AuthenticatedPartnerRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
+  '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -115,14 +143,18 @@ export interface FileRoutesByTo {
   '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
+  '/partner': typeof AuthenticatedPartnerRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/collections': typeof CollectionsIndexRoute
+  '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/auth': typeof AuthRoute
   '/cart': typeof CartRoute
   '/contact': typeof ContactRoute
   '/faq': typeof FaqRoute
@@ -131,15 +163,18 @@ export interface FileRoutesById {
   '/shipping': typeof ShippingRoute
   '/shop': typeof ShopRoute
   '/terms': typeof TermsRoute
+  '/_authenticated/partner': typeof AuthenticatedPartnerRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
+  '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/auth'
     | '/cart'
     | '/contact'
     | '/faq'
@@ -148,13 +183,16 @@ export interface FileRouteTypes {
     | '/shipping'
     | '/shop'
     | '/terms'
+    | '/partner'
     | '/collections/$slug'
     | '/products/$slug'
     | '/collections/'
+    | '/admin/referrals'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/auth'
     | '/cart'
     | '/contact'
     | '/faq'
@@ -163,13 +201,17 @@ export interface FileRouteTypes {
     | '/shipping'
     | '/shop'
     | '/terms'
+    | '/partner'
     | '/collections/$slug'
     | '/products/$slug'
     | '/collections'
+    | '/admin/referrals'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
+    | '/auth'
     | '/cart'
     | '/contact'
     | '/faq'
@@ -178,14 +220,18 @@ export interface FileRouteTypes {
     | '/shipping'
     | '/shop'
     | '/terms'
+    | '/_authenticated/partner'
     | '/collections/$slug'
     | '/products/$slug'
     | '/collections/'
+    | '/_authenticated/admin/referrals'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  AuthRoute: typeof AuthRoute
   CartRoute: typeof CartRoute
   ContactRoute: typeof ContactRoute
   FaqRoute: typeof FaqRoute
@@ -257,11 +303,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -292,12 +352,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/partner': {
+      id: '/_authenticated/partner'
+      path: '/partner'
+      fullPath: '/partner'
+      preLoaderRoute: typeof AuthenticatedPartnerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/referrals': {
+      id: '/_authenticated/admin/referrals'
+      path: '/admin/referrals'
+      fullPath: '/admin/referrals'
+      preLoaderRoute: typeof AuthenticatedAdminReferralsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPartnerRoute: typeof AuthenticatedPartnerRoute
+  AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPartnerRoute: AuthenticatedPartnerRoute,
+  AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  AuthRoute: AuthRoute,
   CartRoute: CartRoute,
   ContactRoute: ContactRoute,
   FaqRoute: FaqRoute,
@@ -313,13 +402,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
