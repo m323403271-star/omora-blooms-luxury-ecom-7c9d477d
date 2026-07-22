@@ -3,14 +3,45 @@ import { X, Minus, Plus, MessageCircle } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
+import { getStoredRef } from "@/lib/referral";
+import { supabase } from "@/integrations/supabase/client";
 
 export function CartDrawer() {
   const { items, isOpen, close, remove, setQuantity, total, count } = useCart();
   if (!isOpen) return null;
 
+  const ref = getStoredRef();
+  const refLine = ref ? `\n\nReferral code: ${ref}` : "";
   const message = `Hello OMORA BLOOMS! I'd like to order:\n\n${items
     .map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`)
-    .join("\n")}\n\nTotal: ${formatPrice(total)}\n\nPlease confirm.`;
+    .join("\n")}\n\nTotal: ${formatPrice(total)}${refLine}\n\nPlease confirm.`;
+
+  async function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
+    if (!ref || items.length === 0) return;
+    e.preventDefault();
+    try {
+      const { data: partner } = await supabase
+        .from("partners")
+        .select("id, code, commission_rate, active")
+        .eq("code", ref)
+        .eq("active", true)
+        .maybeSingle();
+      if (partner) {
+        const rate = Number(partner.commission_rate);
+        await supabase.from("referred_orders").insert({
+          partner_id: partner.id,
+          partner_code: partner.code,
+          items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+          total,
+          commission_rate: rate,
+          commission_amount: Number(((total * rate) / 100).toFixed(2)),
+        });
+      }
+    } catch {
+      // don't block checkout on logging errors
+    }
+    window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
+  }
 
   return (
     <div className="fixed inset-0 z-50 animate-fade-in">
@@ -58,9 +89,13 @@ export function CartDrawer() {
                 <span className="text-[color:var(--muted-foreground)]">Subtotal</span>
                 <span className="text-[color:var(--gold)] font-medium">{formatPrice(total)}</span>
               </div>
+              {ref && (
+                <p className="text-[11px] text-[color:var(--gold)]">Referral applied: {ref}</p>
+              )}
               <p className="text-xs text-[color:var(--muted-foreground)]">Shipping & taxes calculated at checkout. Complimentary luxury packaging included.</p>
               <a
                 href={whatsappLink(message)}
+                onClick={handleCheckout}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm font-semibold"
