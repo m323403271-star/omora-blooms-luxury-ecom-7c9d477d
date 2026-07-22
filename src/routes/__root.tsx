@@ -17,6 +17,7 @@ import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { CartDrawer } from "@/components/site/CartDrawer";
 import { WhatsAppFab } from "@/components/site/WhatsAppFab";
+import { RefCapture } from "@/components/site/RefCapture";
 import logoAsset from "@/assets/omora-logo.asset.json";
 
 function NotFoundComponent() {
@@ -124,6 +125,7 @@ function RootComponent() {
         </div>
         <CartDrawer />
         <WhatsAppFab />
+        <RefCapture />
         <Toaster theme="dark" position="bottom-left" toastOptions={{ style: { background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--border)" } }} />
       </CartProvider>
     </QueryClientProvider>
