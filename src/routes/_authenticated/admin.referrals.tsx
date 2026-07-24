@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
-import { Download, Plus, LogOut } from "lucide-react";
+import { Download, Plus, LogOut, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -39,6 +39,8 @@ function AdminReferrals() {
   const [orders, setOrders] = useState<ReferredOrder[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ code: "", name: "", partner_type: "driver", contact_email: "", contact_phone: "", commission_rate: 10 });
+  const [settings, setSettings] = useState({ default_commission_rate: 10, razorpay_enabled: true, whatsapp_enabled: true });
+  const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -55,13 +57,36 @@ function AdminReferrals() {
   }, [navigate]);
 
   async function refresh() {
-    const [p, o] = await Promise.all([
+    const [p, o, s] = await Promise.all([
       supabase.from("partners").select("*").order("created_at", { ascending: false }),
       supabase.from("referred_orders").select("id, partner_code, total, commission_amount, status, created_at").order("created_at", { ascending: false }).limit(100),
+      supabase.from("site_settings").select("default_commission_rate, razorpay_enabled, whatsapp_enabled").eq("id", true).maybeSingle(),
     ]);
     if (p.data) setPartners(p.data as Partner[]);
     if (o.data) setOrders(o.data as ReferredOrder[]);
+    if (s.data) {
+      const sd = s.data;
+      setSettings({
+        default_commission_rate: Number(sd.default_commission_rate),
+        razorpay_enabled: !!sd.razorpay_enabled,
+        whatsapp_enabled: !!sd.whatsapp_enabled,
+      });
+      setForm((f) => ({ ...f, commission_rate: Number(sd.default_commission_rate) }));
+    }
   }
+
+  async function saveSettings() {
+    setSavingSettings(true);
+    const { error } = await supabase.from("site_settings").update({
+      default_commission_rate: settings.default_commission_rate,
+      razorpay_enabled: settings.razorpay_enabled,
+      whatsapp_enabled: settings.whatsapp_enabled,
+    }).eq("id", true);
+    setSavingSettings(false);
+    if (error) return toast.error(error.message);
+    toast.success("Settings saved");
+  }
+
 
   async function createPartner(e: React.FormEvent) {
     e.preventDefault();
@@ -111,6 +136,38 @@ function AdminReferrals() {
         <StatCard label="Referred orders" value={String(orders.length)} />
         <StatCard label="Total commission" value={`₹${totalCommission.toLocaleString("en-IN")}`} />
       </div>
+
+      <div className="glass-card rounded-2xl p-6 mb-10">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+          <div>
+            <p className="eyebrow mb-1">Commission & payment settings</p>
+            <p className="text-xs text-[color:var(--muted-foreground)]">Applied as the default rate for new partners and checkout options shown to customers.</p>
+          </div>
+          <button onClick={saveSettings} disabled={savingSettings} className="btn-gold px-5 py-2.5 rounded-full text-sm inline-flex items-center gap-2 disabled:opacity-60">
+            <Save className="h-4 w-4" /> {savingSettings ? "Saving…" : "Save settings"}
+          </button>
+        </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div>
+            <label className="text-xs eyebrow block mb-2">Default commission %</label>
+            <input
+              type="number" min={0} max={100} step={0.5}
+              value={settings.default_commission_rate}
+              onChange={(e) => setSettings({ ...settings, default_commission_rate: Number(e.target.value) })}
+              className="w-full bg-transparent hairline border rounded-full px-4 py-3 text-sm"
+            />
+          </div>
+          <label className="flex items-center gap-3 hairline border rounded-full px-4 py-3 text-sm cursor-pointer">
+            <input type="checkbox" checked={settings.razorpay_enabled} onChange={(e) => setSettings({ ...settings, razorpay_enabled: e.target.checked })} />
+            <span>Razorpay checkout enabled</span>
+          </label>
+          <label className="flex items-center gap-3 hairline border rounded-full px-4 py-3 text-sm cursor-pointer">
+            <input type="checkbox" checked={settings.whatsapp_enabled} onChange={(e) => setSettings({ ...settings, whatsapp_enabled: e.target.checked })} />
+            <span>WhatsApp checkout enabled</span>
+          </label>
+        </div>
+      </div>
+
 
       {showForm && (
         <form onSubmit={createPartner} className="glass-card rounded-2xl p-6 mb-10 grid md:grid-cols-2 gap-4">
