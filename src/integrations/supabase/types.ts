@@ -184,6 +184,30 @@ export type Database = {
           },
         ]
       }
+      site_settings: {
+        Row: {
+          default_commission_rate: number
+          id: boolean
+          razorpay_enabled: boolean
+          updated_at: string
+          whatsapp_enabled: boolean
+        }
+        Insert: {
+          default_commission_rate?: number
+          id?: boolean
+          razorpay_enabled?: boolean
+          updated_at?: string
+          whatsapp_enabled?: boolean
+        }
+        Update: {
+          default_commission_rate?: number
+          id?: boolean
+          razorpay_enabled?: boolean
+          updated_at?: string
+          whatsapp_enabled?: boolean
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -216,6 +240,18 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      log_referred_order: {
+        Args: { _items: Json; _partner_code: string }
+        Returns: string
+      }
+      lookup_partner: {
+        Args: { _code: string }
+        Returns: {
+          code: string
+          commission_rate: number
+          id: string
+        }[]
       }
     }
     Enums: {
