@@ -65,12 +65,13 @@ function AdminReferrals() {
     if (p.data) setPartners(p.data as Partner[]);
     if (o.data) setOrders(o.data as ReferredOrder[]);
     if (s.data) {
+      const sd = s.data;
       setSettings({
-        default_commission_rate: Number(s.data.default_commission_rate),
-        razorpay_enabled: !!s.data.razorpay_enabled,
-        whatsapp_enabled: !!s.data.whatsapp_enabled,
+        default_commission_rate: Number(sd.default_commission_rate),
+        razorpay_enabled: !!sd.razorpay_enabled,
+        whatsapp_enabled: !!sd.whatsapp_enabled,
       });
-      setForm((f) => ({ ...f, commission_rate: Number(s.data.default_commission_rate) }));
+      setForm((f) => ({ ...f, commission_rate: Number(sd.default_commission_rate) }));
     }
   }
 
