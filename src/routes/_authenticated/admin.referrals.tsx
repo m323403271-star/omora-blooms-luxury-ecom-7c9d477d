@@ -39,6 +39,8 @@ function AdminReferrals() {
   const [orders, setOrders] = useState<ReferredOrder[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ code: "", name: "", partner_type: "driver", contact_email: "", contact_phone: "", commission_rate: 10 });
+  const [settings, setSettings] = useState({ default_commission_rate: 10, razorpay_enabled: true, whatsapp_enabled: true });
+  const [savingSettings, setSavingSettings] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -55,13 +57,35 @@ function AdminReferrals() {
   }, [navigate]);
 
   async function refresh() {
-    const [p, o] = await Promise.all([
+    const [p, o, s] = await Promise.all([
       supabase.from("partners").select("*").order("created_at", { ascending: false }),
       supabase.from("referred_orders").select("id, partner_code, total, commission_amount, status, created_at").order("created_at", { ascending: false }).limit(100),
+      supabase.from("site_settings").select("default_commission_rate, razorpay_enabled, whatsapp_enabled").eq("id", true).maybeSingle(),
     ]);
     if (p.data) setPartners(p.data as Partner[]);
     if (o.data) setOrders(o.data as ReferredOrder[]);
+    if (s.data) {
+      setSettings({
+        default_commission_rate: Number(s.data.default_commission_rate),
+        razorpay_enabled: !!s.data.razorpay_enabled,
+        whatsapp_enabled: !!s.data.whatsapp_enabled,
+      });
+      setForm((f) => ({ ...f, commission_rate: Number(s.data.default_commission_rate) }));
+    }
   }
+
+  async function saveSettings() {
+    setSavingSettings(true);
+    const { error } = await supabase.from("site_settings").update({
+      default_commission_rate: settings.default_commission_rate,
+      razorpay_enabled: settings.razorpay_enabled,
+      whatsapp_enabled: settings.whatsapp_enabled,
+    }).eq("id", true);
+    setSavingSettings(false);
+    if (error) return toast.error(error.message);
+    toast.success("Settings saved");
+  }
+
 
   async function createPartner(e: React.FormEvent) {
     e.preventDefault();
