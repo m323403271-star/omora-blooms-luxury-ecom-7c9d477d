@@ -17,30 +17,19 @@ export function CartDrawer() {
     .join("\n")}\n\nTotal: ${formatPrice(total)}${refLine}\n\nPlease confirm.`;
 
   async function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
-    if (!ref || items.length === 0) return;
-    e.preventDefault();
-    try {
-      const { data: partner } = await supabase
-        .from("partners")
-        .select("id, code, commission_rate, active")
-        .eq("code", ref)
-        .eq("active", true)
-        .maybeSingle();
-      if (partner) {
-        const rate = Number(partner.commission_rate);
-        await supabase.from("referred_orders").insert({
-          partner_id: partner.id,
-          partner_code: partner.code,
-          items: items.map((i) => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
-          total,
-          commission_rate: rate,
-          commission_amount: Number(((total * rate) / 100).toFixed(2)),
+    if (items.length === 0) return;
+    if (ref) {
+      e.preventDefault();
+      try {
+        await supabase.rpc("log_referred_order", {
+          _partner_code: ref,
+          _items: items.map((i) => ({ id: i.id, quantity: i.quantity })),
         });
+      } catch {
+        // don't block checkout on logging errors
       }
-    } catch {
-      // don't block checkout on logging errors
+      window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
     }
-    window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
   }
 
   return (
