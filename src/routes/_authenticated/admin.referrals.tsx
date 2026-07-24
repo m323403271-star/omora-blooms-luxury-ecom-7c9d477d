@@ -137,6 +137,38 @@ function AdminReferrals() {
         <StatCard label="Total commission" value={`₹${totalCommission.toLocaleString("en-IN")}`} />
       </div>
 
+      <div className="glass-card rounded-2xl p-6 mb-10">
+        <div className="flex items-center justify-between flex-wrap gap-3 mb-4">
+          <div>
+            <p className="eyebrow mb-1">Commission & payment settings</p>
+            <p className="text-xs text-[color:var(--muted-foreground)]">Applied as the default rate for new partners and checkout options shown to customers.</p>
+          </div>
+          <button onClick={saveSettings} disabled={savingSettings} className="btn-gold px-5 py-2.5 rounded-full text-sm inline-flex items-center gap-2 disabled:opacity-60">
+            <Save className="h-4 w-4" /> {savingSettings ? "Saving…" : "Save settings"}
+          </button>
+        </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          <div>
+            <label className="text-xs eyebrow block mb-2">Default commission %</label>
+            <input
+              type="number" min={0} max={100} step={0.5}
+              value={settings.default_commission_rate}
+              onChange={(e) => setSettings({ ...settings, default_commission_rate: Number(e.target.value) })}
+              className="w-full bg-transparent hairline border rounded-full px-4 py-3 text-sm"
+            />
+          </div>
+          <label className="flex items-center gap-3 hairline border rounded-full px-4 py-3 text-sm cursor-pointer">
+            <input type="checkbox" checked={settings.razorpay_enabled} onChange={(e) => setSettings({ ...settings, razorpay_enabled: e.target.checked })} />
+            <span>Razorpay checkout enabled</span>
+          </label>
+          <label className="flex items-center gap-3 hairline border rounded-full px-4 py-3 text-sm cursor-pointer">
+            <input type="checkbox" checked={settings.whatsapp_enabled} onChange={(e) => setSettings({ ...settings, whatsapp_enabled: e.target.checked })} />
+            <span>WhatsApp checkout enabled</span>
+          </label>
+        </div>
+      </div>
+
+
       {showForm && (
         <form onSubmit={createPartner} className="glass-card rounded-2xl p-6 mb-10 grid md:grid-cols-2 gap-4">
           <Input label="Code (e.g. CAB001)" value={form.code} onChange={(v) => setForm({ ...form, code: v })} required />
