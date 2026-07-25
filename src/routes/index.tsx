@@ -99,7 +99,7 @@ function Marquee() {
 }
 
 function FeaturedCollections() {
-  const highlightSlugs = ["crochet-bouquets", "frames-vases", "divine-heritage", "pipe-cleaner-bouquets"] as const;
+  const highlightSlugs = ["crochet-bouquets", "frames-vases", "pipe-cleaner-bouquets"] as const;
   const trio = highlightSlugs
     .map((slug) => COLLECTIONS.find((c) => c.slug === slug))
     .filter((c): c is (typeof COLLECTIONS)[number] => Boolean(c));
