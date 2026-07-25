@@ -34,6 +34,11 @@ function ProductPage() {
 
   const related = data.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
+  // Universal gallery: use uploaded product.images if provided (future admin uploads),
+  // otherwise synthesize a 3–4 photo gallery from the main image, collection cover,
+  // and related products so every PDP has multi-angle thumbnails today.
+  const gallery = useMemo(() => resolveGallery(product, collection?.image, related), [product, collection?.image, related]);
+
   return (
     <div>
       <div className="container-luxe pt-10 text-xs text-[color:var(--muted-foreground)] tracking-widest uppercase">
@@ -47,9 +52,8 @@ function ProductPage() {
       </div>
 
       <section className="container-luxe grid lg:grid-cols-2 gap-10 md:gap-16 py-10 md:py-16">
-        <div className="glass-card rounded-3xl p-3 md:p-4">
-          <img src={img} alt={product.name} className="w-full aspect-square object-cover rounded-2xl" />
-        </div>
+        <Media3DViewer images={gallery} alt={product.name} />
+
         <div>
           {collection && <p className="eyebrow mb-3">{collection.name}</p>}
           <h1 className="font-serif text-4xl md:text-5xl leading-tight">{product.name}</h1>
