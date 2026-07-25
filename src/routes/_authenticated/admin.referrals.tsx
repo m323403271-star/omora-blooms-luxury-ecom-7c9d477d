@@ -73,13 +73,15 @@ function AdminReferrals() {
   }, [navigate]);
 
   async function refresh() {
-    const [p, o, s] = await Promise.all([
+    const [p, o, s, pay] = await Promise.all([
       supabase.from("partners").select("*").order("created_at", { ascending: false }),
       supabase.from("referred_orders").select("id, partner_code, total, commission_amount, status, created_at").order("created_at", { ascending: false }).limit(100),
       supabase.from("site_settings").select("default_commission_rate, razorpay_enabled, whatsapp_enabled").eq("id", true).maybeSingle(),
+      supabase.from("payments").select("id, razorpay_order_id, razorpay_payment_id, amount, currency, status, ref_code, error_message, created_at, updated_at").order("created_at", { ascending: false }).limit(100),
     ]);
     if (p.data) setPartners(p.data as Partner[]);
     if (o.data) setOrders(o.data as ReferredOrder[]);
+    if (pay.data) setPayments(pay.data as Payment[]);
     if (s.data) {
       const sd = s.data;
       setSettings({
@@ -90,6 +92,14 @@ function AdminReferrals() {
       setForm((f) => ({ ...f, commission_rate: Number(sd.default_commission_rate) }));
     }
   }
+
+  async function refreshPayments() {
+    setRefreshingPayments(true);
+    const { data } = await supabase.from("payments").select("id, razorpay_order_id, razorpay_payment_id, amount, currency, status, ref_code, error_message, created_at, updated_at").order("created_at", { ascending: false }).limit(100);
+    if (data) setPayments(data as Payment[]);
+    setRefreshingPayments(false);
+  }
+
 
   async function saveSettings() {
     setSavingSettings(true);
