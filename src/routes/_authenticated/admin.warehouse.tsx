@@ -16,6 +16,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { findPickup } from "@/lib/pickup";
+import { OrderPreviewSender } from "@/components/site/OrderPreviewSender";
 
 type Priority = "airport" | "prestige" | "standard";
 
