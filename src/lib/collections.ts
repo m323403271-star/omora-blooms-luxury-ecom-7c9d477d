@@ -18,6 +18,7 @@ export type Collection = {
 export const COLLECTIONS: Collection[] = [
   { slug: "crochet-bouquets", name: "Crochet Bouquets", tagline: "Forever roses, hand-stitched", image: crochetImg },
   { slug: "pipe-cleaner-bouquets", name: "Pipe Cleaner Bouquets", tagline: "Whimsical everlasting florals", image: pipecleanerImg },
+  { slug: "indoor-plants", name: "Indoor Plants", tagline: "Bring nature indoors with beautiful greenery", image: indoorPlantsImg },
   { slug: "baby-collection", name: "Baby Essentials", tagline: "Welcome the little one", image: babyImg },
   { slug: "mother-recovery", name: "Mother Recovery", tagline: "Postpartum care, elevated", image: motherImg },
   { slug: "airport-collection", name: "Airport Welcome", tagline: "Homecomings, made memorable", image: airportImg },
