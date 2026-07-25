@@ -36,6 +36,8 @@ function OrderStatusPage() {
   const [data, setData] = useState<PaymentRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const pickup = getPickupForOrder(orderId);
+
 
   async function load() {
     setLoading(true);
