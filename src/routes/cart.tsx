@@ -175,11 +175,11 @@ function CartPage() {
             <button
               disabled={paying || items.length === 0}
               onClick={async () => {
-                if (!pickup) { toast.error("Please select an airport pickup point to continue."); return; }
+                if (pickupRequired && !pickup) { toast.error("Please select an airport pickup point to continue."); return; }
                 setPaying(true);
                 try {
                   await startRazorpayCheckout(items, (orderId) => {
-                    savePickupForOrder(orderId, pickup);
+                    if (showPickup && pickup) savePickupForOrder(orderId, pickup);
                     clear();
                     navigate({ to: "/order/$orderId", params: { orderId } });
                   });
