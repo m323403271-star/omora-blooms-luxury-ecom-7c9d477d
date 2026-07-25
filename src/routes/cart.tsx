@@ -21,11 +21,27 @@ function CartPage() {
   const { items, total, setQuantity, remove, clear } = useCart();
   const [paying, setPaying] = useState(false);
   const [pickup, setPickup] = useState<string>(() => getSelectedPickup() ?? "");
+  const [pincode, setPincode] = useState<string | null>(() => getStoredPincode());
+  const [airportOverride, setAirportOverride] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as string | null;
+      setPincode(detail ?? null);
+    };
+    window.addEventListener("omora:pincode-changed", handler as EventListener);
+    return () => window.removeEventListener("omora:pincode-changed", handler as EventListener);
+  }, []);
+
+  const isAirportPincode = !!(pincode && EXPRESS_PINCODES[pincode]);
+  const showPickup = isAirportPincode || airportOverride;
+  const pickupRequired = showPickup;
+
   const ref = typeof window !== "undefined" ? getStoredRef() : null;
   const refLine = ref ? `\n\nReferral code: ${ref}` : "";
   const pickupObj = findPickup(pickup);
-  const pickupLine = pickupObj ? `\n\nAirport Pickup Point: ${pickupObj.label} (${pickupObj.detail})` : "";
+  const pickupLine = showPickup && pickupObj ? `\n\nAirport Pickup Point: ${pickupObj.label} (${pickupObj.detail})` : "";
 
   const message = items.length === 0
     ? ""
@@ -38,7 +54,7 @@ function CartPage() {
 
   async function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
     if (items.length === 0) return;
-    if (!pickup) {
+    if (pickupRequired && !pickup) {
       e.preventDefault();
       toast.error("Please select an airport pickup point to continue.");
       return;
