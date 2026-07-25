@@ -138,6 +138,9 @@ export function Header() {
                 ))}
               </div>
             </div>
+            <div className="px-6 pb-4">
+              <DeliveryEtaChecker title="Check Delivery ETA" />
+            </div>
             <div className="mt-auto p-6 border-t hairline space-y-3">
               <Link
                 to="/airport-pickup"
