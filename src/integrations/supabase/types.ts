@@ -86,6 +86,48 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          error_message: string | null
+          id: string
+          items: Json
+          razorpay_order_id: string
+          razorpay_payment_id: string | null
+          ref_code: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          error_message?: string | null
+          id?: string
+          items?: Json
+          razorpay_order_id: string
+          razorpay_payment_id?: string | null
+          ref_code?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          error_message?: string | null
+          id?: string
+          items?: Json
+          razorpay_order_id?: string
+          razorpay_payment_id?: string | null
+          ref_code?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           available: boolean
