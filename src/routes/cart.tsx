@@ -8,6 +8,7 @@ import { getStoredRef } from "@/lib/referral";
 import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
 import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
+import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/cart")({
