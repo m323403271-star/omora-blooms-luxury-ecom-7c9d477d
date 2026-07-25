@@ -66,9 +66,12 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-1 md:gap-2 md:order-3">
+            <div className="hidden md:block">
+              <DeliveryEtaChecker variant="header" />
+            </div>
             <Link
               to="/airport-pickup"
-              className="hidden lg:inline-flex items-center gap-1.5 rounded-full border hairline px-3 py-1.5 text-[11px] tracking-[0.14em] uppercase text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10"
+              className="hidden xl:inline-flex items-center gap-1.5 rounded-full border hairline px-3 py-1.5 text-[11px] tracking-[0.14em] uppercase text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10"
             >
               ✈ Airport Pickup Points
             </Link>
