@@ -55,7 +55,9 @@ export function OrderPreviewSender({
         upsert: false,
       });
       if (error) { toast.error(error.message); return; }
-      const publicUrl = supabase.storage.from(BUCKET).getPublicUrl(key).data.publicUrl;
+      const { data: signed, error: sErr } = await supabase.storage.from(BUCKET).createSignedUrl(key, 60 * 60 * 24 * 365);
+      if (sErr || !signed?.signedUrl) { toast.error(sErr?.message ?? "Could not sign URL"); return; }
+      const publicUrl = signed.signedUrl;
       const { error: uErr } = await supabase
         .from("payments")
         .update({ preview_photo_url: publicUrl })
