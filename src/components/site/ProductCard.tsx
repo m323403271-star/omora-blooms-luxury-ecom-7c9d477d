@@ -13,8 +13,10 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-[color:var(--card)] hairline border">
           <img
             src={img}
-            alt={product.name}
+            alt={`${product.name}${product.tagline ? ` — ${product.tagline}` : ""} | OMORA BLOOMS handmade luxury`}
             loading="lazy"
+            decoding="async"
+            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
           {product.compare_at_price && (
