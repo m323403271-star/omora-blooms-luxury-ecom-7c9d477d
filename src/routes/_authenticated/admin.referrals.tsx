@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { Download, Plus, LogOut, Save, RefreshCw, CheckCircle2, XCircle, Clock, AlertCircle } from "lucide-react";
