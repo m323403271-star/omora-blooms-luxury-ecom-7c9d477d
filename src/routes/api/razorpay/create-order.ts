@@ -12,7 +12,17 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
           return Response.json({ error: "Razorpay not configured" }, { status: 500 });
         }
 
-        let body: { items?: Item[]; ref?: string | null };
+        let body: {
+          items?: Item[];
+          ref?: string | null;
+          meta?: {
+            pincode?: string | null;
+            customerTier?: "regular" | "prestige" | null;
+            pickupPointId?: string | null;
+            customerName?: string | null;
+            customerPhone?: string | null;
+          };
+        };
         try {
           body = await request.json();
         } catch {
@@ -23,6 +33,13 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         if (items.length === 0 || items.length > 100) {
           return Response.json({ error: "Invalid items" }, { status: 400 });
         }
+        const meta = body.meta ?? {};
+        const cleanTier = meta.customerTier === "prestige" ? "prestige" : "regular";
+        const cleanPincode = typeof meta.pincode === "string" && /^[1-9]\d{5}$/.test(meta.pincode) ? meta.pincode : null;
+        const cleanPickup = typeof meta.pickupPointId === "string" ? meta.pickupPointId.slice(0, 60) : null;
+        const cleanName = typeof meta.customerName === "string" ? meta.customerName.slice(0, 120) : null;
+        const cleanPhone = typeof meta.customerPhone === "string" ? meta.customerPhone.replace(/\D/g, "").slice(0, 15) : null;
+
 
         // Load trusted prices from DB
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
