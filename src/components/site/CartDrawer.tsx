@@ -165,11 +165,16 @@ export function CartDrawer() {
                   if (pickupRequired && !pickup) { toast.error("Please select an airport pickup point to continue."); return; }
                   setPaying(true);
                   try {
+                    const { getCustomerTier } = await import("@/lib/delivery");
                     await startRazorpayCheckout(items, (orderId) => {
                       if (showPickup && pickup) savePickupForOrder(orderId, pickup);
                       clear();
                       close();
                       navigate({ to: "/order/$orderId", params: { orderId } });
+                    }, {
+                      pincode: pincode,
+                      customerTier: getCustomerTier(),
+                      pickupPointId: showPickup ? pickup || null : null,
                     });
                   } finally {
                     setPaying(false);
@@ -178,6 +183,7 @@ export function CartDrawer() {
                 className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm font-semibold disabled:opacity-60"
               >
                 <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Pay with Razorpay"}
+
               </button>
 
               <a
