@@ -7,6 +7,7 @@ import { collectionBySlug } from "@/lib/collections";
 import { useCart } from "@/lib/cart";
 import { orderOnWhatsApp } from "@/lib/whatsapp";
 import { ProductCard } from "@/components/site/ProductCard";
+import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ params }) => ({
