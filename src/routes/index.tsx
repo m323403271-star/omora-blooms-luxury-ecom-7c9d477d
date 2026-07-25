@@ -119,14 +119,14 @@ function FeaturedCollections() {
             params={{ slug: c.slug }}
             className={`group relative overflow-hidden rounded-2xl hairline border ${i === 0 ? "md:col-span-2 md:row-span-2" : ""}`}
           >
-            <div className={`${i === 0 ? "aspect-[16/10] md:aspect-[16/12]" : "aspect-[4/5]"} relative`}>
+            <div className={`${i === 0 ? "aspect-[4/5] md:aspect-[16/12]" : "aspect-[4/5]"} relative`}>
               <img src={c.image} alt={c.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-5 md:p-7">
-                <p className="eyebrow mb-1">Collection</p>
-                <h3 className="font-serif text-2xl md:text-3xl">{c.name}</h3>
-                <p className="text-xs md:text-sm text-[color:var(--muted-foreground)] mt-1">{c.tagline}</p>
-                <span className="mt-4 inline-flex items-center gap-2 text-xs text-[color:var(--gold)] tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Explore <ArrowRight className="h-3 w-3" /></span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-4 md:p-7">
+                <p className="eyebrow mb-1 text-[0.6rem] md:text-[0.7rem]">Collection</p>
+                <h3 className="font-serif text-lg md:text-3xl leading-tight">{c.name}</h3>
+                <p className="text-[11px] md:text-sm text-[color:var(--muted-foreground)] mt-1 line-clamp-2">{c.tagline}</p>
+                <span className="mt-3 md:mt-4 hidden md:inline-flex items-center gap-2 text-xs text-[color:var(--gold)] tracking-widest uppercase opacity-0 group-hover:opacity-100 transition-opacity">Explore <ArrowRight className="h-3 w-3" /></span>
               </div>
             </div>
           </Link>
