@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer } from "lucide-react";
 import { formatPrice } from "@/lib/products";
+import { getPickupForOrder } from "@/lib/pickup";
+
 
 export const Route = createFileRoute("/order/$orderId")({
   head: () => ({ meta: [{ title: "Order Status — OMORA BLOOMS" }] }),
@@ -34,6 +36,8 @@ function OrderStatusPage() {
   const [data, setData] = useState<PaymentRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const pickup = getPickupForOrder(orderId);
+
 
   async function load() {
     setLoading(true);
@@ -106,6 +110,29 @@ function OrderStatusPage() {
                 <p className="mt-4 text-xs opacity-80">Reason: {data.error_message}</p>
               )}
             </div>
+
+            {pickup && (
+              <div className="glass-card rounded-2xl p-6 border hairline">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 rounded-full bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="eyebrow">Airport Pickup Point</p>
+                    <p className="font-serif text-2xl mt-1">{pickup.label}</p>
+                    <p className="text-sm text-[color:var(--muted-foreground)] mt-1">{pickup.detail}</p>
+                    <p className="mt-4 inline-flex items-center gap-2 text-xs text-[color:var(--gold)] border hairline rounded-full px-3 py-1.5">
+                      <Timer className="h-3.5 w-3.5" /> Express 20–30 minute delivery window
+                    </p>
+                    <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)]">
+                      Security rules restrict delivery executives from entering gate check-in areas. Please meet our delivery agent at the Pickup Point above.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
 
             {data.items && data.items.length > 0 && (
               <div className="glass-card rounded-2xl p-6">

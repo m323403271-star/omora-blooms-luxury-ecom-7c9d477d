@@ -1,27 +1,42 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { X, Minus, Plus, MessageCircle, CreditCard } from "lucide-react";
+import { X, Minus, Plus, MessageCircle, CreditCard, MapPin, ShieldAlert } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { getStoredRef } from "@/lib/referral";
 import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
+import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
 
 export function CartDrawer() {
   const { items, isOpen, close, remove, setQuantity, total, count, clear } = useCart();
   const [paying, setPaying] = useState(false);
+  const [pickup, setPickup] = useState<string>(() => getSelectedPickup() ?? "");
   const navigate = useNavigate();
   if (!isOpen) return null;
 
   const ref = getStoredRef();
   const refLine = ref ? `\n\nReferral code: ${ref}` : "";
+  const pickupObj = findPickup(pickup);
+  const pickupLine = pickupObj ? `\n\nAirport Pickup Point: ${pickupObj.label} (${pickupObj.detail})` : "";
   const message = `Hello OMORA BLOOMS! I'd like to order:\n\n${items
     .map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`)
-    .join("\n")}\n\nTotal: ${formatPrice(total)}${refLine}\n\nPlease confirm.`;
+    .join("\n")}\n\nTotal: ${formatPrice(total)}${pickupLine}${refLine}\n\nPlease confirm.`;
+
+  function updatePickup(id: string) {
+    setPickup(id);
+    if (id) setSelectedPickup(id);
+  }
 
   async function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
     if (items.length === 0) return;
+    if (!pickup) {
+      e.preventDefault();
+      toast.error("Please select an airport pickup point to continue.");
+      return;
+    }
     if (ref) {
       e.preventDefault();
       try {
@@ -35,6 +50,7 @@ export function CartDrawer() {
       window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
     }
   }
+
 
   return (
     <div className="fixed inset-0 z-50 animate-fade-in">
@@ -78,6 +94,29 @@ export function CartDrawer() {
               ))}
             </div>
             <div className="border-t hairline px-6 py-5 space-y-4">
+              {/* Airport pickup */}
+              <div className="rounded-xl border hairline p-3">
+                <label className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
+                  <MapPin className="h-3.5 w-3.5" /> Airport Pickup <span className="text-[color:var(--destructive)]">*</span>
+                </label>
+                <select
+                  required
+                  value={pickup}
+                  onChange={(e) => updatePickup(e.target.value)}
+                  className="mt-2 w-full bg-[color:var(--noir)] border hairline rounded-lg px-2.5 py-2 text-xs text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                >
+                  <option value="">Select a pickup point…</option>
+                  {PICKUP_POINTS.map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </select>
+                <p className="mt-2 flex items-start gap-1.5 text-[10px] text-[color:var(--muted-foreground)] leading-relaxed">
+                  <ShieldAlert className="h-3 w-3 mt-0.5 text-[color:var(--gold)] flex-shrink-0" />
+                  <span>Security rules restrict entry to gate check-in areas. Meet our agent at your chosen Pickup Point.</span>
+                </p>
+                <p className="mt-1 text-[10px] text-[color:var(--gold)]">⚡ Express 20–30 min delivery window.</p>
+              </div>
+
               <div className="flex justify-between text-sm">
                 <span className="text-[color:var(--muted-foreground)]">Subtotal</span>
                 <span className="text-[color:var(--gold)] font-medium">{formatPrice(total)}</span>
@@ -89,9 +128,11 @@ export function CartDrawer() {
               <button
                 disabled={paying}
                 onClick={async () => {
+                  if (!pickup) { toast.error("Please select an airport pickup point to continue."); return; }
                   setPaying(true);
                   try {
                     await startRazorpayCheckout(items, (orderId) => {
+                      savePickupForOrder(orderId, pickup);
                       clear();
                       close();
                       navigate({ to: "/order/$orderId", params: { orderId } });
@@ -104,6 +145,7 @@ export function CartDrawer() {
               >
                 <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Pay with Razorpay"}
               </button>
+
               <a
                 href={whatsappLink(message)}
                 onClick={handleCheckout}

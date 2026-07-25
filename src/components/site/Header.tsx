@@ -20,10 +20,21 @@ export function Header() {
 
   return (
     <>
+      {/* Airport express banner */}
+      <div className="bg-gold-gradient text-[color:var(--noir)] text-[11px] md:text-[12px] tracking-[0.18em] uppercase font-semibold py-2 text-center px-3">
+        <span className="mr-2">⚡ Express 20–30 Mins Delivery at Kempegowda International Airport!</span>
+        <Link to="/airport-pickup" className="underline underline-offset-4 hover:opacity-80 normal-case tracking-normal font-medium">
+          Check Airport Pickup Points →
+        </Link>
+        <p className="mt-1 text-[10px] tracking-[0.14em] uppercase font-normal opacity-80">
+          Due to airport security policies, deliveries are available only at designated Pickup Points.
+        </p>
+      </div>
       {/* Announcement */}
-      <div className="bg-gold-gradient text-[color:var(--noir)] text-[11px] tracking-[0.24em] uppercase font-medium py-2 text-center">
+      <div className="bg-[color:var(--noir)] text-[color:var(--muted-foreground)] text-[11px] tracking-[0.24em] uppercase font-medium py-2 text-center border-b hairline">
         Complimentary luxury packaging · Same-day delivery available · WhatsApp {WHATSAPP_DISPLAY}
       </div>
+
 
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-[color:var(--noir)]/80 border-b hairline">
         <div className="container-luxe flex items-center justify-between h-20 md:h-24">
@@ -53,12 +64,19 @@ export function Header() {
 
           <div className="flex items-center gap-1 md:gap-2 md:order-3">
             <Link
+              to="/airport-pickup"
+              className="hidden lg:inline-flex items-center gap-1.5 rounded-full border hairline px-3 py-1.5 text-[11px] tracking-[0.14em] uppercase text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10"
+            >
+              ✈ Airport Pickup Points
+            </Link>
+            <Link
               to="/shop"
               aria-label="Search"
               className="hidden md:inline-flex p-2 text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)]"
             >
               <Search className="h-4 w-4" />
             </Link>
+
             <button
               onClick={open}
               aria-label="Open cart"
@@ -114,7 +132,14 @@ export function Header() {
                 ))}
               </div>
             </div>
-            <div className="mt-auto p-6 border-t hairline">
+            <div className="mt-auto p-6 border-t hairline space-y-3">
+              <Link
+                to="/airport-pickup"
+                onClick={() => setMobileOpen(false)}
+                className="btn-outline-gold w-full inline-flex items-center justify-center py-3 px-4 rounded-full text-sm"
+              >
+                ✈ Airport Pickup Points
+              </Link>
               <a
                 href={whatsappLink("Hi OMORA BLOOMS, I'd like to order.")}
                 target="_blank"
@@ -124,6 +149,7 @@ export function Header() {
                 Order on WhatsApp
               </a>
             </div>
+
           </div>
         </div>
       )}
