@@ -12,11 +12,20 @@ import { Media3DViewer } from "@/components/site/Media3DViewer";
 
 
 export const Route = createFileRoute("/products/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.slug.replace(/-/g, " ")} — OMORA BLOOMS` },
-    ],
-  }),
+  head: ({ params }) => {
+    const title = params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const desc = `Shop ${title} — handmade luxury bouquet by OMORA BLOOMS. Everlasting crochet & pipe-cleaner flowers, gift-boxed with same-day delivery in Bengaluru.`;
+    return {
+      meta: [
+        { title: `${title} — OMORA BLOOMS` },
+        { name: "description", content: desc },
+        { property: "og:title", content: `${title} — OMORA BLOOMS` },
+        { property: "og:description", content: desc },
+        { property: "og:type", content: "product" },
+        { name: "twitter:card", content: "summary_large_image" },
+      ],
+    };
+  },
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery),
   component: ProductPage,
 });
@@ -52,7 +61,11 @@ function ProductPage() {
       </div>
 
       <section className="container-luxe grid lg:grid-cols-2 gap-10 md:gap-16 py-10 md:py-16">
-        <Media3DViewer images={gallery} alt={product.name} />
+        <Media3DViewer
+          images={gallery}
+          alt={`${product.name}${collection ? ` — ${collection.name}` : ""} handmade luxury bouquet by OMORA BLOOMS`}
+        />
+
 
         <div>
           {collection && <p className="eyebrow mb-3">{collection.name}</p>}

@@ -73,6 +73,10 @@ export function Media3DViewer({ images, alt }: Props) {
             src={mainSrc}
             alt={alt}
             draggable={false}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            sizes="(min-width: 1024px) 50vw, 100vw"
             className="absolute inset-0 h-full w-full object-cover will-change-transform"
             style={{
               transform: zoomed ? "scale(2)" : "scale(1)",
@@ -119,7 +123,13 @@ export function Media3DViewer({ images, alt }: Props) {
                   : "hairline hover:border-[color:var(--gold)]/60"
               }`}
             >
-              <img src={src} alt={`${alt} — angle ${i + 1}`} className="h-16 w-16 md:h-20 md:w-20 object-cover" />
+              <img
+                src={src}
+                alt={`${alt} — alternate view ${i + 1}`}
+                loading="lazy"
+                decoding="async"
+                className="h-16 w-16 md:h-20 md:w-20 object-cover"
+              />
             </button>
           ))}
         </div>
