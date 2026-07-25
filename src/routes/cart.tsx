@@ -123,6 +123,11 @@ function CartPage() {
               <p className="mt-2 text-[11px] text-[color:var(--gold)]">⚡ Express 20–30 minute delivery window.</p>
             </div>
 
+            <div className="mb-5">
+              <DeliveryEtaChecker variant="checkout" title="Delivery SLA" locked />
+            </div>
+
+
             <div className="space-y-3 text-sm">
               <div className="flex justify-between"><span className="text-[color:var(--muted-foreground)]">Subtotal</span><span>{formatPrice(total)}</span></div>
               <div className="flex justify-between"><span className="text-[color:var(--muted-foreground)]">Shipping</span><span className="text-[color:var(--gold)]">Calculated at checkout</span></div>
