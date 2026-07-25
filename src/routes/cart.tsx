@@ -1,10 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MessageCircle, Minus, Plus, Trash2 } from "lucide-react";
+import { CreditCard, MessageCircle, Minus, Plus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { getStoredRef } from "@/lib/referral";
 import { supabase } from "@/integrations/supabase/client";
+import { startRazorpayCheckout } from "@/lib/razorpay";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Your Bag — OMORA BLOOMS" }] }),
