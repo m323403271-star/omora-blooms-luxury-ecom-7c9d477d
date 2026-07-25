@@ -1,27 +1,42 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { X, Minus, Plus, MessageCircle, CreditCard } from "lucide-react";
+import { X, Minus, Plus, MessageCircle, CreditCard, MapPin, ShieldAlert } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { getStoredRef } from "@/lib/referral";
 import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
+import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
 
 export function CartDrawer() {
   const { items, isOpen, close, remove, setQuantity, total, count, clear } = useCart();
   const [paying, setPaying] = useState(false);
+  const [pickup, setPickup] = useState<string>(() => getSelectedPickup() ?? "");
   const navigate = useNavigate();
   if (!isOpen) return null;
 
   const ref = getStoredRef();
   const refLine = ref ? `\n\nReferral code: ${ref}` : "";
+  const pickupObj = findPickup(pickup);
+  const pickupLine = pickupObj ? `\n\nAirport Pickup Point: ${pickupObj.label} (${pickupObj.detail})` : "";
   const message = `Hello OMORA BLOOMS! I'd like to order:\n\n${items
     .map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`)
-    .join("\n")}\n\nTotal: ${formatPrice(total)}${refLine}\n\nPlease confirm.`;
+    .join("\n")}\n\nTotal: ${formatPrice(total)}${pickupLine}${refLine}\n\nPlease confirm.`;
+
+  function updatePickup(id: string) {
+    setPickup(id);
+    if (id) setSelectedPickup(id);
+  }
 
   async function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
     if (items.length === 0) return;
+    if (!pickup) {
+      e.preventDefault();
+      toast.error("Please select an airport pickup point to continue.");
+      return;
+    }
     if (ref) {
       e.preventDefault();
       try {
@@ -35,6 +50,7 @@ export function CartDrawer() {
       window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
     }
   }
+
 
   return (
     <div className="fixed inset-0 z-50 animate-fade-in">
