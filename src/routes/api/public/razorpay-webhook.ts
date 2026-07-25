@@ -94,10 +94,14 @@ export const Route = createFileRoute("/api/public/razorpay-webhook")({
           return Response.json({ ok: true });
         }
 
-        const update: Record<string, unknown> = { status: nextStatus };
+        const update: {
+          status: string;
+          razorpay_payment_id?: string;
+          error_message?: string | null;
+        } = { status: nextStatus };
         if (paymentId) update.razorpay_payment_id = paymentId;
-        if (errorMessage !== null) update.error_message = errorMessage;
         if (nextStatus === "paid") update.error_message = null;
+        else if (errorMessage !== null) update.error_message = errorMessage;
 
         const { error: updateError } = await supabaseAdmin
           .from("payments")
