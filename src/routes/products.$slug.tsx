@@ -42,8 +42,17 @@ function ProductPage() {
   const img = resolveProductImage(product.image_url);
   const { add } = useCart();
   const [qty, setQty] = useState(1);
+  const [gift, setGift] = useState<GiftOptions | null>(null);
+  const [bouquet, setBouquet] = useState<CustomBouquet | null>(null);
+  const [addOnTotal, setAddOnTotal] = useState(0);
 
+  const unitPrice = product.price + addOnTotal;
   const related = data.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+
+  const waMessage = useMemo(() => {
+    const base = `Hello OMORA BLOOMS! I'd like to order:\n\n${product.name} × ${qty} — ${formatPrice(unitPrice * qty)}`;
+    return base + formatGiftForWhatsApp(gift, bouquet) + `\n\nPlease confirm availability.`;
+  }, [product.name, qty, unitPrice, gift, bouquet]);
 
   // Universal gallery: use uploaded product.images if provided (future admin uploads),
   // otherwise synthesize a 3–4 photo gallery from the main image, collection cover,
