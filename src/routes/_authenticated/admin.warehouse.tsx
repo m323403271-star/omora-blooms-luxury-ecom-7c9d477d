@@ -33,6 +33,9 @@ type OrderRow = {
   priority: Priority;
   created_at: string;
   items: Array<{ name: string; quantity: number }> | null;
+  preview_photo_url: string | null;
+  preview_sent_at: string | null;
+  preview_channel: string | null;
 };
 
 const SLA_MINUTES: Record<Priority, number> = {
