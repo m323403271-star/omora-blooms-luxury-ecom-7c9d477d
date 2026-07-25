@@ -8,6 +8,7 @@ import corporateImg from "@/assets/collection-corporate.jpg";
 import weddingImg from "@/assets/collection-wedding.jpg";
 import indoorPlantsImg from "@/assets/collection-indoor-plants.jpg";
 import framesVasesImg from "@/assets/collection-frames-vases.jpg";
+import divineHeritageImg from "@/assets/collection-divine-heritage.jpg";
 
 export type Collection = {
   slug: string;
