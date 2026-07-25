@@ -47,7 +47,19 @@ function loadScript(): Promise<boolean> {
   });
 }
 
-export async function startRazorpayCheckout(items: CartItem[], onSuccess: (orderId: string) => void): Promise<void> {
+export type CheckoutMeta = {
+  pincode?: string | null;
+  customerTier?: "regular" | "prestige" | null;
+  pickupPointId?: string | null;
+  customerName?: string | null;
+  customerPhone?: string | null;
+};
+
+export async function startRazorpayCheckout(
+  items: CartItem[],
+  onSuccess: (orderId: string) => void,
+  meta: CheckoutMeta = {},
+): Promise<void> {
   if (items.length === 0) return;
   const ref = getStoredRef();
 
@@ -65,8 +77,10 @@ export async function startRazorpayCheckout(items: CartItem[], onSuccess: (order
       body: JSON.stringify({
         items: items.map((i) => ({ id: i.id, quantity: i.quantity })),
         ref,
+        meta,
       }),
     });
+
   } catch {
     toast.error("Network error starting payment");
     return;

@@ -91,9 +91,15 @@ export type Database = {
           amount: number
           created_at: string
           currency: string
+          customer_name: string | null
+          customer_phone: string | null
+          customer_tier: string
           error_message: string | null
           id: string
           items: Json
+          pickup_point_id: string | null
+          pincode: string | null
+          priority: string
           razorpay_order_id: string
           razorpay_payment_id: string | null
           ref_code: string | null
@@ -104,9 +110,15 @@ export type Database = {
           amount: number
           created_at?: string
           currency?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_tier?: string
           error_message?: string | null
           id?: string
           items?: Json
+          pickup_point_id?: string | null
+          pincode?: string | null
+          priority?: string
           razorpay_order_id: string
           razorpay_payment_id?: string | null
           ref_code?: string | null
@@ -117,9 +129,15 @@ export type Database = {
           amount?: number
           created_at?: string
           currency?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          customer_tier?: string
           error_message?: string | null
           id?: string
           items?: Json
+          pickup_point_id?: string | null
+          pincode?: string | null
+          priority?: string
           razorpay_order_id?: string
           razorpay_payment_id?: string | null
           ref_code?: string | null
