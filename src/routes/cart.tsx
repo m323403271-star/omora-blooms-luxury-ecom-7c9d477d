@@ -45,7 +45,11 @@ function CartPage() {
 
   const message = items.length === 0
     ? ""
-    : `Hello OMORA BLOOMS! I'd like to order:\n\n${items.map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`).join("\n")}\n\nTotal: ${formatPrice(total)}${pickupLine}${refLine}\n\nPlease confirm.`;
+    : `Hello OMORA BLOOMS! I'd like to order:\n\n${items.map((i) => {
+        const line = `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`;
+        const extras = formatGiftForWhatsApp(i.gift, i.bouquet).replace(/^\n\n/, "\n").replace(/\n/g, "\n  ");
+        return line + extras;
+      }).join("\n")}\n\nTotal: ${formatPrice(total)}${pickupLine}${refLine}\n\nPlease confirm.`;
 
   function updatePickup(id: string) {
     setPickup(id);
