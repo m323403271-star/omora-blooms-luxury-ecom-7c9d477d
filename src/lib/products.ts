@@ -37,8 +37,19 @@ const imageMap: Record<string, string> = {
   "/src/assets/collection-wedding.jpg": weddingImg,
 };
 
-export function resolveProductImage(url: string): string {
-  return imageMap[url] ?? url;
+export function resolveProductImage(url: string, opts?: { width?: number; quality?: number }): string {
+  const mapped = imageMap[url];
+  if (mapped) return mapped;
+  // Supabase Storage: rewrite public object URLs to the image render endpoint,
+  // which auto-serves WebP to supporting browsers and resizes on the CDN edge.
+  if (typeof url === "string" && url.includes("/storage/v1/object/public/")) {
+    const rendered = url.replace("/storage/v1/object/public/", "/storage/v1/render/image/public/");
+    const width = opts?.width ?? 1200;
+    const quality = opts?.quality ?? 75;
+    const sep = rendered.includes("?") ? "&" : "?";
+    return `${rendered}${sep}width=${width}&quality=${quality}&resize=contain`;
+  }
+  return url;
 }
 
 async function fetchProducts(): Promise<Product[]> {
