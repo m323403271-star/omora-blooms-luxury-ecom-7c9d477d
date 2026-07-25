@@ -116,19 +116,17 @@ function FeaturedCollections() {
         </Link>
       </div>
 
-      {/* Mobile: horizontal snap carousel. md: 2-col. lg+: balanced 4-column grid. */}
-      <div className="-mx-4 px-4 md:mx-0 md:px-0 flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth pb-2 md:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+      {/* Mobile: horizontal snap carousel. md+: balanced 3-column grid. */}
+      <div className="-mx-4 px-4 md:mx-0 md:px-0 flex md:grid md:grid-cols-3 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth pb-2 md:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {trio.map((c) => {
           const isNew = c.slug === "frames-vases";
-          const isNewArrival = c.slug === "divine-heritage";
-          const highlighted = isNew || isNewArrival;
           return (
             <Link
               key={c.slug}
               to="/collections/$slug"
               params={{ slug: c.slug }}
               className={`group relative shrink-0 md:shrink w-[82%] sm:w-[60%] md:w-auto snap-center overflow-hidden rounded-3xl hairline border transition-shadow duration-500 ${
-                highlighted
+                isNew
                   ? "ring-1 ring-[color:var(--gold)]/50 shadow-[0_20px_60px_-20px_rgba(200,162,74,0.45)]"
                   : "hover:shadow-[0_20px_60px_-20px_rgba(200,162,74,0.25)]"
               }`}
@@ -139,14 +137,14 @@ function FeaturedCollections() {
                   alt={`${c.name} — ${c.tagline} | OMORA BLOOMS collection`}
                   loading="lazy"
                   decoding="async"
-                  sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 82vw"
+                  sizes="(min-width: 768px) 33vw, 82vw"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-                {(isNew || isNewArrival) && (
+                {isNew && (
                   <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-[0.22em] uppercase font-semibold px-3 py-1.5 shadow-lg">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--noir)]" /> {isNewArrival ? "New Arrival" : "New Collection"}
+                    <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--noir)]" /> New Collection
                   </span>
                 )}
 
