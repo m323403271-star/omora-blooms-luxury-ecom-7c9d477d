@@ -8,6 +8,7 @@ import corporateImg from "@/assets/collection-corporate.jpg";
 import weddingImg from "@/assets/collection-wedding.jpg";
 import indoorPlantsImg from "@/assets/collection-indoor-plants.jpg";
 import framesVasesImg from "@/assets/collection-frames-vases.jpg";
+import divineHeritageImg from "@/assets/collection-divine-heritage.jpg";
 
 export type Collection = {
   slug: string;
@@ -19,6 +20,7 @@ export type Collection = {
 export const COLLECTIONS: Collection[] = [
   { slug: "crochet-bouquets", name: "Crochet Bouquets", tagline: "Handcrafted with love, made to last forever", image: crochetImg },
   { slug: "frames-vases", name: "Everlasting Floral Frames & Vases", tagline: "Elegant wall frames & luxury glass vases decor", image: framesVasesImg },
+  { slug: "divine-heritage", name: "Divine Heritage Collection", tagline: "Timeless brass diyas, organic dhoop, & everlasting crochet lotus", image: divineHeritageImg },
   { slug: "pipe-cleaner-bouquets", name: "Pipe Cleaner Bouquets", tagline: "Whimsical everlasting florals", image: pipecleanerImg },
   { slug: "indoor-plants", name: "Indoor Plants", tagline: "Bring nature indoors with beautiful greenery", image: indoorPlantsImg },
   { slug: "baby-collection", name: "Baby Essentials", tagline: "Welcome the little one", image: babyImg },
