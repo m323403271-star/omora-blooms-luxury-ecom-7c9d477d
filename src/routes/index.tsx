@@ -19,6 +19,7 @@ function HomePage() {
       <Hero />
       <Marquee />
       <FeaturedCollections />
+      <EternalBondBanner />
       <Suspense fallback={<div className="container-luxe py-24 text-center text-sm text-[color:var(--muted-foreground)]">Loading...</div>}>
         <BestSellers />
       </Suspense>
