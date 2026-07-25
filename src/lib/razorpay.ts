@@ -47,7 +47,7 @@ function loadScript(): Promise<boolean> {
   });
 }
 
-export async function startRazorpayCheckout(items: CartItem[], onSuccess: () => void): Promise<void> {
+export async function startRazorpayCheckout(items: CartItem[], onSuccess: (orderId: string) => void): Promise<void> {
   if (items.length === 0) return;
   const ref = getStoredRef();
 
@@ -113,7 +113,7 @@ export async function startRazorpayCheckout(items: CartItem[], onSuccess: () => 
         const data = (await verifyRes.json()) as { ok?: boolean };
         if (data.ok) {
           toast.success("Payment successful! Our concierge will confirm shortly.");
-          onSuccess();
+          onSuccess(order.orderId);
         } else {
           toast.error("Payment verification failed. Please contact us.");
         }
