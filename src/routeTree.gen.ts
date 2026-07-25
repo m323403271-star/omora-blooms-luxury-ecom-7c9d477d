@@ -32,6 +32,7 @@ import { Route as ApiRazorpayStatusRouteImport } from './routes/api/razorpay/sta
 import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay/mark-status'
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
+import { Route as AuthenticatedAdminWarehouseRouteImport } from './routes/_authenticated/admin.warehouse'
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 
 const TermsRoute = TermsRouteImport.update({
@@ -149,6 +150,12 @@ const ApiPublicRazorpayWebhookRoute =
     path: '/api/public/razorpay-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AuthenticatedAdminWarehouseRoute =
+  AuthenticatedAdminWarehouseRouteImport.update({
+    id: '/admin/warehouse',
+    path: '/admin/warehouse',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminReferralsRoute =
   AuthenticatedAdminReferralsRouteImport.update({
     id: '/admin/referrals',
@@ -175,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
+  '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
@@ -200,6 +208,7 @@ export interface FileRoutesByTo {
   '/products/$slug': typeof ProductsSlugRoute
   '/collections': typeof CollectionsIndexRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
+  '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
@@ -227,6 +236,7 @@ export interface FileRoutesById {
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
+  '/_authenticated/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/collections/'
     | '/admin/referrals'
+    | '/admin/warehouse'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/mark-status'
@@ -279,6 +290,7 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/collections'
     | '/admin/referrals'
+    | '/admin/warehouse'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/mark-status'
@@ -305,6 +317,7 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/collections/'
     | '/_authenticated/admin/referrals'
+    | '/_authenticated/admin/warehouse'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/mark-status'
@@ -500,6 +513,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRazorpayWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/admin/warehouse': {
+      id: '/_authenticated/admin/warehouse'
+      path: '/admin/warehouse'
+      fullPath: '/admin/warehouse'
+      preLoaderRoute: typeof AuthenticatedAdminWarehouseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/referrals': {
       id: '/_authenticated/admin/referrals'
       path: '/admin/referrals'
@@ -513,11 +533,13 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPartnerRoute: typeof AuthenticatedPartnerRoute
   AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
+  AuthenticatedAdminWarehouseRoute: typeof AuthenticatedAdminWarehouseRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPartnerRoute: AuthenticatedPartnerRoute,
   AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,
+  AuthenticatedAdminWarehouseRoute: AuthenticatedAdminWarehouseRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
