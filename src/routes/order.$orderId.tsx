@@ -1,7 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer } from "lucide-react";
 import { formatPrice } from "@/lib/products";
+import { getPickupForOrder } from "@/lib/pickup";
+
 
 export const Route = createFileRoute("/order/$orderId")({
   head: () => ({ meta: [{ title: "Order Status — OMORA BLOOMS" }] }),
