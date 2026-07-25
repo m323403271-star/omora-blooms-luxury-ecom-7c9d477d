@@ -94,6 +94,29 @@ export function CartDrawer() {
               ))}
             </div>
             <div className="border-t hairline px-6 py-5 space-y-4">
+              {/* Airport pickup */}
+              <div className="rounded-xl border hairline p-3">
+                <label className="flex items-center gap-2 text-[10px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
+                  <MapPin className="h-3.5 w-3.5" /> Airport Pickup <span className="text-[color:var(--destructive)]">*</span>
+                </label>
+                <select
+                  required
+                  value={pickup}
+                  onChange={(e) => updatePickup(e.target.value)}
+                  className="mt-2 w-full bg-[color:var(--noir)] border hairline rounded-lg px-2.5 py-2 text-xs text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                >
+                  <option value="">Select a pickup point…</option>
+                  {PICKUP_POINTS.map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </select>
+                <p className="mt-2 flex items-start gap-1.5 text-[10px] text-[color:var(--muted-foreground)] leading-relaxed">
+                  <ShieldAlert className="h-3 w-3 mt-0.5 text-[color:var(--gold)] flex-shrink-0" />
+                  <span>Security rules restrict entry to gate check-in areas. Meet our agent at your chosen Pickup Point.</span>
+                </p>
+                <p className="mt-1 text-[10px] text-[color:var(--gold)]">⚡ Express 20–30 min delivery window.</p>
+              </div>
+
               <div className="flex justify-between text-sm">
                 <span className="text-[color:var(--muted-foreground)]">Subtotal</span>
                 <span className="text-[color:var(--gold)] font-medium">{formatPrice(total)}</span>
@@ -105,9 +128,11 @@ export function CartDrawer() {
               <button
                 disabled={paying}
                 onClick={async () => {
+                  if (!pickup) { toast.error("Please select an airport pickup point to continue."); return; }
                   setPaying(true);
                   try {
                     await startRazorpayCheckout(items, (orderId) => {
+                      savePickupForOrder(orderId, pickup);
                       clear();
                       close();
                       navigate({ to: "/order/$orderId", params: { orderId } });
@@ -120,6 +145,7 @@ export function CartDrawer() {
               >
                 <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Pay with Razorpay"}
               </button>
+
               <a
                 href={whatsappLink(message)}
                 onClick={handleCheckout}
