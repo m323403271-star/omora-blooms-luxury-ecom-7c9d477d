@@ -65,6 +65,10 @@ function ProductPage() {
             )}
           </div>
 
+          <div className="mt-4">
+            <DeliveryEtaChecker />
+          </div>
+
           {product.description && (
             <p className="mt-6 text-[color:var(--muted-foreground)] leading-relaxed">{product.description}</p>
           )}
@@ -92,9 +96,6 @@ function ProductPage() {
             <MessageCircle className="h-4 w-4" /> Order on WhatsApp
           </a>
 
-          <div className="mt-6">
-            <DeliveryEtaChecker />
-          </div>
 
           <div className="mt-10 grid grid-cols-2 gap-3 text-xs">
             <Feature icon={Sparkles} title="Handmade to order" copy="Crafted by our artisans" />
