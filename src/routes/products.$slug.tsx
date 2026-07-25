@@ -83,9 +83,12 @@ function ProductPage() {
           <h1 className="font-serif text-4xl md:text-5xl leading-tight">{product.name}</h1>
           {product.tagline && <p className="mt-3 text-[color:var(--muted-foreground)]">{product.tagline}</p>}
           <div className="mt-6 flex items-baseline gap-3">
-            <span className="text-3xl text-[color:var(--gold)] font-medium">{formatPrice(product.price)}</span>
+            <span className="text-3xl text-[color:var(--gold)] font-medium">{formatPrice(unitPrice)}</span>
             {product.compare_at_price && (
               <span className="text-lg text-[color:var(--muted-foreground)] line-through">{formatPrice(product.compare_at_price)}</span>
+            )}
+            {addOnTotal > 0 && (
+              <span className="text-xs text-[color:var(--muted-foreground)]">(incl. +{formatPrice(addOnTotal)} customization)</span>
             )}
           </div>
 
@@ -97,6 +100,15 @@ function ProductPage() {
             <p className="mt-6 text-[color:var(--muted-foreground)] leading-relaxed">{product.description}</p>
           )}
 
+          <GiftAndBouquetCustomizer
+            basePrice={product.price}
+            onChange={({ gift: g, bouquet: b, addOnTotal: a }) => {
+              setGift(g);
+              setBouquet(b);
+              setAddOnTotal(a);
+            }}
+          />
+
           <div className="mt-8 flex items-center gap-4">
             <div className="flex items-center hairline border rounded-full">
               <button className="p-3" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease"><Minus className="h-4 w-4" /></button>
@@ -104,7 +116,7 @@ function ProductPage() {
               <button className="p-3" onClick={() => setQty((q) => q + 1)} aria-label="Increase"><Plus className="h-4 w-4" /></button>
             </div>
             <button
-              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: img }, qty)}
+              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: unitPrice, image: img, gift, bouquet }, qty)}
               className="btn-gold flex-1 py-3.5 px-6 rounded-full text-sm inline-flex items-center justify-center gap-2"
             >
               <ShoppingBag className="h-4 w-4" /> Add to bag
@@ -112,7 +124,7 @@ function ProductPage() {
           </div>
 
           <a
-            href={orderOnWhatsApp({ name: product.name, price: product.price })}
+            href={whatsappLink(waMessage)}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 btn-outline-gold w-full py-3.5 rounded-full text-sm inline-flex items-center justify-center gap-2"
