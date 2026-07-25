@@ -1,13 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { MessageCircle, ShoppingBag, Heart, Truck, ShieldCheck, Sparkles, Minus, Plus } from "lucide-react";
-import { formatPrice, productsQuery, resolveProductImage } from "@/lib/products";
+import { formatPrice, productsQuery, resolveProductImage, type Product } from "@/lib/products";
 import { collectionBySlug } from "@/lib/collections";
 import { useCart } from "@/lib/cart";
 import { orderOnWhatsApp } from "@/lib/whatsapp";
 import { ProductCard } from "@/components/site/ProductCard";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
+import { Media3DViewer } from "@/components/site/Media3DViewer";
+
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ params }) => ({
@@ -32,6 +34,11 @@ function ProductPage() {
 
   const related = data.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
+  // Universal gallery: use uploaded product.images if provided (future admin uploads),
+  // otherwise synthesize a 3–4 photo gallery from the main image, collection cover,
+  // and related products so every PDP has multi-angle thumbnails today.
+  const gallery = useMemo(() => resolveGallery(product, collection?.image, related), [product, collection?.image, related]);
+
   return (
     <div>
       <div className="container-luxe pt-10 text-xs text-[color:var(--muted-foreground)] tracking-widest uppercase">
@@ -45,9 +52,8 @@ function ProductPage() {
       </div>
 
       <section className="container-luxe grid lg:grid-cols-2 gap-10 md:gap-16 py-10 md:py-16">
-        <div className="glass-card rounded-3xl p-3 md:p-4">
-          <img src={img} alt={product.name} className="w-full aspect-square object-cover rounded-2xl" />
-        </div>
+        <Media3DViewer images={gallery} alt={product.name} />
+
         <div>
           {collection && <p className="eyebrow mb-3">{collection.name}</p>}
           <h1 className="font-serif text-4xl md:text-5xl leading-tight">{product.name}</h1>
@@ -57,6 +63,10 @@ function ProductPage() {
             {product.compare_at_price && (
               <span className="text-lg text-[color:var(--muted-foreground)] line-through">{formatPrice(product.compare_at_price)}</span>
             )}
+          </div>
+
+          <div className="mt-4">
+            <DeliveryEtaChecker />
           </div>
 
           {product.description && (
@@ -86,9 +96,6 @@ function ProductPage() {
             <MessageCircle className="h-4 w-4" /> Order on WhatsApp
           </a>
 
-          <div className="mt-6">
-            <DeliveryEtaChecker />
-          </div>
 
           <div className="mt-10 grid grid-cols-2 gap-3 text-xs">
             <Feature icon={Sparkles} title="Handmade to order" copy="Crafted by our artisans" />
@@ -127,3 +134,19 @@ function Feature({ icon: Icon, title, copy }: { icon: React.ComponentType<{ clas
     </div>
   );
 }
+
+function resolveGallery(product: Product, collectionImg: string | undefined, related: Product[]): string[] {
+  const uploaded = ((product as unknown as { images?: string[] | null }).images ?? [])
+    .filter((s): s is string => typeof s === "string" && s.length > 0)
+    .map(resolveProductImage);
+  if (uploaded.length > 0) {
+    return Array.from(new Set([resolveProductImage(product.image_url), ...uploaded])).slice(0, 6);
+  }
+  const fallback = [
+    resolveProductImage(product.image_url),
+    collectionImg,
+    ...related.slice(0, 2).map((r) => resolveProductImage(r.image_url)),
+  ].filter((s): s is string => Boolean(s));
+  return Array.from(new Set(fallback)).slice(0, 4);
+}
+
