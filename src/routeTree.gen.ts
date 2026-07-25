@@ -30,6 +30,7 @@ import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/ver
 import { Route as ApiRazorpayStatusRouteImport } from './routes/api/razorpay/status'
 import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay/mark-status'
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
+import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 
 const TermsRoute = TermsRouteImport.update({
@@ -136,6 +137,12 @@ const ApiRazorpayCreateOrderRoute = ApiRazorpayCreateOrderRouteImport.update({
   path: '/api/razorpay/create-order',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicRazorpayWebhookRoute =
+  ApiPublicRazorpayWebhookRouteImport.update({
+    id: '/api/public/razorpay-webhook',
+    path: '/api/public/razorpay-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAdminReferralsRoute =
   AuthenticatedAdminReferralsRouteImport.update({
     id: '/admin/referrals',
@@ -161,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
+  '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
   '/api/razorpay/status': typeof ApiRazorpayStatusRoute
@@ -184,6 +192,7 @@ export interface FileRoutesByTo {
   '/products/$slug': typeof ProductsSlugRoute
   '/collections': typeof CollectionsIndexRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
+  '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
   '/api/razorpay/status': typeof ApiRazorpayStatusRoute
@@ -209,6 +218,7 @@ export interface FileRoutesById {
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
+  '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
   '/api/razorpay/status': typeof ApiRazorpayStatusRoute
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/collections/'
     | '/admin/referrals'
+    | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/mark-status'
     | '/api/razorpay/status'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/collections'
     | '/admin/referrals'
+    | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/mark-status'
     | '/api/razorpay/status'
@@ -281,6 +293,7 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/collections/'
     | '/_authenticated/admin/referrals'
+    | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/mark-status'
     | '/api/razorpay/status'
@@ -304,6 +317,7 @@ export interface RootRouteChildren {
   OrderOrderIdRoute: typeof OrderOrderIdRoute
   ProductsSlugRoute: typeof ProductsSlugRoute
   CollectionsIndexRoute: typeof CollectionsIndexRoute
+  ApiPublicRazorpayWebhookRoute: typeof ApiPublicRazorpayWebhookRoute
   ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
   ApiRazorpayMarkStatusRoute: typeof ApiRazorpayMarkStatusRoute
   ApiRazorpayStatusRoute: typeof ApiRazorpayStatusRoute
@@ -459,6 +473,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRazorpayCreateOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/razorpay-webhook': {
+      id: '/api/public/razorpay-webhook'
+      path: '/api/public/razorpay-webhook'
+      fullPath: '/api/public/razorpay-webhook'
+      preLoaderRoute: typeof ApiPublicRazorpayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/referrals': {
       id: '/_authenticated/admin/referrals'
       path: '/admin/referrals'
@@ -499,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   OrderOrderIdRoute: OrderOrderIdRoute,
   ProductsSlugRoute: ProductsSlugRoute,
   CollectionsIndexRoute: CollectionsIndexRoute,
+  ApiPublicRazorpayWebhookRoute: ApiPublicRazorpayWebhookRoute,
   ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
   ApiRazorpayMarkStatusRoute: ApiRazorpayMarkStatusRoute,
   ApiRazorpayStatusRoute: ApiRazorpayStatusRoute,
