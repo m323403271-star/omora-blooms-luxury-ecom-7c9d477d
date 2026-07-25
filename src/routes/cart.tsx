@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { CreditCard, MessageCircle, Minus, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
@@ -16,6 +16,7 @@ export const Route = createFileRoute("/cart")({
 function CartPage() {
   const { items, total, setQuantity, remove, clear } = useCart();
   const [paying, setPaying] = useState(false);
+  const navigate = useNavigate();
   const ref = typeof window !== "undefined" ? getStoredRef() : null;
   const refLine = ref ? `\n\nReferral code: ${ref}` : "";
 
@@ -91,7 +92,10 @@ function CartPage() {
               onClick={async () => {
                 setPaying(true);
                 try {
-                  await startRazorpayCheckout(items, () => clear());
+                  await startRazorpayCheckout(items, (orderId) => {
+                    clear();
+                    navigate({ to: "/order/$orderId", params: { orderId } });
+                  });
                 } finally {
                   setPaying(false);
                 }

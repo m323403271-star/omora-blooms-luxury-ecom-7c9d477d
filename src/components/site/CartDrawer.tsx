@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { X, Minus, Plus, MessageCircle, CreditCard } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
@@ -11,6 +11,7 @@ import { startRazorpayCheckout } from "@/lib/razorpay";
 export function CartDrawer() {
   const { items, isOpen, close, remove, setQuantity, total, count, clear } = useCart();
   const [paying, setPaying] = useState(false);
+  const navigate = useNavigate();
   if (!isOpen) return null;
 
   const ref = getStoredRef();
@@ -90,9 +91,10 @@ export function CartDrawer() {
                 onClick={async () => {
                   setPaying(true);
                   try {
-                    await startRazorpayCheckout(items, () => {
+                    await startRazorpayCheckout(items, (orderId) => {
                       clear();
                       close();
+                      navigate({ to: "/order/$orderId", params: { orderId } });
                     });
                   } finally {
                     setPaying(false);

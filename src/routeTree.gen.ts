@@ -23,9 +23,11 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
+import { Route as OrderOrderIdRouteImport } from './routes/order.$orderId'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
 import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
+import { Route as ApiRazorpayStatusRouteImport } from './routes/api/razorpay/status'
 import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay/mark-status'
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
@@ -99,6 +101,11 @@ const ProductsSlugRoute = ProductsSlugRouteImport.update({
   path: '/products/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OrderOrderIdRoute = OrderOrderIdRouteImport.update({
+  id: '/order/$orderId',
+  path: '/order/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
   id: '/collections/$slug',
   path: '/collections/$slug',
@@ -112,6 +119,11 @@ const AuthenticatedPartnerRoute = AuthenticatedPartnerRouteImport.update({
 const ApiRazorpayVerifyRoute = ApiRazorpayVerifyRouteImport.update({
   id: '/api/razorpay/verify',
   path: '/api/razorpay/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRazorpayStatusRoute = ApiRazorpayStatusRouteImport.update({
+  id: '/api/razorpay/status',
+  path: '/api/razorpay/status',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiRazorpayMarkStatusRoute = ApiRazorpayMarkStatusRouteImport.update({
@@ -145,11 +157,13 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/partner': typeof AuthenticatedPartnerRoute
   '/collections/$slug': typeof CollectionsSlugRoute
+  '/order/$orderId': typeof OrderOrderIdRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
+  '/api/razorpay/status': typeof ApiRazorpayStatusRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
 }
 export interface FileRoutesByTo {
@@ -166,11 +180,13 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/partner': typeof AuthenticatedPartnerRoute
   '/collections/$slug': typeof CollectionsSlugRoute
+  '/order/$orderId': typeof OrderOrderIdRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/collections': typeof CollectionsIndexRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
+  '/api/razorpay/status': typeof ApiRazorpayStatusRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
 }
 export interface FileRoutesById {
@@ -189,11 +205,13 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/partner': typeof AuthenticatedPartnerRoute
   '/collections/$slug': typeof CollectionsSlugRoute
+  '/order/$orderId': typeof OrderOrderIdRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
+  '/api/razorpay/status': typeof ApiRazorpayStatusRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
 }
 export interface FileRouteTypes {
@@ -212,11 +230,13 @@ export interface FileRouteTypes {
     | '/terms'
     | '/partner'
     | '/collections/$slug'
+    | '/order/$orderId'
     | '/products/$slug'
     | '/collections/'
     | '/admin/referrals'
     | '/api/razorpay/create-order'
     | '/api/razorpay/mark-status'
+    | '/api/razorpay/status'
     | '/api/razorpay/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -233,11 +253,13 @@ export interface FileRouteTypes {
     | '/terms'
     | '/partner'
     | '/collections/$slug'
+    | '/order/$orderId'
     | '/products/$slug'
     | '/collections'
     | '/admin/referrals'
     | '/api/razorpay/create-order'
     | '/api/razorpay/mark-status'
+    | '/api/razorpay/status'
     | '/api/razorpay/verify'
   id:
     | '__root__'
@@ -255,11 +277,13 @@ export interface FileRouteTypes {
     | '/terms'
     | '/_authenticated/partner'
     | '/collections/$slug'
+    | '/order/$orderId'
     | '/products/$slug'
     | '/collections/'
     | '/_authenticated/admin/referrals'
     | '/api/razorpay/create-order'
     | '/api/razorpay/mark-status'
+    | '/api/razorpay/status'
     | '/api/razorpay/verify'
   fileRoutesById: FileRoutesById
 }
@@ -277,10 +301,12 @@ export interface RootRouteChildren {
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
   CollectionsSlugRoute: typeof CollectionsSlugRoute
+  OrderOrderIdRoute: typeof OrderOrderIdRoute
   ProductsSlugRoute: typeof ProductsSlugRoute
   CollectionsIndexRoute: typeof CollectionsIndexRoute
   ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
   ApiRazorpayMarkStatusRoute: typeof ApiRazorpayMarkStatusRoute
+  ApiRazorpayStatusRoute: typeof ApiRazorpayStatusRoute
   ApiRazorpayVerifyRoute: typeof ApiRazorpayVerifyRoute
 }
 
@@ -384,6 +410,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/order/$orderId': {
+      id: '/order/$orderId'
+      path: '/order/$orderId'
+      fullPath: '/order/$orderId'
+      preLoaderRoute: typeof OrderOrderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/collections/$slug': {
       id: '/collections/$slug'
       path: '/collections/$slug'
@@ -403,6 +436,13 @@ declare module '@tanstack/react-router' {
       path: '/api/razorpay/verify'
       fullPath: '/api/razorpay/verify'
       preLoaderRoute: typeof ApiRazorpayVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/razorpay/status': {
+      id: '/api/razorpay/status'
+      path: '/api/razorpay/status'
+      fullPath: '/api/razorpay/status'
+      preLoaderRoute: typeof ApiRazorpayStatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/razorpay/mark-status': {
@@ -456,10 +496,12 @@ const rootRouteChildren: RootRouteChildren = {
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,
   CollectionsSlugRoute: CollectionsSlugRoute,
+  OrderOrderIdRoute: OrderOrderIdRoute,
   ProductsSlugRoute: ProductsSlugRoute,
   CollectionsIndexRoute: CollectionsIndexRoute,
   ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
   ApiRazorpayMarkStatusRoute: ApiRazorpayMarkStatusRoute,
+  ApiRazorpayStatusRoute: ApiRazorpayStatusRoute,
   ApiRazorpayVerifyRoute: ApiRazorpayVerifyRoute,
 }
 export const routeTree = rootRouteImport
