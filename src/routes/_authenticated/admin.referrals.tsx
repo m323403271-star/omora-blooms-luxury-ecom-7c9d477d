@@ -25,6 +25,19 @@ type ReferredOrder = {
   created_at: string;
 };
 
+type Payment = {
+  id: string;
+  razorpay_order_id: string;
+  razorpay_payment_id: string | null;
+  amount: number;
+  currency: string;
+  status: string;
+  ref_code: string | null;
+  error_message: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 const BASE_URL = "https://omorablooms.com";
 
 export const Route = createFileRoute("/_authenticated/admin/referrals")({
@@ -37,6 +50,9 @@ function AdminReferrals() {
   const [checking, setChecking] = useState(true);
   const [partners, setPartners] = useState<Partner[]>([]);
   const [orders, setOrders] = useState<ReferredOrder[]>([]);
+  const [payments, setPayments] = useState<Payment[]>([]);
+  const [paymentFilter, setPaymentFilter] = useState<"all" | "created" | "paid" | "failed" | "cancelled" | "pending">("all");
+  const [refreshingPayments, setRefreshingPayments] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ code: "", name: "", partner_type: "driver", contact_email: "", contact_phone: "", commission_rate: 10 });
   const [settings, setSettings] = useState({ default_commission_rate: 10, razorpay_enabled: true, whatsapp_enabled: true });
