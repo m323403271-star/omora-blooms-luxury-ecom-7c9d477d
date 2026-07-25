@@ -93,6 +93,12 @@ export function CartDrawer() {
                   <div className="flex-1 min-w-0">
                     <p className="font-serif text-base truncate">{i.name}</p>
                     <p className="text-[color:var(--gold)] text-sm mt-1">{formatPrice(i.price)}</p>
+                    {(i.gift || i.bouquet) && (
+                      <div className="mt-2 text-[10px] space-y-0.5">
+                        {i.gift && <p className="text-[color:var(--gold)]">🎁 {i.gift.cardLabel}{i.gift.message ? ` · "${i.gift.message.slice(0, 40)}${i.gift.message.length > 40 ? "…" : ""}"` : ""}</p>}
+                        {i.bouquet && <p className="text-[color:var(--muted-foreground)] truncate">💐 Custom bouquet</p>}
+                      </div>
+                    )}
                     <div className="mt-3 flex items-center gap-3">
                       <div className="flex items-center hairline border rounded-full">
                         <button onClick={() => setQuantity(i.id, i.quantity - 1)} className="p-1.5" aria-label="Decrease"><Minus className="h-3 w-3" /></button>
