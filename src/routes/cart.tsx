@@ -52,26 +52,17 @@ function CartPage() {
     if (id) setSelectedPickup(id);
   }
 
-  async function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
+  function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
     if (items.length === 0) return;
     if (pickupRequired && !pickup) {
       e.preventDefault();
       toast.error("Please select an airport pickup point to continue.");
       return;
     }
-    if (ref) {
-      e.preventDefault();
-      try {
-        await supabase.rpc("log_referred_order", {
-          _partner_code: ref,
-          _items: items.map((i) => ({ id: i.id, quantity: i.quantity })),
-        });
-      } catch {
-        // ignore logging errors
-      }
-      window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
-    }
+    // Referral attribution for WhatsApp orders is reconciled server-side
+    // after admin confirmation; never logged directly from the client.
   }
+
 
 
   return (
