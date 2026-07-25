@@ -143,6 +143,8 @@ function ProductPage() {
         </div>
       </section>
 
+      <ReviewSection productId={product.id} productName={product.name} />
+
       {related.length > 0 && (
         <section className="container-luxe pb-20 border-t hairline pt-16">
           <div className="flex items-end justify-between mb-8">
