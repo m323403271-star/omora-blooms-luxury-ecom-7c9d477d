@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { toast } from "sonner";
+import type { CustomBouquet, GiftOptions } from "@/lib/gifting";
+import { hashCustomization } from "@/lib/gifting";
 
 export type CartItem = {
   id: string;
@@ -8,13 +10,17 @@ export type CartItem = {
   price: number;
   image: string;
   quantity: number;
+  gift?: GiftOptions | null;
+  bouquet?: CustomBouquet | null;
 };
+
+type AddInput = Omit<CartItem, "quantity" | "id"> & { id: string };
 
 type CartContextValue = {
   items: CartItem[];
   count: number;
   total: number;
-  add: (item: Omit<CartItem, "quantity">, quantity?: number) => void;
+  add: (item: AddInput, quantity?: number) => void;
   remove: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
   clear: () => void;
@@ -50,15 +56,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [items, hydrated]);
 
-  const add = useCallback((item: Omit<CartItem, "quantity">, quantity = 1) => {
+  const add = useCallback((input: AddInput, quantity = 1) => {
     setItems((prev) => {
-      const existing = prev.find((p) => p.id === item.id);
+      const suffix = hashCustomization(input.gift ?? null, input.bouquet ?? null);
+      const compositeId = `${input.id}${suffix}`;
+      const existing = prev.find((p) => p.id === compositeId);
       if (existing) {
-        return prev.map((p) => (p.id === item.id ? { ...p, quantity: p.quantity + quantity } : p));
+        return prev.map((p) => (p.id === compositeId ? { ...p, quantity: p.quantity + quantity } : p));
       }
-      return [...prev, { ...item, quantity }];
+      const item: CartItem = {
+        ...input,
+        id: compositeId,
+        quantity,
+        gift: input.gift ?? null,
+        bouquet: input.bouquet ?? null,
+      };
+      return [...prev, item];
     });
-    toast.success(`${item.name} added to your bag`);
+    toast.success(`${input.name} added to your bag`);
     setIsOpen(true);
   }, []);
 

@@ -5,10 +5,12 @@ import { MessageCircle, ShoppingBag, Heart, Truck, ShieldCheck, Sparkles, Minus,
 import { formatPrice, productsQuery, resolveProductImage, type Product } from "@/lib/products";
 import { collectionBySlug } from "@/lib/collections";
 import { useCart } from "@/lib/cart";
-import { orderOnWhatsApp } from "@/lib/whatsapp";
+import { whatsappLink } from "@/lib/whatsapp";
 import { ProductCard } from "@/components/site/ProductCard";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { Media3DViewer } from "@/components/site/Media3DViewer";
+import { GiftAndBouquetCustomizer } from "@/components/site/GiftAndBouquetCustomizer";
+import { formatGiftForWhatsApp, type CustomBouquet, type GiftOptions } from "@/lib/gifting";
 
 
 export const Route = createFileRoute("/products/$slug")({
@@ -40,8 +42,17 @@ function ProductPage() {
   const img = resolveProductImage(product.image_url);
   const { add } = useCart();
   const [qty, setQty] = useState(1);
+  const [gift, setGift] = useState<GiftOptions | null>(null);
+  const [bouquet, setBouquet] = useState<CustomBouquet | null>(null);
+  const [addOnTotal, setAddOnTotal] = useState(0);
 
+  const unitPrice = product.price + addOnTotal;
   const related = data.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
+
+  const waMessage = useMemo(() => {
+    const base = `Hello OMORA BLOOMS! I'd like to order:\n\n${product.name} × ${qty} — ${formatPrice(unitPrice * qty)}`;
+    return base + formatGiftForWhatsApp(gift, bouquet) + `\n\nPlease confirm availability.`;
+  }, [product.name, qty, unitPrice, gift, bouquet]);
 
   // Universal gallery: use uploaded product.images if provided (future admin uploads),
   // otherwise synthesize a 3–4 photo gallery from the main image, collection cover,
@@ -72,9 +83,12 @@ function ProductPage() {
           <h1 className="font-serif text-4xl md:text-5xl leading-tight">{product.name}</h1>
           {product.tagline && <p className="mt-3 text-[color:var(--muted-foreground)]">{product.tagline}</p>}
           <div className="mt-6 flex items-baseline gap-3">
-            <span className="text-3xl text-[color:var(--gold)] font-medium">{formatPrice(product.price)}</span>
+            <span className="text-3xl text-[color:var(--gold)] font-medium">{formatPrice(unitPrice)}</span>
             {product.compare_at_price && (
               <span className="text-lg text-[color:var(--muted-foreground)] line-through">{formatPrice(product.compare_at_price)}</span>
+            )}
+            {addOnTotal > 0 && (
+              <span className="text-xs text-[color:var(--muted-foreground)]">(incl. +{formatPrice(addOnTotal)} customization)</span>
             )}
           </div>
 
@@ -86,6 +100,15 @@ function ProductPage() {
             <p className="mt-6 text-[color:var(--muted-foreground)] leading-relaxed">{product.description}</p>
           )}
 
+          <GiftAndBouquetCustomizer
+            basePrice={product.price}
+            onChange={({ gift: g, bouquet: b, addOnTotal: a }) => {
+              setGift(g);
+              setBouquet(b);
+              setAddOnTotal(a);
+            }}
+          />
+
           <div className="mt-8 flex items-center gap-4">
             <div className="flex items-center hairline border rounded-full">
               <button className="p-3" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease"><Minus className="h-4 w-4" /></button>
@@ -93,7 +116,7 @@ function ProductPage() {
               <button className="p-3" onClick={() => setQty((q) => q + 1)} aria-label="Increase"><Plus className="h-4 w-4" /></button>
             </div>
             <button
-              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: img }, qty)}
+              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: unitPrice, image: img, gift, bouquet }, qty)}
               className="btn-gold flex-1 py-3.5 px-6 rounded-full text-sm inline-flex items-center justify-center gap-2"
             >
               <ShoppingBag className="h-4 w-4" /> Add to bag
@@ -101,7 +124,7 @@ function ProductPage() {
           </div>
 
           <a
-            href={orderOnWhatsApp({ name: product.name, price: product.price })}
+            href={whatsappLink(waMessage)}
             target="_blank"
             rel="noopener noreferrer"
             className="mt-3 btn-outline-gold w-full py-3.5 rounded-full text-sm inline-flex items-center justify-center gap-2"

@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
 import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
 import { EXPRESS_PINCODES, getStoredPincode } from "@/lib/delivery";
+import { formatGiftForWhatsApp } from "@/lib/gifting";
 
 export function CartDrawer() {
   const { items, isOpen, close, remove, setQuantity, total, count, clear } = useCart();
@@ -39,7 +40,11 @@ export function CartDrawer() {
   const pickupObj = findPickup(pickup);
   const pickupLine = showPickup && pickupObj ? `\n\nAirport Pickup Point: ${pickupObj.label} (${pickupObj.detail})` : "";
   const message = `Hello OMORA BLOOMS! I'd like to order:\n\n${items
-    .map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`)
+    .map((i) => {
+      const line = `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`;
+      const extras = formatGiftForWhatsApp(i.gift, i.bouquet).replace(/^\n\n/, "\n").replace(/\n/g, "\n  ");
+      return line + extras;
+    })
     .join("\n")}\n\nTotal: ${formatPrice(total)}${pickupLine}${refLine}\n\nPlease confirm.`;
 
   function updatePickup(id: string) {
@@ -88,6 +93,12 @@ export function CartDrawer() {
                   <div className="flex-1 min-w-0">
                     <p className="font-serif text-base truncate">{i.name}</p>
                     <p className="text-[color:var(--gold)] text-sm mt-1">{formatPrice(i.price)}</p>
+                    {(i.gift || i.bouquet) && (
+                      <div className="mt-2 text-[10px] space-y-0.5">
+                        {i.gift && <p className="text-[color:var(--gold)]">🎁 {i.gift.cardLabel}{i.gift.message ? ` · "${i.gift.message.slice(0, 40)}${i.gift.message.length > 40 ? "…" : ""}"` : ""}</p>}
+                        {i.bouquet && <p className="text-[color:var(--muted-foreground)] truncate">💐 Custom bouquet</p>}
+                      </div>
+                    )}
                     <div className="mt-3 flex items-center gap-3">
                       <div className="flex items-center hairline border rounded-full">
                         <button onClick={() => setQuantity(i.id, i.quantity - 1)} className="p-1.5" aria-label="Decrease"><Minus className="h-3 w-3" /></button>
