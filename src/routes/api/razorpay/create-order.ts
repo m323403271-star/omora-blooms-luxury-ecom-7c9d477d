@@ -73,6 +73,19 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         }
         const order = (await rzpRes.json()) as { id: string; amount: number; currency: string };
 
+        try {
+          await supabaseAdmin.from("payments").insert({
+            razorpay_order_id: order.id,
+            amount: totalRupees,
+            currency: order.currency,
+            status: "created",
+            ref_code: body.ref ?? null,
+            items: clean as never,
+          });
+        } catch (e) {
+          console.error("Payment log insert failed", e);
+        }
+
         return Response.json({
           orderId: order.id,
           amount: order.amount,
