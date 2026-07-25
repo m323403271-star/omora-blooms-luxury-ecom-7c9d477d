@@ -7,6 +7,7 @@ import giftboxImg from "@/assets/collection-giftbox.jpg";
 import corporateImg from "@/assets/collection-corporate.jpg";
 import weddingImg from "@/assets/collection-wedding.jpg";
 import indoorPlantsImg from "@/assets/collection-indoor-plants.jpg";
+import framesVasesImg from "@/assets/collection-frames-vases.jpg";
 
 export type Collection = {
   slug: string;
