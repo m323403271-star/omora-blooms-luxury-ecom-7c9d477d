@@ -5,10 +5,12 @@ import { MessageCircle, ShoppingBag, Heart, Truck, ShieldCheck, Sparkles, Minus,
 import { formatPrice, productsQuery, resolveProductImage, type Product } from "@/lib/products";
 import { collectionBySlug } from "@/lib/collections";
 import { useCart } from "@/lib/cart";
-import { orderOnWhatsApp } from "@/lib/whatsapp";
+import { whatsappLink } from "@/lib/whatsapp";
 import { ProductCard } from "@/components/site/ProductCard";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { Media3DViewer } from "@/components/site/Media3DViewer";
+import { GiftAndBouquetCustomizer } from "@/components/site/GiftAndBouquetCustomizer";
+import { formatGiftForWhatsApp, type CustomBouquet, type GiftOptions } from "@/lib/gifting";
 
 
 export const Route = createFileRoute("/products/$slug")({
