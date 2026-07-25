@@ -284,6 +284,22 @@ function OrderRowCard({ order, now, position }: { order: OrderRow; now: number; 
           ))}
         </div>
       )}
+
+      <div className="mt-4">
+        <OrderPreviewSender
+          orderId={order.id}
+          orderCode={order.razorpay_order_id}
+          customerName={order.customer_name}
+          customerPhone={order.customer_phone}
+          amount={order.amount}
+          existingUrl={order.preview_photo_url}
+        />
+        {order.preview_sent_at && (
+          <p className="mt-2 text-[10px] tracking-widest uppercase text-emerald-300">
+            ✓ Preview sent via {order.preview_channel ?? "message"} · {new Date(order.preview_sent_at).toLocaleString("en-IN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
