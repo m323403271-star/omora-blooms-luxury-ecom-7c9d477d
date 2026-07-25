@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Menu, ShoppingBag, Search, X } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "./Logo";
+import { DeliveryEtaChecker } from "./DeliveryEtaChecker";
+import { DeliveryBanner } from "./DeliveryBanner";
 import { useCart } from "@/lib/cart";
 import { COLLECTIONS } from "@/lib/collections";
 import { WHATSAPP_DISPLAY, whatsappLink } from "@/lib/whatsapp";
@@ -34,10 +36,11 @@ export function Header() {
       <div className="bg-[color:var(--noir)] text-[color:var(--muted-foreground)] text-[11px] tracking-[0.24em] uppercase font-medium py-2 text-center border-b hairline">
         Complimentary luxury packaging · Same-day delivery available · WhatsApp {WHATSAPP_DISPLAY}
       </div>
+      <DeliveryBanner />
 
 
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-[color:var(--noir)]/80 border-b hairline">
-        <div className="container-luxe flex items-center justify-between h-20 md:h-24">
+        <div className="container-luxe flex items-center justify-between h-20 md:h-24 gap-3">
           <button
             className="md:hidden text-[color:var(--gold)] p-2 -ml-2"
             onClick={() => setMobileOpen(true)}
@@ -63,9 +66,12 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-1 md:gap-2 md:order-3">
+            <div className="hidden md:block">
+              <DeliveryEtaChecker variant="header" />
+            </div>
             <Link
               to="/airport-pickup"
-              className="hidden lg:inline-flex items-center gap-1.5 rounded-full border hairline px-3 py-1.5 text-[11px] tracking-[0.14em] uppercase text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10"
+              className="hidden xl:inline-flex items-center gap-1.5 rounded-full border hairline px-3 py-1.5 text-[11px] tracking-[0.14em] uppercase text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10"
             >
               ✈ Airport Pickup Points
             </Link>
@@ -131,6 +137,9 @@ export function Header() {
                   </Link>
                 ))}
               </div>
+            </div>
+            <div className="px-6 pb-4">
+              <DeliveryEtaChecker title="Check Delivery ETA" />
             </div>
             <div className="mt-auto p-6 border-t hairline space-y-3">
               <Link
