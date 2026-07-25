@@ -156,6 +156,7 @@ export type Database = {
           featured: boolean
           id: string
           image_url: string
+          images: string[]
           name: string
           price: number
           slug: string
@@ -172,6 +173,7 @@ export type Database = {
           featured?: boolean
           id?: string
           image_url: string
+          images?: string[]
           name: string
           price?: number
           slug: string
@@ -188,6 +190,7 @@ export type Database = {
           featured?: boolean
           id?: string
           image_url?: string
+          images?: string[]
           name?: string
           price?: number
           slug?: string
