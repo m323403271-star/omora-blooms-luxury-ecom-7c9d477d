@@ -132,7 +132,14 @@ export function Header() {
                 ))}
               </div>
             </div>
-            <div className="mt-auto p-6 border-t hairline">
+            <div className="mt-auto p-6 border-t hairline space-y-3">
+              <Link
+                to="/airport-pickup"
+                onClick={() => setMobileOpen(false)}
+                className="btn-outline-gold w-full inline-flex items-center justify-center py-3 px-4 rounded-full text-sm"
+              >
+                ✈ Airport Pickup Points
+              </Link>
               <a
                 href={whatsappLink("Hi OMORA BLOOMS, I'd like to order.")}
                 target="_blank"
@@ -142,6 +149,7 @@ export function Header() {
                 Order on WhatsApp
               </a>
             </div>
+
           </div>
         </div>
       )}
