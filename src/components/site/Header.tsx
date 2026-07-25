@@ -36,10 +36,11 @@ export function Header() {
       <div className="bg-[color:var(--noir)] text-[color:var(--muted-foreground)] text-[11px] tracking-[0.24em] uppercase font-medium py-2 text-center border-b hairline">
         Complimentary luxury packaging · Same-day delivery available · WhatsApp {WHATSAPP_DISPLAY}
       </div>
+      <DeliveryBanner />
 
 
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-[color:var(--noir)]/80 border-b hairline">
-        <div className="container-luxe flex items-center justify-between h-20 md:h-24">
+        <div className="container-luxe flex items-center justify-between h-20 md:h-24 gap-3">
           <button
             className="md:hidden text-[color:var(--gold)] p-2 -ml-2"
             onClick={() => setMobileOpen(true)}
