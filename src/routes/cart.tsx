@@ -178,10 +178,15 @@ function CartPage() {
                 if (pickupRequired && !pickup) { toast.error("Please select an airport pickup point to continue."); return; }
                 setPaying(true);
                 try {
+                  const { getCustomerTier } = await import("@/lib/delivery");
                   await startRazorpayCheckout(items, (orderId) => {
                     if (showPickup && pickup) savePickupForOrder(orderId, pickup);
                     clear();
                     navigate({ to: "/order/$orderId", params: { orderId } });
+                  }, {
+                    pincode: pincode,
+                    customerTier: getCustomerTier(),
+                    pickupPointId: showPickup ? pickup || null : null,
                   });
                 } finally {
                   setPaying(false);
@@ -191,6 +196,7 @@ function CartPage() {
             >
               <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Pay with Razorpay"}
             </button>
+
             <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-outline-gold mt-3 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
               <MessageCircle className="h-4 w-4" /> Order via WhatsApp
             </a>
