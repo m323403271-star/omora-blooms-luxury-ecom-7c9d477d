@@ -11,6 +11,7 @@ import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { Media3DViewer } from "@/components/site/Media3DViewer";
 import { GiftAndBouquetCustomizer } from "@/components/site/GiftAndBouquetCustomizer";
 import { formatGiftForWhatsApp, type CustomBouquet, type GiftOptions } from "@/lib/gifting";
+import { ReviewSection } from "@/components/site/ReviewSection";
 
 
 export const Route = createFileRoute("/products/$slug")({
