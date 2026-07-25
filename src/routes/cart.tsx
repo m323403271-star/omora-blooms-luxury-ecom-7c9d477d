@@ -10,6 +10,7 @@ import { startRazorpayCheckout } from "@/lib/razorpay";
 import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { EXPRESS_PINCODES, getStoredPincode } from "@/lib/delivery";
+import { formatGiftForWhatsApp } from "@/lib/gifting";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/cart")({
@@ -89,6 +90,22 @@ function CartPage() {
                 <div className="flex-1">
                   <p className="font-serif text-xl">{i.name}</p>
                   <p className="text-[color:var(--gold)] mt-1">{formatPrice(i.price)}</p>
+                  {(i.gift || i.bouquet) && (
+                    <div className="mt-2 rounded-lg border hairline bg-[color:var(--noir)]/60 px-3 py-2 text-[11px] space-y-0.5">
+                      {i.gift && (
+                        <>
+                          <p className="text-[color:var(--gold)]">🎁 Gift · {i.gift.cardLabel}</p>
+                          {i.gift.message && <p className="text-[color:var(--muted-foreground)] italic">"{i.gift.message}"</p>}
+                        </>
+                      )}
+                      {i.bouquet && (
+                        <p className="text-[color:var(--muted-foreground)]">
+                          💐 Custom: {i.bouquet.flowers.filter((f) => f.qty > 0).map((f) => `${f.label}×${f.qty}`).join(", ") || "—"}
+                          {i.bouquet.wrapping ? ` · ${i.bouquet.wrapping.label}` : ""}
+                        </p>
+                      )}
+                    </div>
+                  )}
                   <div className="mt-4 flex items-center gap-4">
                     <div className="flex items-center hairline border rounded-full">
                       <button className="p-2" onClick={() => setQuantity(i.id, i.quantity - 1)} aria-label="Decrease"><Minus className="h-3 w-3" /></button>
