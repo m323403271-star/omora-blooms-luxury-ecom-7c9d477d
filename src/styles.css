@@ -167,3 +167,14 @@
   color: var(--gold);
   font-weight: 500;
 }
+
+@keyframes media3d-spin {
+  0%   { transform: rotateY(-10deg) rotateX(3deg) scale(1); }
+  25%  { transform: rotateY(0deg)   rotateX(-2deg) scale(1.02); }
+  50%  { transform: rotateY(10deg)  rotateX(3deg) scale(1); }
+  75%  { transform: rotateY(0deg)   rotateX(-2deg) scale(1.02); }
+  100% { transform: rotateY(-10deg) rotateX(3deg) scale(1); }
+}
+.media3d-auto {
+  animation: media3d-spin 10s ease-in-out infinite;
+}
