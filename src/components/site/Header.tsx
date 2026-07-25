@@ -64,12 +64,19 @@ export function Header() {
 
           <div className="flex items-center gap-1 md:gap-2 md:order-3">
             <Link
+              to="/airport-pickup"
+              className="hidden lg:inline-flex items-center gap-1.5 rounded-full border hairline px-3 py-1.5 text-[11px] tracking-[0.14em] uppercase text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10"
+            >
+              ✈ Airport Pickup Points
+            </Link>
+            <Link
               to="/shop"
               aria-label="Search"
               className="hidden md:inline-flex p-2 text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)]"
             >
               <Search className="h-4 w-4" />
             </Link>
+
             <button
               onClick={open}
               aria-label="Open cart"
