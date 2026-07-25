@@ -14,7 +14,8 @@ export const Route = createFileRoute("/cart")({
 });
 
 function CartPage() {
-  const { items, total, setQuantity, remove } = useCart();
+  const { items, total, setQuantity, remove, clear } = useCart();
+  const [paying, setPaying] = useState(false);
   const ref = typeof window !== "undefined" ? getStoredRef() : null;
   const refLine = ref ? `\n\nReferral code: ${ref}` : "";
 
@@ -85,10 +86,24 @@ function CartPage() {
               </div>
             </div>
             {ref && <p className="mt-3 text-xs text-[color:var(--gold)]">Referral applied: {ref}</p>}
-            <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-gold mt-6 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
-              <MessageCircle className="h-4 w-4" /> Checkout via WhatsApp
+            <button
+              disabled={paying || items.length === 0}
+              onClick={async () => {
+                setPaying(true);
+                try {
+                  await startRazorpayCheckout(items, () => clear());
+                } finally {
+                  setPaying(false);
+                }
+              }}
+              className="btn-gold mt-6 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm disabled:opacity-60"
+            >
+              <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Pay with Razorpay"}
+            </button>
+            <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-outline-gold mt-3 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
+              <MessageCircle className="h-4 w-4" /> Order via WhatsApp
             </a>
-            <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)] text-center">Secure order confirmation via WhatsApp with our concierge team.</p>
+            <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)] text-center">UPI, cards & net banking. Or confirm with our concierge on WhatsApp.</p>
           </aside>
         </div>
       )}
