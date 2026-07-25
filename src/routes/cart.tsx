@@ -95,6 +95,33 @@ function CartPage() {
           </div>
           <aside className="glass-card rounded-2xl p-6 h-fit sticky top-28">
             <p className="eyebrow mb-4">Order Summary</p>
+
+            {/* Airport pickup */}
+            <div className="mb-5 rounded-xl border hairline p-4">
+              <label className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
+                <MapPin className="h-3.5 w-3.5" /> Airport Pickup Point <span className="text-[color:var(--destructive)]">*</span>
+              </label>
+              <select
+                required
+                value={pickup}
+                onChange={(e) => updatePickup(e.target.value)}
+                className="mt-2 w-full bg-[color:var(--noir)] border hairline rounded-lg px-3 py-2.5 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+              >
+                <option value="">Select a pickup point…</option>
+                {PICKUP_POINTS.map((p) => (
+                  <option key={p.id} value={p.id}>{p.label}</option>
+                ))}
+              </select>
+              {pickupObj && (
+                <p className="mt-2 text-[11px] text-[color:var(--muted-foreground)]">{pickupObj.detail}</p>
+              )}
+              <p className="mt-3 flex items-start gap-2 text-[11px] text-[color:var(--muted-foreground)]">
+                <ShieldAlert className="h-3.5 w-3.5 mt-0.5 text-[color:var(--gold)] flex-shrink-0" />
+                <span><strong className="text-[color:var(--foreground)]">Note:</strong> Security rules restrict delivery executives from entering gate check-in areas. Please meet our delivery agent at your chosen Pickup Point.</span>
+              </p>
+              <p className="mt-2 text-[11px] text-[color:var(--gold)]">⚡ Express 20–30 minute delivery window.</p>
+            </div>
+
             <div className="space-y-3 text-sm">
               <div className="flex justify-between"><span className="text-[color:var(--muted-foreground)]">Subtotal</span><span>{formatPrice(total)}</span></div>
               <div className="flex justify-between"><span className="text-[color:var(--muted-foreground)]">Shipping</span><span className="text-[color:var(--gold)]">Calculated at checkout</span></div>
@@ -106,9 +133,11 @@ function CartPage() {
             <button
               disabled={paying || items.length === 0}
               onClick={async () => {
+                if (!pickup) { toast.error("Please select an airport pickup point to continue."); return; }
                 setPaying(true);
                 try {
                   await startRazorpayCheckout(items, (orderId) => {
+                    savePickupForOrder(orderId, pickup);
                     clear();
                     navigate({ to: "/order/$orderId", params: { orderId } });
                   });
@@ -125,6 +154,7 @@ function CartPage() {
             </a>
             <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)] text-center">UPI, cards & net banking. Or confirm with our concierge on WhatsApp.</p>
           </aside>
+
         </div>
       )}
     </div>
