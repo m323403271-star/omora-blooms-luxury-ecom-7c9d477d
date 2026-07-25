@@ -2,6 +2,8 @@ import { Link } from "@tanstack/react-router";
 import { Menu, ShoppingBag, Search, X } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "./Logo";
+import { DeliveryEtaChecker } from "./DeliveryEtaChecker";
+import { DeliveryBanner } from "./DeliveryBanner";
 import { useCart } from "@/lib/cart";
 import { COLLECTIONS } from "@/lib/collections";
 import { WHATSAPP_DISPLAY, whatsappLink } from "@/lib/whatsapp";
