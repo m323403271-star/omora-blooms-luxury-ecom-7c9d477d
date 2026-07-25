@@ -151,7 +151,7 @@ function Feature({ icon: Icon, title, copy }: { icon: React.ComponentType<{ clas
 function resolveGallery(product: Product, collectionImg: string | undefined, related: Product[]): string[] {
   const uploaded = ((product as unknown as { images?: string[] | null }).images ?? [])
     .filter((s): s is string => typeof s === "string" && s.length > 0)
-    .map(resolveProductImage);
+    .map((s) => resolveProductImage(s));
   if (uploaded.length > 0) {
     return Array.from(new Set([resolveProductImage(product.image_url), ...uploaded])).slice(0, 6);
   }
