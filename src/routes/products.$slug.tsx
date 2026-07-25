@@ -52,7 +52,11 @@ function ProductPage() {
       </div>
 
       <section className="container-luxe grid lg:grid-cols-2 gap-10 md:gap-16 py-10 md:py-16">
-        <Media3DViewer images={gallery} alt={product.name} />
+        <Media3DViewer
+          images={gallery}
+          alt={`${product.name}${collection ? ` — ${collection.name}` : ""} handmade luxury bouquet by OMORA BLOOMS`}
+        />
+
 
         <div>
           {collection && <p className="eyebrow mb-3">{collection.name}</p>}
