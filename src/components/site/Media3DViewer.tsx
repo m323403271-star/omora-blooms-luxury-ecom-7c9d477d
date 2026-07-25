@@ -123,7 +123,13 @@ export function Media3DViewer({ images, alt }: Props) {
                   : "hairline hover:border-[color:var(--gold)]/60"
               }`}
             >
-              <img src={src} alt={`${alt} — angle ${i + 1}`} className="h-16 w-16 md:h-20 md:w-20 object-cover" />
+              <img
+                src={src}
+                alt={`${alt} — alternate view ${i + 1}`}
+                loading="lazy"
+                decoding="async"
+                className="h-16 w-16 md:h-20 md:w-20 object-cover"
+              />
             </button>
           ))}
         </div>
