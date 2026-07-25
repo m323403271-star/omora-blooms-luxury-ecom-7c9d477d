@@ -1,13 +1,16 @@
 import { Link } from "@tanstack/react-router";
-import { X, Minus, Plus, MessageCircle } from "lucide-react";
+import { X, Minus, Plus, MessageCircle, CreditCard } from "lucide-react";
+import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { getStoredRef } from "@/lib/referral";
 import { supabase } from "@/integrations/supabase/client";
+import { startRazorpayCheckout } from "@/lib/razorpay";
 
 export function CartDrawer() {
-  const { items, isOpen, close, remove, setQuantity, total, count } = useCart();
+  const { items, isOpen, close, remove, setQuantity, total, count, clear } = useCart();
+  const [paying, setPaying] = useState(false);
   if (!isOpen) return null;
 
   const ref = getStoredRef();
@@ -82,14 +85,31 @@ export function CartDrawer() {
                 <p className="text-[11px] text-[color:var(--gold)]">Referral applied: {ref}</p>
               )}
               <p className="text-xs text-[color:var(--muted-foreground)]">Shipping & taxes calculated at checkout. Complimentary luxury packaging included.</p>
+              <button
+                disabled={paying}
+                onClick={async () => {
+                  setPaying(true);
+                  try {
+                    await startRazorpayCheckout(items, () => {
+                      clear();
+                      close();
+                    });
+                  } finally {
+                    setPaying(false);
+                  }
+                }}
+                className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm font-semibold disabled:opacity-60"
+              >
+                <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Pay with Razorpay"}
+              </button>
               <a
                 href={whatsappLink(message)}
                 onClick={handleCheckout}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm font-semibold"
+                className="btn-outline-gold w-full inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm"
               >
-                <MessageCircle className="h-4 w-4" /> Checkout via WhatsApp
+                <MessageCircle className="h-4 w-4" /> Order via WhatsApp
               </a>
               <Link to="/cart" onClick={close} className="btn-outline-gold w-full inline-flex items-center justify-center py-3 rounded-full text-sm">
                 View bag
