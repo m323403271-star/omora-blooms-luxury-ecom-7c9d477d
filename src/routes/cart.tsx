@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert } from "lucide-react";
-import { useState } from "react";
+import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert, Plane } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
 import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
+import { EXPRESS_PINCODES, getStoredPincode } from "@/lib/delivery";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/cart")({
