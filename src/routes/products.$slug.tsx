@@ -1,13 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { MessageCircle, ShoppingBag, Heart, Truck, ShieldCheck, Sparkles, Minus, Plus } from "lucide-react";
-import { formatPrice, productsQuery, resolveProductImage } from "@/lib/products";
+import { formatPrice, productsQuery, resolveProductImage, type Product } from "@/lib/products";
 import { collectionBySlug } from "@/lib/collections";
 import { useCart } from "@/lib/cart";
 import { orderOnWhatsApp } from "@/lib/whatsapp";
 import { ProductCard } from "@/components/site/ProductCard";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
+import { Media3DViewer } from "@/components/site/Media3DViewer";
+
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ params }) => ({
