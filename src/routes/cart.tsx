@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { CreditCard, MessageCircle, Minus, Plus, Trash2 } from "lucide-react";
+import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert } from "lucide-react";
 import { useState } from "react";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
@@ -7,6 +7,8 @@ import { whatsappLink } from "@/lib/whatsapp";
 import { getStoredRef } from "@/lib/referral";
 import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
+import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Your Bag — OMORA BLOOMS" }] }),
@@ -16,16 +18,29 @@ export const Route = createFileRoute("/cart")({
 function CartPage() {
   const { items, total, setQuantity, remove, clear } = useCart();
   const [paying, setPaying] = useState(false);
+  const [pickup, setPickup] = useState<string>(() => getSelectedPickup() ?? "");
   const navigate = useNavigate();
   const ref = typeof window !== "undefined" ? getStoredRef() : null;
   const refLine = ref ? `\n\nReferral code: ${ref}` : "";
+  const pickupObj = findPickup(pickup);
+  const pickupLine = pickupObj ? `\n\nAirport Pickup Point: ${pickupObj.label} (${pickupObj.detail})` : "";
 
   const message = items.length === 0
     ? ""
-    : `Hello OMORA BLOOMS! I'd like to order:\n\n${items.map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`).join("\n")}\n\nTotal: ${formatPrice(total)}${refLine}\n\nPlease confirm.`;
+    : `Hello OMORA BLOOMS! I'd like to order:\n\n${items.map((i) => `• ${i.name} × ${i.quantity} — ${formatPrice(i.price * i.quantity)}`).join("\n")}\n\nTotal: ${formatPrice(total)}${pickupLine}${refLine}\n\nPlease confirm.`;
+
+  function updatePickup(id: string) {
+    setPickup(id);
+    if (id) setSelectedPickup(id);
+  }
 
   async function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
     if (items.length === 0) return;
+    if (!pickup) {
+      e.preventDefault();
+      toast.error("Please select an airport pickup point to continue.");
+      return;
+    }
     if (ref) {
       e.preventDefault();
       try {
@@ -39,6 +54,7 @@ function CartPage() {
       window.open(whatsappLink(message), "_blank", "noopener,noreferrer");
     }
   }
+
 
   return (
     <div className="container-luxe py-16 md:py-24">
