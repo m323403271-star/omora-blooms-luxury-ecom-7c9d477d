@@ -99,6 +99,9 @@ export type Database = {
           items: Json
           pickup_point_id: string | null
           pincode: string | null
+          preview_channel: string | null
+          preview_photo_url: string | null
+          preview_sent_at: string | null
           priority: string
           razorpay_order_id: string
           razorpay_payment_id: string | null
@@ -118,6 +121,9 @@ export type Database = {
           items?: Json
           pickup_point_id?: string | null
           pincode?: string | null
+          preview_channel?: string | null
+          preview_photo_url?: string | null
+          preview_sent_at?: string | null
           priority?: string
           razorpay_order_id: string
           razorpay_payment_id?: string | null
@@ -137,6 +143,9 @@ export type Database = {
           items?: Json
           pickup_point_id?: string | null
           pincode?: string | null
+          preview_channel?: string | null
+          preview_photo_url?: string | null
+          preview_sent_at?: string | null
           priority?: string
           razorpay_order_id?: string
           razorpay_payment_id?: string | null
@@ -243,6 +252,59 @@ export type Database = {
             columns: ["partner_id"]
             isOneToOne: false
             referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reviews: {
+        Row: {
+          approved: boolean
+          author_name: string
+          body: string
+          created_at: string
+          id: string
+          media: Json
+          product_id: string
+          rating: number
+          title: string | null
+          updated_at: string
+          user_id: string | null
+          verified_buyer: boolean
+        }
+        Insert: {
+          approved?: boolean
+          author_name: string
+          body: string
+          created_at?: string
+          id?: string
+          media?: Json
+          product_id: string
+          rating: number
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+          verified_buyer?: boolean
+        }
+        Update: {
+          approved?: boolean
+          author_name?: string
+          body?: string
+          created_at?: string
+          id?: string
+          media?: Json
+          product_id?: string
+          rating?: number
+          title?: string | null
+          updated_at?: string
+          user_id?: string | null
+          verified_buyer?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reviews_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
             referencedColumns: ["id"]
           },
         ]

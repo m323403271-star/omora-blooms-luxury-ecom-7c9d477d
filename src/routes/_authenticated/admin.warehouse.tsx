@@ -16,6 +16,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { findPickup } from "@/lib/pickup";
+import { OrderPreviewSender } from "@/components/site/OrderPreviewSender";
 
 type Priority = "airport" | "prestige" | "standard";
 
@@ -32,6 +33,9 @@ type OrderRow = {
   priority: Priority;
   created_at: string;
   items: Array<{ name: string; quantity: number }> | null;
+  preview_photo_url: string | null;
+  preview_sent_at: string | null;
+  preview_channel: string | null;
 };
 
 const SLA_MINUTES: Record<Priority, number> = {
@@ -280,6 +284,22 @@ function OrderRowCard({ order, now, position }: { order: OrderRow; now: number; 
           ))}
         </div>
       )}
+
+      <div className="mt-4">
+        <OrderPreviewSender
+          orderId={order.id}
+          orderCode={order.razorpay_order_id}
+          customerName={order.customer_name}
+          customerPhone={order.customer_phone}
+          amount={order.amount}
+          existingUrl={order.preview_photo_url}
+        />
+        {order.preview_sent_at && (
+          <p className="mt-2 text-[10px] tracking-widest uppercase text-emerald-300">
+            ✓ Preview sent via {order.preview_channel ?? "message"} · {new Date(order.preview_sent_at).toLocaleString("en-IN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "short" })}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
