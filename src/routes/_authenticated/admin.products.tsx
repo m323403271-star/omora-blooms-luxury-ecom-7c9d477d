@@ -85,8 +85,8 @@ function AdminProductsPage() {
           <h1 className="font-serif text-3xl md:text-4xl mt-1">Product Photos</h1>
           <p className="text-sm text-[color:var(--muted-foreground)] mt-1">Upload up to {MAX_PER_PRODUCT} gallery images per product (max {MAX_MB}MB each).</p>
         </div>
-        <Link to="/_authenticated/admin/referrals" search={{}} params={{}} className="hidden">.</Link>
         <Link to="/" className="btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2"><ArrowLeft className="h-3 w-3" /> Back to site</Link>
+
       </div>
 
       <div className="mt-8 flex items-center gap-3 hairline border rounded-full px-4 py-2 max-w-md">
