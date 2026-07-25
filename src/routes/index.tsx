@@ -305,3 +305,54 @@ function FinalCta() {
     </section>
   );
 }
+
+function EternalBondBanner() {
+  return (
+    <section className="container-luxe pb-4 md:pb-8 -mt-6 md:-mt-10">
+      <Link
+        to="/products/$slug"
+        params={{ slug: "eternal-bond-luxury-kit" }}
+        className="group relative block overflow-hidden rounded-3xl hairline border ring-1 ring-[color:var(--gold)]/40 shadow-[0_30px_80px_-30px_rgba(200,162,74,0.55)] transition-shadow duration-500 hover:shadow-[0_40px_100px_-30px_rgba(200,162,74,0.7)]"
+      >
+        <div className="relative aspect-[16/10] sm:aspect-[16/8] md:aspect-[21/9]">
+          <img
+            src={eternalBondBanner}
+            alt="The Eternal Bond Luxury Kit — royal luxury gift combo for new mother and newborn baby | OMORA BLOOMS"
+            loading="lazy"
+            decoding="async"
+            width={1600}
+            height={900}
+            sizes="(min-width: 768px) 90vw, 100vw"
+            className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/20 md:from-black/85 md:via-black/45 md:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent md:hidden" />
+
+          <span className="absolute top-5 left-5 md:top-7 md:left-8 inline-flex items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-[0.22em] uppercase font-semibold px-3 py-1.5 shadow-lg">
+            <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--noir)]" /> Most Gifted for Naming Ceremonies
+          </span>
+
+          <div className="absolute inset-0 flex items-end md:items-center">
+            <div className="p-6 sm:p-8 md:p-14 max-w-xl md:max-w-2xl">
+              <p className="eyebrow mb-3 md:mb-4 text-[color:var(--gold)]">Exclusively for Mom &amp; Baby</p>
+              <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight">
+                The Eternal Bond<br className="hidden sm:block" /> Luxury Kit
+              </h3>
+              <p className="mt-4 md:mt-5 text-sm md:text-base text-white/80 max-w-lg leading-relaxed">
+                A royal luxury gift combo thoughtfully curated for both the New Mother and the Newborn Baby — everlasting crochet bouquet, mother recovery wellness, baby essentials, in a signature OMORA heritage box.
+              </p>
+              <div className="mt-6 md:mt-8 flex flex-wrap items-center gap-3">
+                <span className="btn-primary-gold inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-medium">
+                  Buy Now <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </span>
+                <span className="btn-outline-gold inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm">
+                  Shop the Kit
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Link>
+    </section>
+  );
+}
