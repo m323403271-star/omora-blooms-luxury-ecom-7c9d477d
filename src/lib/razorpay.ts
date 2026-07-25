@@ -82,6 +82,15 @@ export async function startRazorpayCheckout(items: CartItem[], onSuccess: () => 
     keyId: string;
   };
 
+  const markStatus = (status: "failed" | "cancelled" | "pending", err?: string) => {
+    fetch("/api/razorpay/mark-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId: order.orderId, status, error: err }),
+      keepalive: true,
+    }).catch(() => {});
+  };
+
   const rzp = new window.Razorpay!({
     key: order.keyId,
     amount: order.amount,
@@ -115,8 +124,15 @@ export async function startRazorpayCheckout(items: CartItem[], onSuccess: () => 
     modal: {
       ondismiss: () => {
         toast.message("Payment cancelled");
+        markStatus("cancelled", "User dismissed checkout");
       },
     },
+  });
+  rzp.on("payment.failed", (resp: unknown) => {
+    const r = resp as { error?: { description?: string; reason?: string } };
+    const desc = r?.error?.description || r?.error?.reason || "Payment failed";
+    toast.error(desc);
+    markStatus("failed", desc);
   });
   rzp.open();
 }

@@ -33,14 +33,22 @@ export const Route = createFileRoute("/api/razorpay/verify")({
           .digest("hex");
         const a = Buffer.from(expected);
         const b = Buffer.from(razorpay_signature);
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
         if (a.length !== b.length || !timingSafeEqual(a, b)) {
+          try {
+            await supabaseAdmin.from("payments").update({
+              razorpay_payment_id,
+              status: "failed",
+              error_message: "Invalid signature",
+            }).eq("razorpay_order_id", razorpay_order_id);
+          } catch (e) { console.error("Payment status update failed", e); }
           return Response.json({ ok: false, error: "Invalid signature" }, { status: 400 });
         }
 
         // Log referred order if applicable (trusted server call recomputes totals)
         if (body.ref && Array.isArray(body.items) && body.items.length > 0) {
           try {
-            const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
             await supabaseAdmin.rpc("log_referred_order", {
               _partner_code: body.ref,
               _items: body.items.map((i) => ({ id: i.id, quantity: i.quantity })) as never,
@@ -49,6 +57,14 @@ export const Route = createFileRoute("/api/razorpay/verify")({
             console.error("Referral log failed", e);
           }
         }
+
+        try {
+          await supabaseAdmin.from("payments").update({
+            razorpay_payment_id,
+            status: "paid",
+            error_message: null,
+          }).eq("razorpay_order_id", razorpay_order_id);
+        } catch (e) { console.error("Payment status update failed", e); }
 
         return Response.json({ ok: true, paymentId: razorpay_payment_id });
       },

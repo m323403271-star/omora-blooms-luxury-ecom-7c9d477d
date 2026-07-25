@@ -26,6 +26,7 @@ import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
 import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
+import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay/mark-status'
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 
@@ -113,6 +114,11 @@ const ApiRazorpayVerifyRoute = ApiRazorpayVerifyRouteImport.update({
   path: '/api/razorpay/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRazorpayMarkStatusRoute = ApiRazorpayMarkStatusRouteImport.update({
+  id: '/api/razorpay/mark-status',
+  path: '/api/razorpay/mark-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiRazorpayCreateOrderRoute = ApiRazorpayCreateOrderRouteImport.update({
   id: '/api/razorpay/create-order',
   path: '/api/razorpay/create-order',
@@ -143,6 +149,7 @@ export interface FileRoutesByFullPath {
   '/collections/': typeof CollectionsIndexRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
+  '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
 }
 export interface FileRoutesByTo {
@@ -163,6 +170,7 @@ export interface FileRoutesByTo {
   '/collections': typeof CollectionsIndexRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
+  '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
 }
 export interface FileRoutesById {
@@ -185,6 +193,7 @@ export interface FileRoutesById {
   '/collections/': typeof CollectionsIndexRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
+  '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
 }
 export interface FileRouteTypes {
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/collections/'
     | '/admin/referrals'
     | '/api/razorpay/create-order'
+    | '/api/razorpay/mark-status'
     | '/api/razorpay/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -227,6 +237,7 @@ export interface FileRouteTypes {
     | '/collections'
     | '/admin/referrals'
     | '/api/razorpay/create-order'
+    | '/api/razorpay/mark-status'
     | '/api/razorpay/verify'
   id:
     | '__root__'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/collections/'
     | '/_authenticated/admin/referrals'
     | '/api/razorpay/create-order'
+    | '/api/razorpay/mark-status'
     | '/api/razorpay/verify'
   fileRoutesById: FileRoutesById
 }
@@ -268,6 +280,7 @@ export interface RootRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
   CollectionsIndexRoute: typeof CollectionsIndexRoute
   ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
+  ApiRazorpayMarkStatusRoute: typeof ApiRazorpayMarkStatusRoute
   ApiRazorpayVerifyRoute: typeof ApiRazorpayVerifyRoute
 }
 
@@ -392,6 +405,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiRazorpayVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/razorpay/mark-status': {
+      id: '/api/razorpay/mark-status'
+      path: '/api/razorpay/mark-status'
+      fullPath: '/api/razorpay/mark-status'
+      preLoaderRoute: typeof ApiRazorpayMarkStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/razorpay/create-order': {
       id: '/api/razorpay/create-order'
       path: '/api/razorpay/create-order'
@@ -439,6 +459,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsSlugRoute: ProductsSlugRoute,
   CollectionsIndexRoute: CollectionsIndexRoute,
   ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
+  ApiRazorpayMarkStatusRoute: ApiRazorpayMarkStatusRoute,
   ApiRazorpayVerifyRoute: ApiRazorpayVerifyRoute,
 }
 export const routeTree = rootRouteImport
