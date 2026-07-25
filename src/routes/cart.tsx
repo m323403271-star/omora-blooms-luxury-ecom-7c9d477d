@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert } from "lucide-react";
-import { useState } from "react";
+import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert, Plane } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
 import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
+import { EXPRESS_PINCODES, getStoredPincode } from "@/lib/delivery";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/cart")({
@@ -20,11 +21,27 @@ function CartPage() {
   const { items, total, setQuantity, remove, clear } = useCart();
   const [paying, setPaying] = useState(false);
   const [pickup, setPickup] = useState<string>(() => getSelectedPickup() ?? "");
+  const [pincode, setPincode] = useState<string | null>(() => getStoredPincode());
+  const [airportOverride, setAirportOverride] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as string | null;
+      setPincode(detail ?? null);
+    };
+    window.addEventListener("omora:pincode-changed", handler as EventListener);
+    return () => window.removeEventListener("omora:pincode-changed", handler as EventListener);
+  }, []);
+
+  const isAirportPincode = !!(pincode && EXPRESS_PINCODES[pincode]);
+  const showPickup = isAirportPincode || airportOverride;
+  const pickupRequired = showPickup;
+
   const ref = typeof window !== "undefined" ? getStoredRef() : null;
   const refLine = ref ? `\n\nReferral code: ${ref}` : "";
   const pickupObj = findPickup(pickup);
-  const pickupLine = pickupObj ? `\n\nAirport Pickup Point: ${pickupObj.label} (${pickupObj.detail})` : "";
+  const pickupLine = showPickup && pickupObj ? `\n\nAirport Pickup Point: ${pickupObj.label} (${pickupObj.detail})` : "";
 
   const message = items.length === 0
     ? ""
@@ -37,7 +54,7 @@ function CartPage() {
 
   async function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
     if (items.length === 0) return;
-    if (!pickup) {
+    if (pickupRequired && !pickup) {
       e.preventDefault();
       toast.error("Please select an airport pickup point to continue.");
       return;
@@ -97,31 +114,50 @@ function CartPage() {
           <aside className="glass-card rounded-2xl p-6 h-fit sticky top-28">
             <p className="eyebrow mb-4">Order Summary</p>
 
-            {/* Airport pickup */}
-            <div className="mb-5 rounded-xl border hairline p-4">
-              <label className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
-                <MapPin className="h-3.5 w-3.5" /> Airport Pickup Point <span className="text-[color:var(--destructive)]">*</span>
+            {/* Airport pickup toggle for non-airport pincodes */}
+            {!isAirportPincode && (
+              <label className="mb-3 flex items-center gap-2 text-xs text-[color:var(--muted-foreground)] cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={airportOverride}
+                  onChange={(e) => {
+                    setAirportOverride(e.target.checked);
+                    if (!e.target.checked) setPickup("");
+                  }}
+                  className="accent-[color:var(--gold)]"
+                />
+                <Plane className="h-3.5 w-3.5 text-[color:var(--gold)]" />
+                <span>Deliver at Bengaluru Airport (BLR) instead</span>
               </label>
-              <select
-                required
-                value={pickup}
-                onChange={(e) => updatePickup(e.target.value)}
-                className="mt-2 w-full bg-[color:var(--noir)] border hairline rounded-lg px-3 py-2.5 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
-              >
-                <option value="">Select a pickup point…</option>
-                {PICKUP_POINTS.map((p) => (
-                  <option key={p.id} value={p.id}>{p.label}</option>
-                ))}
-              </select>
-              {pickupObj && (
-                <p className="mt-2 text-[11px] text-[color:var(--muted-foreground)]">{pickupObj.detail}</p>
-              )}
-              <p className="mt-3 flex items-start gap-2 text-[11px] text-[color:var(--muted-foreground)]">
-                <ShieldAlert className="h-3.5 w-3.5 mt-0.5 text-[color:var(--gold)] flex-shrink-0" />
-                <span><strong className="text-[color:var(--foreground)]">Note:</strong> Security rules restrict delivery executives from entering gate check-in areas. Please meet our delivery agent at your chosen Pickup Point.</span>
-              </p>
-              <p className="mt-2 text-[11px] text-[color:var(--gold)]">⚡ Express 20–30 minute delivery window.</p>
-            </div>
+            )}
+
+            {/* Airport pickup */}
+            {showPickup && (
+              <div className="mb-5 rounded-xl border hairline p-4">
+                <label className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
+                  <MapPin className="h-3.5 w-3.5" /> Airport Pickup Point <span className="text-[color:var(--destructive)]">*</span>
+                </label>
+                <select
+                  required
+                  value={pickup}
+                  onChange={(e) => updatePickup(e.target.value)}
+                  className="mt-2 w-full bg-[color:var(--noir)] border hairline rounded-lg px-3 py-2.5 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                >
+                  <option value="">Select a pickup point…</option>
+                  {PICKUP_POINTS.map((p) => (
+                    <option key={p.id} value={p.id}>{p.label}</option>
+                  ))}
+                </select>
+                {pickupObj && (
+                  <p className="mt-2 text-[11px] text-[color:var(--muted-foreground)]">{pickupObj.detail}</p>
+                )}
+                <p className="mt-3 flex items-start gap-2 text-[11px] text-[color:var(--muted-foreground)]">
+                  <ShieldAlert className="h-3.5 w-3.5 mt-0.5 text-[color:var(--gold)] flex-shrink-0" />
+                  <span><strong className="text-[color:var(--foreground)]">Note:</strong> Security rules restrict delivery executives from entering gate check-in areas. Please meet our delivery agent at your chosen Pickup Point.</span>
+                </p>
+                <p className="mt-2 text-[11px] text-[color:var(--gold)]">⚡ Express 20–30 minute delivery window.</p>
+              </div>
+            )}
 
             <div className="mb-5">
               <DeliveryEtaChecker variant="checkout" title="Delivery SLA" locked />
@@ -139,11 +175,11 @@ function CartPage() {
             <button
               disabled={paying || items.length === 0}
               onClick={async () => {
-                if (!pickup) { toast.error("Please select an airport pickup point to continue."); return; }
+                if (pickupRequired && !pickup) { toast.error("Please select an airport pickup point to continue."); return; }
                 setPaying(true);
                 try {
                   await startRazorpayCheckout(items, (orderId) => {
-                    savePickupForOrder(orderId, pickup);
+                    if (showPickup && pickup) savePickupForOrder(orderId, pickup);
                     clear();
                     navigate({ to: "/order/$orderId", params: { orderId } });
                   });
