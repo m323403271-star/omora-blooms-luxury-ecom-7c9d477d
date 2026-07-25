@@ -98,10 +98,16 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
             status: "created",
             ref_code: body.ref ?? null,
             items: clean as never,
-          });
+            pincode: cleanPincode,
+            customer_tier: cleanTier,
+            pickup_point_id: cleanPickup,
+            customer_name: cleanName,
+            customer_phone: cleanPhone,
+          } as never);
         } catch (e) {
           console.error("Payment log insert failed", e);
         }
+
 
         return Response.json({
           orderId: order.id,
