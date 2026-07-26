@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { ArrowRight, MessageCircle, Sparkles, Package, Truck, Heart, Gem, Award } from "lucide-react";
 import heroBouquet from "@/assets/hero-bouquet.jpg";
 import eternalBondBanner from "@/assets/banner-eternal-bond.jpg";
+import giftboxImg from "@/assets/collection-giftbox.jpg";
 import { COLLECTIONS } from "@/lib/collections";
 import { productsQuery } from "@/lib/products";
 import { ProductCard } from "@/components/site/ProductCard";
@@ -258,7 +259,7 @@ function PackagingBand() {
           </ul>
         </div>
         <div className="order-1 lg:order-2 relative">
-          <img src="/src/assets/collection-giftbox.jpg" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} alt="OMORA BLOOMS luxury packaging" className="w-full aspect-square object-cover rounded-3xl hairline border" />
+          <img src={giftboxImg} loading="lazy" decoding="async" alt="OMORA BLOOMS luxury signature packaging — matte black magnetic gift box with gold foil detailing" className="w-full aspect-square object-cover rounded-3xl hairline border" />
         </div>
       </div>
     </section>
@@ -314,7 +315,7 @@ function EternalBondBanner() {
         params={{ slug: "eternal-bond-luxury-kit" }}
         className="group relative block overflow-hidden rounded-3xl hairline border ring-1 ring-[color:var(--gold)]/40 shadow-[0_30px_80px_-30px_rgba(200,162,74,0.55)] transition-shadow duration-500 hover:shadow-[0_40px_100px_-30px_rgba(200,162,74,0.7)]"
       >
-        <div className="relative aspect-[16/10] sm:aspect-[16/8] md:aspect-[21/9]">
+        <div className="relative aspect-[4/5] sm:aspect-[16/9] md:aspect-[21/9]">
           <img
             src={eternalBondBanner}
             alt="The Eternal Bond Luxury Kit — royal luxury gift combo for new mother and newborn baby | OMORA BLOOMS"
@@ -325,27 +326,32 @@ function EternalBondBanner() {
             sizes="(min-width: 768px) 90vw, 100vw"
             className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-[1.04]"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-black/20 md:from-black/85 md:via-black/45 md:to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent md:hidden" />
+          {/* Stronger mobile scrim keeps text readable over imagery */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/70 to-black/30 md:bg-gradient-to-r md:from-black/85 md:via-black/45 md:to-transparent" />
 
-          <span className="absolute top-5 left-5 md:top-7 md:left-8 inline-flex items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-[0.22em] uppercase font-semibold px-3 py-1.5 shadow-lg">
+          {/* Desktop-only floating badge; mobile badge lives inline below to
+              avoid overlapping the eyebrow/heading. */}
+          <span className="hidden md:inline-flex absolute top-6 left-8 items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-[0.22em] uppercase font-semibold px-3 py-1.5 shadow-lg">
             <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--noir)]" /> Most Gifted for Naming Ceremonies
           </span>
 
           <div className="absolute inset-0 flex items-end md:items-center">
-            <div className="p-6 sm:p-8 md:p-14 max-w-xl md:max-w-2xl">
-              <p className="eyebrow mb-3 md:mb-4 text-[color:var(--gold)]">Exclusively for Mom &amp; Baby</p>
-              <h3 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.05] tracking-tight">
+            <div className="p-5 sm:p-8 md:p-14 w-full md:max-w-2xl">
+              <span className="md:hidden inline-flex items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[9px] tracking-[0.2em] uppercase font-semibold px-2.5 py-1 shadow-lg mb-3">
+                <span className="h-1 w-1 rounded-full bg-[color:var(--noir)]" /> Most Gifted · Naming Ceremonies
+              </span>
+              <p className="eyebrow mb-2 md:mb-4 text-[color:var(--gold)] text-[0.6rem] md:text-[0.7rem]">Exclusively for Mom &amp; Baby</p>
+              <h3 className="font-serif text-[1.75rem] leading-[1.1] sm:text-4xl md:text-5xl lg:text-6xl md:leading-[1.05] tracking-tight">
                 The Eternal Bond<br className="hidden sm:block" /> Luxury Kit
               </h3>
-              <p className="mt-4 md:mt-5 text-sm md:text-base text-white/80 max-w-lg leading-relaxed">
+              <p className="mt-3 md:mt-5 text-[13px] md:text-base text-white/85 max-w-lg leading-relaxed line-clamp-3 md:line-clamp-none">
                 A royal luxury gift combo thoughtfully curated for both the New Mother and the Newborn Baby — everlasting crochet bouquet, mother recovery wellness, baby essentials, in a signature OMORA heritage box.
               </p>
-              <div className="mt-6 md:mt-8 flex flex-wrap items-center gap-3">
-                <span className="btn-primary-gold inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-medium">
+              <div className="mt-5 md:mt-8 flex flex-wrap items-center gap-2.5 md:gap-3">
+                <span className="btn-gold inline-flex items-center gap-2 px-6 md:px-7 py-3 md:py-3.5 rounded-full text-sm font-medium">
                   Buy Now <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </span>
-                <span className="btn-outline-gold inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-sm">
+                <span className="btn-outline-gold inline-flex items-center gap-2 px-6 md:px-7 py-3 md:py-3.5 rounded-full text-sm">
                   Shop the Kit
                 </span>
               </div>

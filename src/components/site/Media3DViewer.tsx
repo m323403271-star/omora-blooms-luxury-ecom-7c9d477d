@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { RotateCw, ZoomIn, ZoomOut } from "lucide-react";
+import { handleImageError } from "@/lib/image-fallback";
 
 type Props = {
   images: string[];
@@ -77,6 +78,7 @@ export function Media3DViewer({ images, alt }: Props) {
             fetchPriority="high"
             decoding="async"
             sizes="(min-width: 1024px) 50vw, 100vw"
+            onError={handleImageError}
             className="absolute inset-0 h-full w-full object-cover will-change-transform"
             style={{
               transform: zoomed ? "scale(2)" : "scale(1)",
@@ -128,6 +130,7 @@ export function Media3DViewer({ images, alt }: Props) {
                 alt={`${alt} — alternate view ${i + 1}`}
                 loading="lazy"
                 decoding="async"
+                onError={handleImageError}
                 className="h-16 w-16 md:h-20 md:w-20 object-cover"
               />
             </button>
