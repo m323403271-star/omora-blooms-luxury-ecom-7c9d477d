@@ -20,12 +20,13 @@ function HomePage() {
     <div>
       <Hero />
       <Marquee />
-      <FeaturedCollections />
-      <EternalBondBanner />
-      
-      {/* Eternal Bond Banner ಮತ್ತು Bestsellers ನಡುವೆ ಹೊಸ ಪ್ರಾಡಕ್ಟ್‌ಗಳು */}
-      <NewArrivalsSection />
 
+      {/* ಹೊಸದಾಗಿ ಸೇರಿಸಿದ 3 ಪ್ರಮುಖ ಪ್ರಾಡಕ್ಟ್‌ಗಳ ವಿಭಾಗ (ಕ್ಲಿಕ್ ಮಾಡಿದರೆ ಸಬ್-ಕ್ಯಾಟಗರಿ ಪೇಜ್‌ಗೆ ಹೋಗುತ್ತದೆ) */}
+      <HomeThreeProductsSection />
+
+      <EternalBondBanner />
+
+      {/* ನಿಮ್ಮ ಹಳೆಯ ಎಲ್ಲಾ ಪ್ರಾಡಕ್ಟ್‌ಗಳು ಇಲ್ಲಿ 'Bestsellers' ಆಗಿ ಸುರಕ್ಷಿತವಾಗಿ ಕಾಣಿಸುತ್ತವೆ */}
       <Suspense fallback={<div className="container-luxe py-24 text-center text-sm text-[color:var(--muted-foreground)]">Loading products...</div>}>
         <BestSellers />
       </Suspense>
@@ -106,73 +107,79 @@ function Marquee() {
   );
 }
 
-function FeaturedCollections() {
-  const highlightSlugs = ["crochet-bouquets", "frames-vases", "pipe-cleaner-bouquets"] as const;
-  const trio = highlightSlugs
-    .map((slug) => COLLECTIONS.find((c) => c.slug === slug))
-    .filter((c): c is (typeof COLLECTIONS)[number] => Boolean(c));
+{/* ಹೋಮ್ ಪೇಜ್‌ನಲ್ಲಿ 3 ಪ್ರಮುಖ ಪ್ರಾಡಕ್ಟ್‌ಗಳು - ಕ್ಲಿಕ್ ಮಾಡಿದಾಗ ಸಬ್-ಕ್ಯಾಟಗರಿ ಪೇಜ್‌ಗೆ ಹೋಗುತ್ತದೆ */}
+function HomeThreeProductsSection() {
+  const featuredThree = LOCAL_PRODUCTS.slice(0, 3);
+
+  const getSubCategorySlug = (categoryName: string) => {
+    switch (categoryName.toLowerCase()) {
+      case "crochet bouquets":
+      case "crochet":
+        return "crochet-bouquets";
+      case "pipe cleaner bouquets":
+      case "pipe cleaner":
+        return "pipe-cleaner-bouquets";
+      case "frames & vases":
+      case "home decor":
+        return "frames-vases";
+      default:
+        return "crochet-bouquets";
+    }
+  };
 
   return (
     <section className="container-luxe py-20 md:py-28">
       <div className="flex items-end justify-between mb-12 gap-6">
         <div>
-          <p className="eyebrow mb-3">Our Collections</p>
-          <h2 className="font-serif text-4xl md:text-5xl max-w-xl leading-tight">Curated for every occasion</h2>
+          <p className="eyebrow mb-3 text-[color:var(--gold)]">Featured Collections</p>
+          <h2 className="font-serif text-4xl md:text-5xl max-w-xl leading-tight">Top Categories</h2>
         </div>
         <Link to="/collections" className="hidden md:inline-flex items-center gap-2 text-sm text-[color:var(--gold)] hover:opacity-80">
-          View all <ArrowRight className="h-4 w-4" />
+          View all categories <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
 
-      <div className="-mx-4 px-4 md:mx-0 md:px-0 flex md:grid md:grid-cols-3 gap-4 md:gap-6 overflow-x-auto md:overflow-visible snap-x snap-mandatory scroll-smooth pb-2 md:pb-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-        {trio.map((c) => {
-          const isNew = c.slug === "frames-vases";
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        {featuredThree.map((product) => {
+          const subCategorySlug = getSubCategorySlug(product.category);
+
           return (
             <Link
-              key={c.slug}
+              key={product.id}
               to="/collections/$slug"
-              params={{ slug: c.slug }}
-              className={`group relative shrink-0 md:shrink w-[82%] sm:w-[60%] md:w-auto snap-center overflow-hidden rounded-3xl hairline border transition-shadow duration-500 ${
-                isNew
-                  ? "ring-1 ring-[color:var(--gold)]/50 shadow-[0_20px_60px_-20px_rgba(200,162,74,0.45)]"
-                  : "hover:shadow-[0_20px_60px_-20px_rgba(200,162,74,0.25)]"
-              }`}
+              params={{ slug: subCategorySlug }}
+              className="group relative block overflow-hidden rounded-3xl hairline border glass-card transition-all duration-500 hover:shadow-[0_20px_60px_-20px_rgba(200,162,74,0.45)]"
             >
-              <div className="relative aspect-[4/5]">
+              <div className="relative aspect-[4/5] overflow-hidden">
                 <img
-                  src={c.image}
-                  alt={`${c.name} — ${c.tagline} | OMORA BLOOMS collection`}
+                  src={product.image}
+                  alt={product.name}
                   loading="lazy"
-                  decoding="async"
-                  sizes="(min-width: 768px) 33vw, 82vw"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
-                {isNew && (
-                  <span className="absolute top-4 left-4 inline-flex items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-[0.22em] uppercase font-semibold px-3 py-1.5 shadow-lg">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[color:var(--noir)]" /> New Collection
+                <div className="absolute top-4 left-4">
+                  <span className="rounded-full bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-widest uppercase font-semibold px-3 py-1 shadow">
+                    {product.category}
                   </span>
-                )}
+                </div>
 
-                <div className="absolute inset-x-0 bottom-0 p-5 md:p-7">
-                  <p className="eyebrow mb-1 text-[0.65rem] md:text-[0.7rem]">Collection</p>
-                  <h3 className="font-serif text-2xl md:text-3xl leading-tight">{c.name}</h3>
-                  <p className="text-xs md:text-sm text-[color:var(--muted-foreground)] mt-1.5 line-clamp-2">{c.tagline}</p>
-                  <span className="mt-4 inline-flex items-center gap-2 text-xs text-[color:var(--gold)] tracking-widest uppercase">
-                    Shop now <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
-                  </span>
+                <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+                  <h3 className="font-serif text-2xl text-white leading-tight">{product.name}</h3>
+                  <p className="text-xs text-white/70 mt-1 line-clamp-2">{product.description}</p>
+                  
+                  <div className="mt-5 flex items-center justify-between">
+                    <span className="text-gold-gradient font-serif text-xl font-medium">₹{product.price.toLocaleString("en-IN")}</span>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[color:var(--gold)] tracking-widest uppercase">
+                      View Sub-Category <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </div>
                 </div>
               </div>
             </Link>
           );
         })}
-      </div>
-
-      <div className="md:hidden mt-6 text-center">
-        <Link to="/collections" className="inline-flex items-center gap-2 text-sm text-[color:var(--gold)]">
-          View all collections <ArrowRight className="h-4 w-4" />
-        </Link>
       </div>
     </section>
   );
@@ -231,27 +238,7 @@ function EternalBondBanner() {
   );
 }
 
-function NewArrivalsSection() {
-  return (
-    <section className="container-luxe py-16 md:py-24 border-t hairline">
-      <div className="flex items-end justify-between mb-12 gap-6">
-        <div>
-          <p className="eyebrow mb-3 text-[color:var(--gold)]">Just Added</p>
-          <h2 className="font-serif text-4xl md:text-5xl max-w-xl leading-tight">New Arrivals</h2>
-        </div>
-        <Link to="/shop" className="hidden md:inline-flex items-center gap-2 text-sm text-[color:var(--gold)] hover:opacity-80">
-          Explore all <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-5 md:gap-8">
-        {LOCAL_PRODUCTS.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
+/* ಇಲ್ಲಿ ನಿಮ್ಮ ಹಳೆಯ ಎಲ್ಲಾ ಪ್ರಾಡಕ್ಟ್‌ಗಳು 'Bestsellers' ಆಗಿ ಲಿಸ್ಟ್ ಆಗುತ್ತವೆ */
 function BestSellers() {
   const { data } = useSuspenseQuery(productsQuery);
   const productsList = (data && data.length > 0) ? data : LOCAL_PRODUCTS;
