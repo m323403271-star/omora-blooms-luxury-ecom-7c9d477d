@@ -2,10 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { formatPrice, resolveProductImage, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
+import { handleImageError } from "@/lib/image-fallback";
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
   const img = resolveProductImage(product.image_url);
+  const onSale = Boolean(product.compare_at_price);
+  const isBestseller = product.tags?.includes("bestseller");
 
   return (
     <div className="group relative">
@@ -17,18 +20,28 @@ export function ProductCard({ product }: { product: Product }) {
             loading="lazy"
             decoding="async"
             sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+            onError={handleImageError}
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          {product.compare_at_price && (
-            <span className="absolute top-3 left-3 bg-[color:var(--blush)] text-[color:var(--noir)] text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full font-medium">
-              Sale
-            </span>
+
+          {/* Badge stack — anchored to top corners with safe insets so they
+              never bleed over the image border or the title below. Both
+              badges share one row when present. */}
+          {(onSale || isBestseller) && (
+            <div className="pointer-events-none absolute inset-x-2 top-2 flex items-start justify-between gap-2">
+              {onSale ? (
+                <span className="inline-flex items-center rounded-full bg-[color:var(--blush)] text-[color:var(--noir)] text-[10px] tracking-[0.18em] uppercase px-2.5 py-1 font-semibold shadow-sm">
+                  Sale
+                </span>
+              ) : <span />}
+              {isBestseller && (
+                <span className="inline-flex items-center rounded-full bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-[0.18em] uppercase px-2.5 py-1 font-semibold shadow-sm">
+                  Bestseller
+                </span>
+              )}
+            </div>
           )}
-          {product.tags?.includes("bestseller") && (
-            <span className="absolute top-3 right-3 bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full font-medium">
-              Bestseller
-            </span>
-          )}
+
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -42,8 +55,8 @@ export function ProductCard({ product }: { product: Product }) {
           </button>
         </div>
         <div className="mt-4 space-y-1">
-          <h3 className="font-serif text-lg text-[color:var(--foreground)] leading-snug">{product.name}</h3>
-          {product.tagline && <p className="text-xs text-[color:var(--muted-foreground)]">{product.tagline}</p>}
+          <h3 className="font-serif text-lg text-[color:var(--foreground)] leading-snug line-clamp-2">{product.name}</h3>
+          {product.tagline && <p className="text-xs text-[color:var(--muted-foreground)] line-clamp-2">{product.tagline}</p>}
           <div className="flex items-baseline gap-2 pt-1">
             <span className="text-[color:var(--gold)] font-medium">{formatPrice(product.price)}</span>
             {product.compare_at_price && (
@@ -55,3 +68,4 @@ export function ProductCard({ product }: { product: Product }) {
     </div>
   );
 }
+
