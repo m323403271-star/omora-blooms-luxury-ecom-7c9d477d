@@ -78,6 +78,7 @@ export function Media3DViewer({ images, alt }: Props) {
             fetchPriority="high"
             decoding="async"
             sizes="(min-width: 1024px) 50vw, 100vw"
+            onError={handleImageError}
             className="absolute inset-0 h-full w-full object-cover will-change-transform"
             style={{
               transform: zoomed ? "scale(2)" : "scale(1)",
