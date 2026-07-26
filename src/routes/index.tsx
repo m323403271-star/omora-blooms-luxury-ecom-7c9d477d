@@ -259,7 +259,7 @@ function PackagingBand() {
           </ul>
         </div>
         <div className="order-1 lg:order-2 relative">
-          <img src="/src/assets/collection-giftbox.jpg" onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }} alt="OMORA BLOOMS luxury packaging" className="w-full aspect-square object-cover rounded-3xl hairline border" />
+          <img src={giftboxImg} loading="lazy" decoding="async" alt="OMORA BLOOMS luxury signature packaging — matte black magnetic gift box with gold foil detailing" className="w-full aspect-square object-cover rounded-3xl hairline border" />
         </div>
       </div>
     </section>
