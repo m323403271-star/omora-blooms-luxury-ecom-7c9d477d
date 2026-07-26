@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { ArrowRight, MessageCircle, Sparkles, Package, Truck, Heart, Gem, Award } from "lucide-react";
 import heroBouquet from "@/assets/hero-bouquet.jpg";
 import eternalBondBanner from "@/assets/banner-eternal-bond.jpg";
+import giftboxImg from "@/assets/collection-giftbox.jpg";
 import { COLLECTIONS } from "@/lib/collections";
 import { productsQuery } from "@/lib/products";
 import { ProductCard } from "@/components/site/ProductCard";
