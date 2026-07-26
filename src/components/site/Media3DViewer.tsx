@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { RotateCw, ZoomIn, ZoomOut } from "lucide-react";
+import { handleImageError } from "@/lib/image-fallback";
 
 type Props = {
   images: string[];
