@@ -130,6 +130,7 @@ export function Media3DViewer({ images, alt }: Props) {
                 alt={`${alt} — alternate view ${i + 1}`}
                 loading="lazy"
                 decoding="async"
+                onError={handleImageError}
                 className="h-16 w-16 md:h-20 md:w-20 object-cover"
               />
             </button>
