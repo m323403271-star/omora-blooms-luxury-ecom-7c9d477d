@@ -6,6 +6,7 @@ import {
   DeliveryBand,
   EternalBondBanner,
   FeatureGrid,
+  FeaturedCarousel,
   FinalCta,
   Hero,
   HomeThreeProductsSection,
