@@ -168,18 +168,60 @@ export function EternalBondBanner() {
 }
 
 export function FeaturedCarousel() {
-  const slugs = [
-    "divine-heritage-luxury-gift-box",
-    "mini-indoor-plants",
-    "luxury-airport-welcome-bouquet",
+  const items = [
+    {
+      key: "crochet",
+      title: "Crochet Bouquets",
+      image: COLLECTIONS.find((c) => c.slug === "crochet-bouquets")!.image,
+      to: "/collections/$slug" as const,
+      params: { slug: "crochet-bouquets" },
+      price: "from ₹3,499",
+    },
+    {
+      key: "frames",
+      title: "Everlasting Floral Frames & Vases",
+      image: COLLECTIONS.find((c) => c.slug === "frames-vases")!.image,
+      to: "/collections/$slug" as const,
+      params: { slug: "frames-vases" },
+      price: "from ₹2,299",
+    },
+    {
+      key: "pipecleaner",
+      title: "Pipe Cleaner Flower Bouquets",
+      image: COLLECTIONS.find((c) => c.slug === "pipe-cleaner-bouquets")!.image,
+      to: "/collections/$slug" as const,
+      params: { slug: "pipe-cleaner-bouquets" },
+      price: "from ₹1,899",
+    },
+    {
+      key: "divine",
+      title: "Divine Heritage Luxury Gift Box",
+      image: resolveProductImage(LOCAL_PRODUCTS.find((p) => p.slug === "divine-heritage-luxury-gift-box")!.image_url),
+      to: "/products/$slug" as const,
+      params: { slug: "divine-heritage-luxury-gift-box" },
+      price: "₹3,999",
+    },
+    {
+      key: "plants",
+      title: "Mini Indoor Plants",
+      image: COLLECTIONS.find((c) => c.slug === "indoor-plants")!.image,
+      to: "/collections/$slug" as const,
+      params: { slug: "indoor-plants" },
+      price: "from ₹1,299",
+    },
+    {
+      key: "airport",
+      title: "Luxury Airport Welcome Bouquet",
+      image: resolveProductImage(LOCAL_PRODUCTS.find((p) => p.slug === "luxury-airport-welcome-bouquet")!.image_url),
+      to: "/products/$slug" as const,
+      params: { slug: "luxury-airport-welcome-bouquet" },
+      price: "₹2,499",
+    },
   ];
-  const items = slugs
-    .map((s) => LOCAL_PRODUCTS.find((p) => p.slug === s))
-    .filter((p): p is typeof LOCAL_PRODUCTS[number] => Boolean(p));
 
   return (
-    <section className="container-luxe py-12 md:py-16">
-      <div className="flex items-end justify-between mb-6 md:mb-8">
+    <section className="container-luxe py-10 md:py-14">
+      <div className="flex items-end justify-between mb-5 md:mb-7">
         <div>
           <p className="eyebrow mb-2 text-[color:var(--gold)]">Curated Picks</p>
           <h2 className="font-serif text-2xl md:text-4xl leading-tight">Signature Highlights</h2>
@@ -189,31 +231,28 @@ export function FeaturedCarousel() {
         </Link>
       </div>
       <div
-        className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth"
+        className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth"
         style={{ scrollbarWidth: "thin" }}
       >
-        {items.map((p) => (
+        {items.map((it) => (
           <Link
-            key={p.id}
-            to="/products/$slug"
-            params={{ slug: p.slug }}
-            className="group relative snap-start shrink-0 w-[65%] sm:w-[45%] md:w-[32%] lg:w-[24%] rounded-2xl overflow-hidden hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
+            key={it.key}
+            to={it.to}
+            params={it.params}
+            className="group relative snap-start shrink-0 w-[42%] sm:w-[30%] md:w-[22%] lg:w-[18%] rounded-2xl overflow-hidden hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
           >
             <div className="aspect-[4/5] overflow-hidden">
               <img
-                src={resolveProductImage(p.image_url)}
-                alt={`${p.name} — OMORA BLOOMS`}
+                src={it.image}
+                alt={`${it.title} — OMORA BLOOMS`}
                 loading="lazy"
                 decoding="async"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
               />
             </div>
-            <div className="absolute inset-x-0 bottom-0 p-3 md:p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-              {p.tagline && <p className="eyebrow text-[color:var(--gold)] text-[10px] mb-1">{p.tagline}</p>}
-              <h3 className="font-serif text-sm md:text-base text-white leading-snug line-clamp-2">{p.name}</h3>
-              <p className="mt-1 text-[color:var(--gold)] text-xs md:text-sm font-medium">
-                {`₹${Number(p.price).toLocaleString("en-IN")}`}
-              </p>
+            <div className="absolute inset-x-0 bottom-0 p-2.5 md:p-3 bg-gradient-to-t from-black/90 via-black/55 to-transparent">
+              <h3 className="font-serif text-[12px] md:text-sm text-white leading-snug line-clamp-2">{it.title}</h3>
+              <p className="mt-0.5 text-[color:var(--gold)] text-[11px] md:text-xs font-medium">{it.price}</p>
             </div>
           </Link>
         ))}
@@ -221,6 +260,7 @@ export function FeaturedCarousel() {
     </section>
   );
 }
+
 
 export function BestSellers() {
   const { data } = useSuspenseQuery(productsQuery);
