@@ -21,7 +21,7 @@ import pipecleanerImg from "@/assets/collection-pipecleaner.jpg";
 import babyImg from "@/assets/collection-baby.jpg";
 import motherImg from "@/assets/collection-mother.jpg";
 import airportImg from "@/assets/collection-airport.jpg";
-import giftboxImg from "@/assets/collection-giftbox.jpg";
+import giftboxImg from "@/assets/divine-heritage-giftbox.jpg";
 import corporateImg from "@/assets/collection-corporate.jpg";
 import weddingImg from "@/assets/collection-wedding.jpg";
 
@@ -32,6 +32,7 @@ const imageMap: Record<string, string> = {
   "/src/assets/collection-mother.jpg": motherImg,
   "/src/assets/collection-airport.jpg": airportImg,
   "/src/assets/collection-giftbox.jpg": giftboxImg,
+  "/src/assets/divine-heritage-giftbox.jpg": giftboxImg,
   "/src/assets/collection-corporate.jpg": corporateImg,
   "/src/assets/collection-wedding.jpg": weddingImg,
 };
