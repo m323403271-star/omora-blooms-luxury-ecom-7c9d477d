@@ -172,30 +172,6 @@ export function EternalBondBanner() {
 export function FeaturedCarousel() {
   const items = [
     {
-      key: "crochet",
-      title: "Crochet Bouquets",
-      image: COLLECTIONS.find((c) => c.slug === "crochet-bouquets")!.image,
-      to: "/collections/$slug" as const,
-      params: { slug: "crochet-bouquets" },
-      price: "from ₹3,499",
-    },
-    {
-      key: "frames",
-      title: "Everlasting Floral Frames & Vases",
-      image: COLLECTIONS.find((c) => c.slug === "frames-vases")!.image,
-      to: "/collections/$slug" as const,
-      params: { slug: "frames-vases" },
-      price: "from ₹2,299",
-    },
-    {
-      key: "pipecleaner",
-      title: "Pipe Cleaner Flower Bouquets",
-      image: COLLECTIONS.find((c) => c.slug === "pipe-cleaner-bouquets")!.image,
-      to: "/collections/$slug" as const,
-      params: { slug: "pipe-cleaner-bouquets" },
-      price: "from ₹1,899",
-    },
-    {
       key: "divine",
       title: "Divine Heritage Luxury Gift Box",
       image: resolveProductImage(LOCAL_PRODUCTS.find((p) => p.slug === "divine-heritage-luxury-gift-box")!.image_url),
