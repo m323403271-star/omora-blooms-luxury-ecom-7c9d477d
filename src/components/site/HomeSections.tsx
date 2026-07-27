@@ -167,6 +167,61 @@ export function EternalBondBanner() {
   );
 }
 
+export function FeaturedCarousel() {
+  const slugs = [
+    "divine-heritage-luxury-gift-box",
+    "mini-indoor-plants",
+    "luxury-airport-welcome-bouquet",
+  ];
+  const items = slugs
+    .map((s) => LOCAL_PRODUCTS.find((p) => p.slug === s))
+    .filter((p): p is typeof LOCAL_PRODUCTS[number] => Boolean(p));
+
+  return (
+    <section className="container-luxe py-12 md:py-16">
+      <div className="flex items-end justify-between mb-6 md:mb-8">
+        <div>
+          <p className="eyebrow mb-2 text-[color:var(--gold)]">Curated Picks</p>
+          <h2 className="font-serif text-2xl md:text-4xl leading-tight">Signature Highlights</h2>
+        </div>
+        <Link to="/shop" className="hidden md:inline-flex items-center gap-1.5 text-sm text-[color:var(--gold)] hover:opacity-80">
+          View All <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+      <div
+        className="flex gap-4 md:gap-6 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth"
+        style={{ scrollbarWidth: "thin" }}
+      >
+        {items.map((p) => (
+          <Link
+            key={p.id}
+            to="/products/$slug"
+            params={{ slug: p.slug }}
+            className="group relative snap-start shrink-0 w-[65%] sm:w-[45%] md:w-[32%] lg:w-[24%] rounded-2xl overflow-hidden hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
+          >
+            <div className="aspect-[4/5] overflow-hidden">
+              <img
+                src={resolveProductImage(p.image_url)}
+                alt={`${p.name} — OMORA BLOOMS`}
+                loading="lazy"
+                decoding="async"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+              />
+            </div>
+            <div className="absolute inset-x-0 bottom-0 p-3 md:p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+              {p.tagline && <p className="eyebrow text-[color:var(--gold)] text-[10px] mb-1">{p.tagline}</p>}
+              <h3 className="font-serif text-sm md:text-base text-white leading-snug line-clamp-2">{p.name}</h3>
+              <p className="mt-1 text-[color:var(--gold)] text-xs md:text-sm font-medium">
+                {`₹${Number(p.price).toLocaleString("en-IN")}`}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function BestSellers() {
   const { data } = useSuspenseQuery(productsQuery);
   const products = (data && data.length > 0 ? data : LOCAL_PRODUCTS).slice(0, 8);
@@ -189,6 +244,7 @@ export function BestSellers() {
     </section>
   );
 }
+
 
 export function StoryBand() {
   return (
