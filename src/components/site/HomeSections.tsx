@@ -6,7 +6,7 @@ import heroBouquet from "@/assets/hero-bouquet.jpg";
 import eternalBondBanner from "@/assets/banner-eternal-bond.jpg";
 import giftboxImg from "@/assets/collection-giftbox.jpg";
 import { COLLECTIONS } from "@/lib/collections";
-import { LOCAL_PRODUCTS, productsQuery } from "@/lib/products";
+import { LOCAL_PRODUCTS, productsQuery, resolveProductImage } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { ProductCard } from "@/components/site/ProductCard";
 
