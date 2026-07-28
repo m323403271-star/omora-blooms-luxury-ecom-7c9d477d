@@ -25,7 +25,7 @@ function Card({ card }: { card: CategoryCard }) {
     <Link
       to="/collections/$slug"
       params={{ slug: card.slug }}
-      search={{ from: "home" } as never}
+     
       className="group relative block overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
       aria-label={`Explore ${card.title}`}
     >
@@ -101,7 +101,7 @@ export function HomeCategoryGrid() {
         <Link
           to="/collections/$slug"
           params={{ slug: "luxury-gift-boxes" }}
-          search={{ from: "home", featured: "eternal-bond" } as never}
+         
           className="group relative block overflow-hidden rounded-3xl hairline border ring-1 ring-[color:var(--gold)]/40 shadow-[0_30px_80px_-30px_rgba(200,162,74,0.55)] transition-shadow duration-500 hover:shadow-[0_40px_100px_-30px_rgba(200,162,74,0.75)]"
           aria-label="Explore The Eternal Bond Luxury Kit"
         >
