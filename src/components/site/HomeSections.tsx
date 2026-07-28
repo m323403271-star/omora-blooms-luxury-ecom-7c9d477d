@@ -6,7 +6,7 @@ import heroBouquet from "@/assets/hero-bouquet.jpg";
 import eternalBondBanner from "@/assets/banner-eternal-bond.jpg";
 import giftboxImg from "@/assets/collection-giftbox.jpg";
 import { COLLECTIONS } from "@/lib/collections";
-import { LOCAL_PRODUCTS, productsQuery, resolveProductImage } from "@/lib/products";
+import { LOCAL_PRODUCTS, productsQuery } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { ProductCard } from "@/components/site/ProductCard";
 
@@ -82,21 +82,18 @@ export function HomeThreeProductsSection() {
     ["crochet-bouquets", "frames-vases", "pipe-cleaner-bouquets"].includes(c.slug)
   );
   return (
-    <section className="container-luxe py-12 md:py-16">
-      <div className="text-center max-w-2xl mx-auto mb-6 md:mb-10">
+    <section className="container-luxe py-16 md:py-24">
+      <div className="text-center max-w-2xl mx-auto mb-10 md:mb-14">
         <p className="eyebrow mb-3">Signature Collections</p>
-        <h2 className="font-serif text-2xl md:text-4xl leading-tight">Handcrafted, Everlasting Luxury</h2>
+        <h2 className="font-serif text-3xl md:text-5xl leading-tight">Handcrafted, Everlasting Luxury</h2>
       </div>
-      <div
-        className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth"
-        style={{ scrollbarWidth: "thin" }}
-      >
+      <div className="grid gap-5 md:gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {featured.map((c) => (
           <Link
             key={c.slug}
             to="/collections/$slug"
             params={{ slug: c.slug }}
-            className="group relative snap-start shrink-0 w-[45%] sm:w-[32%] md:w-[24%] lg:w-[20%] rounded-2xl overflow-hidden hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
+            className="group relative overflow-hidden rounded-3xl hairline border block"
           >
             <div className="aspect-[4/5] overflow-hidden">
               <img
@@ -104,14 +101,15 @@ export function HomeThreeProductsSection() {
                 alt={c.name}
                 loading="lazy"
                 decoding="async"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
+                className="h-full w-full object-cover transition-transform duration-[900ms] group-hover:scale-[1.06]"
               />
             </div>
-            <div className="absolute inset-x-0 bottom-0 p-2.5 md:p-3 bg-gradient-to-t from-black/90 via-black/55 to-transparent">
-              <p className="eyebrow text-[color:var(--gold)] text-[9px] md:text-[10px] mb-0.5">{c.tagline}</p>
-              <h3 className="font-serif text-[12px] md:text-sm text-white leading-snug line-clamp-2">{c.name}</h3>
-              <span className="mt-1 inline-flex items-center gap-1 text-[10px] md:text-xs text-white/90">
-                Explore <ArrowRight className="h-3 w-3" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+              <p className="eyebrow text-[color:var(--gold)] mb-1.5">{c.tagline}</p>
+              <h3 className="font-serif text-xl md:text-2xl text-white">{c.name}</h3>
+              <span className="mt-3 inline-flex items-center gap-1.5 text-xs text-white/90">
+                Explore <ArrowRight className="h-3.5 w-3.5" />
               </span>
             </div>
           </Link>
@@ -169,77 +167,6 @@ export function EternalBondBanner() {
   );
 }
 
-export function FeaturedCarousel() {
-  const items = [
-    {
-      key: "divine",
-      title: "Divine Heritage Luxury Gift Box",
-      image: resolveProductImage(LOCAL_PRODUCTS.find((p) => p.slug === "divine-heritage-luxury-gift-box")!.image_url),
-      to: "/products/$slug" as const,
-      params: { slug: "divine-heritage-luxury-gift-box" },
-      price: "₹3,999",
-    },
-    {
-      key: "plants",
-      title: "Mini Indoor Plants",
-      image: COLLECTIONS.find((c) => c.slug === "indoor-plants")!.image,
-      to: "/collections/$slug" as const,
-      params: { slug: "indoor-plants" },
-      price: "from ₹1,299",
-    },
-    {
-      key: "airport",
-      title: "Luxury Airport Welcome Bouquet",
-      image: resolveProductImage(LOCAL_PRODUCTS.find((p) => p.slug === "luxury-airport-welcome-bouquet")!.image_url),
-      to: "/products/$slug" as const,
-      params: { slug: "luxury-airport-welcome-bouquet" },
-      price: "₹2,499",
-    },
-  ];
-
-  return (
-    <section className="container-luxe py-10 md:py-14">
-      <div className="flex items-end justify-between mb-5 md:mb-7">
-        <div>
-          <p className="eyebrow mb-2 text-[color:var(--gold)]">Curated Picks</p>
-          <h2 className="font-serif text-2xl md:text-4xl leading-tight">Signature Highlights</h2>
-        </div>
-        <Link to="/shop" className="hidden md:inline-flex items-center gap-1.5 text-sm text-[color:var(--gold)] hover:opacity-80">
-          View All <ArrowRight className="h-4 w-4" />
-        </Link>
-      </div>
-      <div
-        className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 md:mx-0 md:px-0 scroll-smooth"
-        style={{ scrollbarWidth: "thin" }}
-      >
-        {items.map((it) => (
-          <Link
-            key={it.key}
-            to={it.to}
-            params={it.params}
-            className="group relative snap-start shrink-0 w-[42%] sm:w-[30%] md:w-[22%] lg:w-[18%] rounded-2xl overflow-hidden hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
-          >
-            <div className="aspect-[4/5] overflow-hidden">
-              <img
-                src={it.image}
-                alt={`${it.title} — OMORA BLOOMS`}
-                loading="lazy"
-                decoding="async"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-              />
-            </div>
-            <div className="absolute inset-x-0 bottom-0 p-2.5 md:p-3 bg-gradient-to-t from-black/90 via-black/55 to-transparent">
-              <h3 className="font-serif text-[12px] md:text-sm text-white leading-snug line-clamp-2">{it.title}</h3>
-              <p className="mt-0.5 text-[color:var(--gold)] text-[11px] md:text-xs font-medium">{it.price}</p>
-            </div>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-
 export function BestSellers() {
   const { data } = useSuspenseQuery(productsQuery);
   const products = (data && data.length > 0 ? data : LOCAL_PRODUCTS).slice(0, 8);
@@ -262,7 +189,6 @@ export function BestSellers() {
     </section>
   );
 }
-
 
 export function StoryBand() {
   return (
