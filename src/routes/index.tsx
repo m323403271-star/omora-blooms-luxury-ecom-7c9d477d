@@ -1,19 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Suspense } from "react";
 import { productsQuery } from "@/lib/products";
 import {
-  BestSellers,
   DeliveryBand,
-  EternalBondBanner,
   FeatureGrid,
-  FeaturedCarousel,
   FinalCta,
   Hero,
-  HomeThreeProductsSection,
   Marquee,
   PackagingBand,
   StoryBand,
 } from "@/components/site/HomeSections";
+import { HomeCategoryGrid } from "@/components/site/HomeCategoryGrid";
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery),
@@ -22,12 +18,14 @@ export const Route = createFileRoute("/")({
       { title: "OMORA BLOOMS — Luxury Handmade Bouquets" },
       {
         name: "description",
-        content: "Shop OMORA BLOOMS luxury handmade crochet bouquets, pipe cleaner flowers, mother recovery kits, baby essentials and premium gift boxes.",
+        content:
+          "Shop OMORA BLOOMS luxury handmade crochet bouquets, pipe cleaner flowers, mother recovery kits, baby essentials and premium gift boxes.",
       },
       { property: "og:title", content: "OMORA BLOOMS — Luxury Handmade Bouquets" },
       {
         property: "og:description",
-        content: "Luxury handmade bouquets and premium gifts crafted to last forever, with express delivery options in Bengaluru.",
+        content:
+          "Luxury handmade bouquets and premium gifts crafted to last forever, with express delivery options in Bengaluru.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -41,19 +39,7 @@ function HomePage() {
     <div>
       <Hero />
       <Marquee />
-
-      {/* ಹೊಸದಾಗಿ ಸೇರಿಸಿದ 3 ಪ್ರಮುಖ ಪ್ರಾಡಕ್ಟ್‌ಗಳ ವಿಭಾಗ (ಕ್ಲಿಕ್ ಮಾಡಿದರೆ ಸಬ್-ಕ್ಯಾಟಗರಿ ಪೇಜ್‌ಗೆ ಹೋಗುತ್ತದೆ) */}
-      <HomeThreeProductsSection />
-
-      <EternalBondBanner />
-
-      <FeaturedCarousel />
-
-      {/* ನಿಮ್ಮ ಹಳೆಯ ಎಲ್ಲಾ ಪ್ರಾಡಕ್ಟ್‌ಗಳು ಇಲ್ಲಿ 'Bestsellers' ಆಗಿ ಸುರಕ್ಷಿತವಾಗಿ ಕಾಣಿಸುತ್ತವೆ */}
-      <Suspense fallback={<div className="container-luxe py-24 text-center text-sm text-[color:var(--muted-foreground)]">Loading products...</div>}>
-        <BestSellers />
-      </Suspense>
-
+      <HomeCategoryGrid />
       <StoryBand />
       <FeatureGrid />
       <PackagingBand />
@@ -62,4 +48,3 @@ function HomePage() {
     </div>
   );
 }
-
