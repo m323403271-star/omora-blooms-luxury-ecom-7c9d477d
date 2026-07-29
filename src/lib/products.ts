@@ -1,4 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export type Product = {
   id: string;
@@ -10,11 +11,13 @@ export type Product = {
   compare_at_price: number | null;
   category: string;
   image_url: string;
+  images?: string[] | null;
   tags: string[] | null;
   featured: boolean;
   available: boolean;
   sort_order: number;
 };
+
 
 import crochetImg from "@/assets/collection-crochet.jpg";
 import pipecleanerImg from "@/assets/collection-pipecleaner.jpg";
