@@ -127,6 +127,7 @@ function RootComponent() {
         <CartDrawer />
         <WhatsAppFab />
         <RefCapture />
+        <Analytics />
         <Toaster theme="dark" position="bottom-left" toastOptions={{ style: { background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--border)" } }} />
       </CartProvider>
     </QueryClientProvider>
