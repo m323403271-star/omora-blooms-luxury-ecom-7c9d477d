@@ -18,6 +18,7 @@ import { Footer } from "@/components/site/Footer";
 import { CartDrawer } from "@/components/site/CartDrawer";
 import { WhatsAppFab } from "@/components/site/WhatsAppFab";
 import { RefCapture } from "@/components/site/RefCapture";
+import { Analytics } from "@/components/site/Analytics";
 import logoAsset from "@/assets/omora-logo.asset.json";
 
 function NotFoundComponent() {
