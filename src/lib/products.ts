@@ -148,8 +148,23 @@ export const LOCAL_PRODUCTS: Product[] = [
 ];
 
 async function fetchProducts(): Promise<Product[]> {
-  return LOCAL_PRODUCTS;
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select(
+        "id, slug, name, tagline, description, price, compare_at_price, category, image_url, images, tags, featured, available, sort_order",
+      )
+      .eq("available", true)
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+    if (error) throw error;
+    if (!data || data.length === 0) return LOCAL_PRODUCTS;
+    return data.map((p) => ({ ...p, price: Number(p.price), compare_at_price: p.compare_at_price === null ? null : Number(p.compare_at_price) })) as Product[];
+  } catch {
+    return LOCAL_PRODUCTS;
+  }
 }
+
 
 export const productsQuery = queryOptions({
   queryKey: ["products"],
