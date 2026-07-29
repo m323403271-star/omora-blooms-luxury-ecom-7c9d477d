@@ -1,8 +1,10 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { collectionBySlug, COLLECTIONS } from "@/lib/collections";
-import { SUB_CATALOG, imageForItem, slugify, type SubItem } from "@/lib/subcategories";
-import { whatsappLink } from "@/lib/whatsapp";
+import { SUB_CATALOG } from "@/lib/subcategories";
+import { productsQuery, resolveProductImage, type Product } from "@/lib/products";
+import { handleImageError } from "@/lib/image-fallback";
 
 export const Route = createFileRoute("/collections/$slug")({
   head: ({ params }) => {
@@ -19,59 +21,55 @@ export const Route = createFileRoute("/collections/$slug")({
       ],
     };
   },
-  loader: ({ params }) => {
+  loader: ({ context, params }) => {
     if (!collectionBySlug(params.slug) && !SUB_CATALOG[params.slug]) throw notFound();
-    return null;
+    return context.queryClient.ensureQueryData(productsQuery);
   },
   component: CollectionPage,
 });
 
-function ItemCard({ item, slug }: { item: SubItem; slug: string }) {
-  const id = slugify(item.title);
-  const img = imageForItem(item.query, `${slug}-${id}`);
-  const inquiry = whatsappLink(
-    `Hello OMORA BLOOMS! I'd like details for:\n\n${item.title}\n(${slug})\n\nPlease share pricing & availability.`,
-  );
+function ItemCard({ product }: { product: Product }) {
+  const img = resolveProductImage(product.images?.[0] || product.image_url);
   return (
-    <div className="group relative overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition">
+    <Link
+      to="/products/$slug"
+      params={{ slug: product.slug }}
+      className="group relative block overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
+    >
       <div className="aspect-[4/5] overflow-hidden bg-black/40 relative">
         <img
           src={img}
-          alt={`${item.title} — OMORA BLOOMS`}
+          alt={`${product.name} — OMORA BLOOMS`}
           loading="lazy"
           decoding="async"
+          sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
+          onError={handleImageError}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).src =
-              `https://source.unsplash.com/600x750/?luxury,flower,bouquet&sig=${id}`;
-          }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
       </div>
       <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-        <h3 className="font-serif text-lg md:text-xl text-white leading-snug tracking-tight line-clamp-2">
-          {item.title}
+        <h3 className="font-serif text-base md:text-xl text-white leading-snug tracking-tight line-clamp-2">
+          {product.name}
         </h3>
-        <a
-          href={inquiry}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/70 text-[color:var(--gold)] hover:bg-[color:var(--gold)] hover:text-[color:var(--noir)] text-[11px] tracking-[0.18em] uppercase font-semibold px-3.5 py-1.5 transition"
-        >
+        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/70 text-[color:var(--gold)] group-hover:bg-[color:var(--gold)] group-hover:text-[color:var(--noir)] text-[10px] md:text-[11px] tracking-[0.18em] uppercase font-semibold px-3.5 py-1.5 transition">
           View Details <ArrowRight className="h-3.5 w-3.5" />
-        </a>
+        </span>
       </div>
-    </div>
+    </Link>
   );
 }
 
 function CollectionPage() {
   const { slug } = Route.useParams();
+  const { data: products } = useSuspenseQuery(productsQuery);
   const collection = collectionBySlug(slug);
   const catalog = SUB_CATALOG[slug];
   const name = collection?.name ?? catalog?.eyebrow ?? "Collection";
   const tagline = collection?.tagline ?? "Handcrafted luxury, made to last forever.";
   const heroImg = collection?.image;
+
+  const items = products.filter((p) => p.category === slug);
 
   return (
     <div>
@@ -88,10 +86,10 @@ function CollectionPage() {
       </section>
 
       <section className="container-luxe py-12 md:py-16">
-        {catalog ? (
+        {items.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {catalog.items.map((it) => (
-              <ItemCard key={it.title} item={it} slug={slug} />
+            {items.map((p) => (
+              <ItemCard key={p.id} product={p} />
             ))}
           </div>
         ) : (
