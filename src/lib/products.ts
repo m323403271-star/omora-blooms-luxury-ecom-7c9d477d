@@ -27,6 +27,9 @@ import airportImg from "@/assets/collection-airport.jpg";
 import giftboxImg from "@/assets/divine-heritage-giftbox.jpg";
 import corporateImg from "@/assets/collection-corporate.jpg";
 import weddingImg from "@/assets/collection-wedding.jpg";
+import indoorPlantsImg from "@/assets/collection-indoor-plants.jpg";
+import framesVasesImg from "@/assets/collection-frames-vases.jpg";
+import plainGiftboxImg from "@/assets/collection-giftbox.jpg";
 
 const imageMap: Record<string, string> = {
   "/src/assets/collection-crochet.jpg": crochetImg,
@@ -34,11 +37,15 @@ const imageMap: Record<string, string> = {
   "/src/assets/collection-baby.jpg": babyImg,
   "/src/assets/collection-mother.jpg": motherImg,
   "/src/assets/collection-airport.jpg": airportImg,
-  "/src/assets/collection-giftbox.jpg": giftboxImg,
+  "/src/assets/collection-giftbox.jpg": plainGiftboxImg,
   "/src/assets/divine-heritage-giftbox.jpg": giftboxImg,
   "/src/assets/collection-corporate.jpg": corporateImg,
   "/src/assets/collection-wedding.jpg": weddingImg,
+  "/src/assets/collection-indoor-plants.jpg": indoorPlantsImg,
+  "/src/assets/collection-frames-vases.jpg": framesVasesImg,
+  "/src/assets/collection-divine-heritage.jpg": giftboxImg,
 };
+
 
 export function resolveProductImage(url: string, opts?: { width?: number; quality?: number }): string {
   const mapped = imageMap[url];
