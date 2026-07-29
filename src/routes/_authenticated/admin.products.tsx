@@ -15,6 +15,9 @@ type Product = {
   category: string;
   image_url: string;
   images: string[] | null;
+  price: number;
+  compare_at_price: number | null;
+  description: string | null;
 };
 
 const BUCKET = "product-images";
@@ -52,7 +55,7 @@ function AdminProductsPage() {
     setLoading(true);
     const { data, error } = await supabase
       .from("products")
-      .select("id, slug, name, category, image_url, images")
+      .select("id, slug, name, category, image_url, images, price, compare_at_price, description")
       .order("category")
       .order("name");
     if (error) toast.error(error.message);
@@ -83,7 +86,7 @@ function AdminProductsPage() {
         <div>
           <p className="eyebrow">Admin</p>
           <h1 className="font-serif text-3xl md:text-4xl mt-1">Product Photos</h1>
-          <p className="text-sm text-[color:var(--muted-foreground)] mt-1">Upload up to {MAX_PER_PRODUCT} gallery images per product (max {MAX_MB}MB each).</p>
+          <p className="text-sm text-[color:var(--muted-foreground)] mt-1">Upload up to {MAX_PER_PRODUCT} gallery images per product (max {MAX_MB}MB each), and edit price & description — changes go live instantly.</p>
         </div>
         <Link to="/" className="btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2"><ArrowLeft className="h-3 w-3" /> Back to site</Link>
 
