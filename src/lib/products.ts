@@ -1,4 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 export type Product = {
   id: string;
@@ -10,11 +11,13 @@ export type Product = {
   compare_at_price: number | null;
   category: string;
   image_url: string;
+  images?: string[] | null;
   tags: string[] | null;
   featured: boolean;
   available: boolean;
   sort_order: number;
 };
+
 
 import crochetImg from "@/assets/collection-crochet.jpg";
 import pipecleanerImg from "@/assets/collection-pipecleaner.jpg";
@@ -24,6 +27,9 @@ import airportImg from "@/assets/collection-airport.jpg";
 import giftboxImg from "@/assets/divine-heritage-giftbox.jpg";
 import corporateImg from "@/assets/collection-corporate.jpg";
 import weddingImg from "@/assets/collection-wedding.jpg";
+import indoorPlantsImg from "@/assets/collection-indoor-plants.jpg";
+import framesVasesImg from "@/assets/collection-frames-vases.jpg";
+import plainGiftboxImg from "@/assets/collection-giftbox.jpg";
 
 const imageMap: Record<string, string> = {
   "/src/assets/collection-crochet.jpg": crochetImg,
@@ -31,11 +37,15 @@ const imageMap: Record<string, string> = {
   "/src/assets/collection-baby.jpg": babyImg,
   "/src/assets/collection-mother.jpg": motherImg,
   "/src/assets/collection-airport.jpg": airportImg,
-  "/src/assets/collection-giftbox.jpg": giftboxImg,
+  "/src/assets/collection-giftbox.jpg": plainGiftboxImg,
   "/src/assets/divine-heritage-giftbox.jpg": giftboxImg,
   "/src/assets/collection-corporate.jpg": corporateImg,
   "/src/assets/collection-wedding.jpg": weddingImg,
+  "/src/assets/collection-indoor-plants.jpg": indoorPlantsImg,
+  "/src/assets/collection-frames-vases.jpg": framesVasesImg,
+  "/src/assets/collection-divine-heritage.jpg": giftboxImg,
 };
+
 
 export function resolveProductImage(url: string, opts?: { width?: number; quality?: number }): string {
   const mapped = imageMap[url];
@@ -138,8 +148,23 @@ export const LOCAL_PRODUCTS: Product[] = [
 ];
 
 async function fetchProducts(): Promise<Product[]> {
-  return LOCAL_PRODUCTS;
+  try {
+    const { data, error } = await supabase
+      .from("products")
+      .select(
+        "id, slug, name, tagline, description, price, compare_at_price, category, image_url, images, tags, featured, available, sort_order",
+      )
+      .eq("available", true)
+      .order("sort_order", { ascending: true })
+      .order("name", { ascending: true });
+    if (error) throw error;
+    if (!data || data.length === 0) return LOCAL_PRODUCTS;
+    return data.map((p) => ({ ...p, price: Number(p.price), compare_at_price: p.compare_at_price === null ? null : Number(p.compare_at_price) })) as Product[];
+  } catch {
+    return LOCAL_PRODUCTS;
+  }
 }
+
 
 export const productsQuery = queryOptions({
   queryKey: ["products"],

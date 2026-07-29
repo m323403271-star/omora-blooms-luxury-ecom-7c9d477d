@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Upload, Trash2, Image as ImageIcon, Search, ArrowLeft, Loader2 } from "lucide-react";
+import { Upload, Trash2, Image as ImageIcon, Search, ArrowLeft, Loader2, Save } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/products")({
   component: AdminProductsPage,
@@ -15,6 +15,9 @@ type Product = {
   category: string;
   image_url: string;
   images: string[] | null;
+  price: number;
+  compare_at_price: number | null;
+  description: string | null;
 };
 
 const BUCKET = "product-images";
@@ -52,7 +55,7 @@ function AdminProductsPage() {
     setLoading(true);
     const { data, error } = await supabase
       .from("products")
-      .select("id, slug, name, category, image_url, images")
+      .select("id, slug, name, category, image_url, images, price, compare_at_price, description")
       .order("category")
       .order("name");
     if (error) toast.error(error.message);
@@ -83,7 +86,7 @@ function AdminProductsPage() {
         <div>
           <p className="eyebrow">Admin</p>
           <h1 className="font-serif text-3xl md:text-4xl mt-1">Product Photos</h1>
-          <p className="text-sm text-[color:var(--muted-foreground)] mt-1">Upload up to {MAX_PER_PRODUCT} gallery images per product (max {MAX_MB}MB each).</p>
+          <p className="text-sm text-[color:var(--muted-foreground)] mt-1">Upload up to {MAX_PER_PRODUCT} gallery images per product (max {MAX_MB}MB each), and edit price & description — changes go live instantly.</p>
         </div>
         <Link to="/" className="btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2"><ArrowLeft className="h-3 w-3" /> Back to site</Link>
 
@@ -109,7 +112,33 @@ function AdminProductsPage() {
 
 function ProductRow({ product, onChanged }: { product: Product; onChanged: () => void }) {
   const [busy, setBusy] = useState(false);
+  const [price, setPrice] = useState(String(product.price ?? 0));
+  const [compareAt, setCompareAt] = useState(product.compare_at_price != null ? String(product.compare_at_price) : "");
+  const [description, setDescription] = useState(product.description ?? "");
+  const [saving, setSaving] = useState(false);
   const images = product.images ?? [];
+
+  const dirty =
+    price !== String(product.price ?? 0) ||
+    compareAt !== (product.compare_at_price != null ? String(product.compare_at_price) : "") ||
+    description !== (product.description ?? "");
+
+  async function saveDetails() {
+    const priceNum = Number(price);
+    if (!Number.isFinite(priceNum) || priceNum < 0) { toast.error("Enter a valid price"); return; }
+    const compareNum = compareAt.trim() === "" ? null : Number(compareAt);
+    if (compareNum !== null && (!Number.isFinite(compareNum) || compareNum < 0)) { toast.error("Enter a valid compare-at price"); return; }
+    if (description.length > 2000) { toast.error("Description must be under 2000 characters"); return; }
+    setSaving(true);
+    const { error } = await supabase
+      .from("products")
+      .update({ price: priceNum, compare_at_price: compareNum, description: description.trim() || null })
+      .eq("id", product.id);
+    setSaving(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("Product details updated");
+    onChanged();
+  }
   const remaining = Math.max(0, MAX_PER_PRODUCT - images.length);
 
   async function handleFiles(files: FileList | null) {
@@ -171,6 +200,52 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
           {remaining === 0 ? "Full" : `Upload (${remaining} left)`}
           <input type="file" accept="image/*" multiple hidden onChange={(e) => { handleFiles(e.target.files); e.currentTarget.value = ""; }} />
         </label>
+      </div>
+
+      <div className="mt-4 grid gap-3 md:grid-cols-[160px_160px_1fr] md:items-start">
+        <label className="block">
+          <span className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">Price (₹)</span>
+          <input
+            type="number"
+            min={0}
+            inputMode="numeric"
+            value={price}
+            onChange={(e) => setPrice(e.target.value)}
+            className="mt-1 w-full hairline border rounded-xl bg-transparent px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">Compare at (₹)</span>
+          <input
+            type="number"
+            min={0}
+            inputMode="numeric"
+            value={compareAt}
+            placeholder="Optional"
+            onChange={(e) => setCompareAt(e.target.value)}
+            className="mt-1 w-full hairline border rounded-xl bg-transparent px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+          />
+        </label>
+        <label className="block">
+          <span className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">Description</span>
+          <textarea
+            rows={3}
+            maxLength={2000}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe this product for customers…"
+            className="mt-1 w-full hairline border rounded-xl bg-transparent px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[color:var(--gold)] resize-y"
+          />
+        </label>
+      </div>
+      <div className="mt-3 flex justify-end">
+        <button
+          onClick={saveDetails}
+          disabled={!dirty || saving}
+          className="btn-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 disabled:opacity-40"
+        >
+          {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />} Save changes
+        </button>
       </div>
 
       {images.length > 0 && (
