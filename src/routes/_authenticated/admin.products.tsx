@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { signProductImages } from "@/lib/storage-image";
 import { Upload, Trash2, Image as ImageIcon, Search, ArrowLeft, Loader2, Save } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/products")({
@@ -24,16 +25,18 @@ const BUCKET = "product-images";
 const MAX_PER_PRODUCT = 4;
 const MAX_MB = 5;
 
-function publicUrl(path: string) {
-  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
-  return data.publicUrl;
+// Bucket is private, so we store the object path and render via signed URLs.
+function storedRef(path: string) {
+  return `${BUCKET}/${path}`;
 }
 
-// Storage path from a public URL (used for delete)
+// Storage path from a stored reference (used for delete)
 function pathFromUrl(url: string): string | null {
   const marker = `/${BUCKET}/`;
   const i = url.indexOf(marker);
-  return i >= 0 ? url.slice(i + marker.length) : null;
+  if (i >= 0) return url.slice(i + marker.length).split("?")[0];
+  if (url.startsWith(`${BUCKET}/`)) return url.slice(BUCKET.length + 1).split("?")[0];
+  return null;
 }
 
 function AdminProductsPage() {
@@ -117,6 +120,17 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
   const [description, setDescription] = useState(product.description ?? "");
   const [saving, setSaving] = useState(false);
   const images = product.images ?? [];
+  const [signed, setSigned] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const all = [product.image_url, ...images].filter(Boolean) as string[];
+    if (all.length === 0) return;
+    let active = true;
+    signProductImages(all).then((m) => { if (active) setSigned(m); });
+    return () => { active = false; };
+  }, [product.image_url, images.join("|")]);
+
+  const src = (u: string) => signed[u] ?? u;
 
   const dirty =
     price !== String(product.price ?? 0) ||
@@ -159,7 +173,7 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
           upsert: false,
         });
         if (error) { toast.error(error.message); continue; }
-        uploaded.push(publicUrl(key));
+        uploaded.push(storedRef(key));
       }
       if (uploaded.length === 0) return;
       const next = [...images, ...uploaded].slice(0, MAX_PER_PRODUCT);
@@ -189,7 +203,7 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
   return (
     <div className="glass-card rounded-2xl p-4 md:p-5">
       <div className="flex items-center gap-4 flex-wrap">
-        <img src={product.image_url} alt={product.name} className="h-16 w-16 rounded-xl object-cover hairline border" />
+        <img src={src(product.image_url)} alt={product.name} className="h-16 w-16 rounded-xl object-cover hairline border" />
         <div className="flex-1 min-w-[200px]">
           <p className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">{product.category}</p>
           <p className="font-serif text-lg leading-tight">{product.name}</p>
@@ -252,7 +266,7 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
         <div className="mt-4 grid grid-cols-4 md:grid-cols-6 gap-2">
           {images.map((url, i) => (
             <div key={url} className="relative group aspect-square rounded-xl overflow-hidden hairline border">
-              <img src={url} alt={`${product.name} ${i + 1}`} className="h-full w-full object-cover" />
+              <img src={src(url)} alt={`${product.name} ${i + 1}`} className="h-full w-full object-cover" />
               <button
                 onClick={() => removeAt(i)}
                 disabled={busy}

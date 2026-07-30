@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { signProductImages } from "@/lib/storage-image";
 
 export type Product = {
   id: string;
@@ -159,7 +160,22 @@ async function fetchProducts(): Promise<Product[]> {
       .order("name", { ascending: true });
     if (error) throw error;
     if (!data || data.length === 0) return LOCAL_PRODUCTS;
-    return data.map((p) => ({ ...p, price: Number(p.price), compare_at_price: p.compare_at_price === null ? null : Number(p.compare_at_price) })) as Product[];
+
+    // Bucket is private: turn stored storage URLs into working signed URLs.
+    const all: string[] = [];
+    for (const p of data) {
+      if (p.image_url) all.push(p.image_url);
+      for (const u of p.images ?? []) if (u) all.push(u);
+    }
+    const signed = await signProductImages(all);
+
+    return data.map((p) => ({
+      ...p,
+      image_url: signed[p.image_url] ?? p.image_url,
+      images: (p.images ?? []).map((u) => signed[u] ?? u),
+      price: Number(p.price),
+      compare_at_price: p.compare_at_price === null ? null : Number(p.compare_at_price),
+    })) as Product[];
   } catch {
     return LOCAL_PRODUCTS;
   }
