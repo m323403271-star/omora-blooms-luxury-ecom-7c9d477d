@@ -118,7 +118,7 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
   const [price, setPrice] = useState(String(product.price ?? 0));
   const [compareAt, setCompareAt] = useState(product.compare_at_price != null ? String(product.compare_at_price) : "");
   const [description, setDescription] = useState(product.description ?? "");
-  const [saving, setSaving] = useState(false);
+  const [pending, setPending] = useState<File[]>([]);
   const images = product.images ?? [];
   const [signed, setSigned] = useState<Record<string, string>>({});
 
@@ -130,41 +130,43 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
     return () => { active = false; };
   }, [product.image_url, images.join("|")]);
 
+  const previews = useMemo(() => pending.map((f) => URL.createObjectURL(f)), [pending]);
+  useEffect(() => () => { previews.forEach((u) => URL.revokeObjectURL(u)); }, [previews]);
+
   const src = (u: string) => signed[u] ?? u;
 
-  const dirty =
+  const fieldsDirty =
     price !== String(product.price ?? 0) ||
     compareAt !== (product.compare_at_price != null ? String(product.compare_at_price) : "") ||
     description !== (product.description ?? "");
+  const dirty = fieldsDirty || pending.length > 0;
 
-  async function saveDetails() {
+  const remaining = Math.max(0, MAX_PER_PRODUCT - images.length - pending.length);
+
+  function stageFiles(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    const accepted: File[] = [];
+    for (const file of Array.from(files)) {
+      if (accepted.length >= remaining) { toast.error(`Max ${MAX_PER_PRODUCT} images per product`); break; }
+      if (!file.type.startsWith("image/")) { toast.error(`${file.name}: not an image`); continue; }
+      if (file.size > MAX_MB * 1024 * 1024) { toast.error(`${file.name}: over ${MAX_MB}MB`); continue; }
+      accepted.push(file);
+    }
+    if (accepted.length > 0) setPending((prev) => [...prev, ...accepted]);
+  }
+
+  // One action: uploads any staged photos AND saves price/description together.
+  async function saveAll() {
     const priceNum = Number(price);
     if (!Number.isFinite(priceNum) || priceNum < 0) { toast.error("Enter a valid price"); return; }
     const compareNum = compareAt.trim() === "" ? null : Number(compareAt);
     if (compareNum !== null && (!Number.isFinite(compareNum) || compareNum < 0)) { toast.error("Enter a valid compare-at price"); return; }
     if (description.length > 2000) { toast.error("Description must be under 2000 characters"); return; }
-    setSaving(true);
-    const { error } = await supabase
-      .from("products")
-      .update({ price: priceNum, compare_at_price: compareNum, description: description.trim() || null })
-      .eq("id", product.id);
-    setSaving(false);
-    if (error) { toast.error(error.message); return; }
-    toast.success("Product details updated");
-    onChanged();
-  }
-  const remaining = Math.max(0, MAX_PER_PRODUCT - images.length);
 
-  async function handleFiles(files: FileList | null) {
-    if (!files || files.length === 0) return;
-    const list = Array.from(files).slice(0, remaining);
-    if (list.length === 0) { toast.error(`Max ${MAX_PER_PRODUCT} images per product`); return; }
     setBusy(true);
     try {
       const uploaded: string[] = [];
-      for (const file of list) {
-        if (!file.type.startsWith("image/")) { toast.error(`${file.name}: not an image`); continue; }
-        if (file.size > MAX_MB * 1024 * 1024) { toast.error(`${file.name}: over ${MAX_MB}MB`); continue; }
+      for (const file of pending) {
         const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
         const key = `${product.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
         const { error } = await supabase.storage.from(BUCKET).upload(key, file, {
@@ -175,11 +177,22 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
         if (error) { toast.error(error.message); continue; }
         uploaded.push(storedRef(key));
       }
-      if (uploaded.length === 0) return;
-      const next = [...images, ...uploaded].slice(0, MAX_PER_PRODUCT);
-      const { error: uErr } = await supabase.from("products").update({ images: next }).eq("id", product.id);
+
+      const nextImages = [...images, ...uploaded].slice(0, MAX_PER_PRODUCT);
+      const update: Record<string, unknown> = {
+        price: priceNum,
+        compare_at_price: compareNum,
+        description: description.trim() || null,
+        images: nextImages,
+      };
+      // Keep the storefront cover in sync with the uploaded gallery.
+      if (nextImages.length > 0) update.image_url = nextImages[0];
+
+      const { error: uErr } = await supabase.from("products").update(update).eq("id", product.id);
       if (uErr) { toast.error(uErr.message); return; }
-      toast.success(`Uploaded ${uploaded.length} photo${uploaded.length > 1 ? "s" : ""}`);
+
+      setPending([]);
+      toast.success(uploaded.length > 0 ? `Saved · ${uploaded.length} photo${uploaded.length > 1 ? "s" : ""} live` : "Product details updated");
       onChanged();
     } finally {
       setBusy(false);
@@ -191,7 +204,9 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
     try {
       const url = images[idx];
       const next = images.filter((_, i) => i !== idx);
-      const { error: uErr } = await supabase.from("products").update({ images: next }).eq("id", product.id);
+      const update: Record<string, unknown> = { images: next };
+      if (product.image_url === url) update.image_url = next[0] ?? product.image_url;
+      const { error: uErr } = await supabase.from("products").update(update).eq("id", product.id);
       if (uErr) { toast.error(uErr.message); return; }
       const path = pathFromUrl(url);
       if (path) await supabase.storage.from(BUCKET).remove([path]);
@@ -203,16 +218,16 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
   return (
     <div className="glass-card rounded-2xl p-4 md:p-5">
       <div className="flex items-center gap-4 flex-wrap">
-        <img src={src(product.image_url)} alt={product.name} className="h-16 w-16 rounded-xl object-cover hairline border" />
+        <img src={src(product.images?.[0] || product.image_url)} alt={product.name} className="h-16 w-16 rounded-xl object-cover hairline border" />
         <div className="flex-1 min-w-[200px]">
           <p className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">{product.category}</p>
           <p className="font-serif text-lg leading-tight">{product.name}</p>
-          <p className="text-xs text-[color:var(--muted-foreground)] mt-0.5">{images.length}/{MAX_PER_PRODUCT} gallery photos</p>
+          <p className="text-xs text-[color:var(--muted-foreground)] mt-0.5">{images.length}/{MAX_PER_PRODUCT} gallery photos{pending.length > 0 ? ` · ${pending.length} pending` : ""}</p>
         </div>
         <label className={`btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 cursor-pointer ${remaining === 0 || busy ? "opacity-50 pointer-events-none" : ""}`}>
-          {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
-          {remaining === 0 ? "Full" : `Upload (${remaining} left)`}
-          <input type="file" accept="image/*" multiple hidden onChange={(e) => { handleFiles(e.target.files); e.currentTarget.value = ""; }} />
+          <Upload className="h-3 w-3" />
+          {remaining === 0 ? "Full" : `Add photos (${remaining} left)`}
+          <input type="file" accept="image/*" multiple hidden onChange={(e) => { stageFiles(e.target.files); e.currentTarget.value = ""; }} />
         </label>
       </div>
 
@@ -254,15 +269,15 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
       </div>
       <div className="mt-3 flex justify-end">
         <button
-          onClick={saveDetails}
-          disabled={!dirty || saving}
+          onClick={saveAll}
+          disabled={!dirty || busy}
           className="btn-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 disabled:opacity-40"
         >
-          {saving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />} Save changes
+          {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />} Save price & photos
         </button>
       </div>
 
-      {images.length > 0 && (
+      {(images.length > 0 || pending.length > 0) && (
         <div className="mt-4 grid grid-cols-4 md:grid-cols-6 gap-2">
           {images.map((url, i) => (
             <div key={url} className="relative group aspect-square rounded-xl overflow-hidden hairline border">
@@ -272,6 +287,20 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
                 disabled={busy}
                 className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition"
                 aria-label="Remove photo"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          ))}
+          {pending.map((file, i) => (
+            <div key={`pending-${i}`} className="relative group aspect-square rounded-xl overflow-hidden hairline border border-dashed">
+              <img src={previews[i]} alt={`Pending ${i + 1}`} className="h-full w-full object-cover opacity-70" />
+              <span className="absolute bottom-1 left-1 text-[9px] uppercase tracking-wider bg-black/70 text-white rounded-full px-2 py-0.5">Pending</span>
+              <button
+                onClick={() => setPending((prev) => prev.filter((_, x) => x !== i))}
+                disabled={busy}
+                className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition"
+                aria-label="Discard photo"
               >
                 <Trash2 className="h-3 w-3" />
               </button>
