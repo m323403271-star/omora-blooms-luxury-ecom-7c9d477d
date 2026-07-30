@@ -179,7 +179,9 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
       }
 
       const nextImages = [...images, ...uploaded].slice(0, MAX_PER_PRODUCT);
-      const update: Record<string, unknown> = {
+      const update: {
+        price: number; compare_at_price: number | null; description: string | null; images: string[]; image_url?: string;
+      } = {
         price: priceNum,
         compare_at_price: compareNum,
         description: description.trim() || null,
@@ -204,7 +206,7 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
     try {
       const url = images[idx];
       const next = images.filter((_, i) => i !== idx);
-      const update: Record<string, unknown> = { images: next };
+      const update: { images: string[]; image_url?: string } = { images: next };
       if (product.image_url === url) update.image_url = next[0] ?? product.image_url;
       const { error: uErr } = await supabase.from("products").update(update).eq("id", product.id);
       if (uErr) { toast.error(uErr.message); return; }
