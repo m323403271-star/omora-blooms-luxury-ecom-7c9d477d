@@ -119,6 +119,17 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
   const [description, setDescription] = useState(product.description ?? "");
   const [saving, setSaving] = useState(false);
   const images = product.images ?? [];
+  const [signed, setSigned] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    const all = [product.image_url, ...images].filter(Boolean) as string[];
+    if (all.length === 0) return;
+    let active = true;
+    signProductImages(all).then((m) => { if (active) setSigned(m); });
+    return () => { active = false; };
+  }, [product.image_url, images.join("|")]);
+
+  const src = (u: string) => signed[u] ?? u;
 
   const dirty =
     price !== String(product.price ?? 0) ||
