@@ -161,7 +161,7 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
           upsert: false,
         });
         if (error) { toast.error(error.message); continue; }
-        uploaded.push(publicUrl(key));
+        uploaded.push(storedRef(key));
       }
       if (uploaded.length === 0) return;
       const next = [...images, ...uploaded].slice(0, MAX_PER_PRODUCT);
