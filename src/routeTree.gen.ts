@@ -24,14 +24,17 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
+import { Route as VarietiesSlugRouteImport } from './routes/varieties.$slug'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as OrderOrderIdRouteImport } from './routes/order.$orderId'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
+import { Route as BuyVariantRouteImport } from './routes/buy.$variant'
 import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
 import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/agent'
 import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
 import { Route as ApiRazorpayStatusRouteImport } from './routes/api/razorpay/status'
 import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay/mark-status'
+import { Route as ApiRazorpayCreateOrderVariantRouteImport } from './routes/api/razorpay/create-order-variant'
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
 import { Route as AuthenticatedAdminWarehouseRouteImport } from './routes/_authenticated/admin.warehouse'
@@ -113,6 +116,11 @@ const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
   path: '/collections/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VarietiesSlugRoute = VarietiesSlugRouteImport.update({
+  id: '/varieties/$slug',
+  path: '/varieties/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductsSlugRoute = ProductsSlugRouteImport.update({
   id: '/products/$slug',
   path: '/products/$slug',
@@ -126,6 +134,11 @@ const OrderOrderIdRoute = OrderOrderIdRouteImport.update({
 const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
   id: '/collections/$slug',
   path: '/collections/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyVariantRoute = BuyVariantRouteImport.update({
+  id: '/buy/$variant',
+  path: '/buy/$variant',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPartnerRoute = AuthenticatedPartnerRouteImport.update({
@@ -153,6 +166,12 @@ const ApiRazorpayMarkStatusRoute = ApiRazorpayMarkStatusRouteImport.update({
   path: '/api/razorpay/mark-status',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiRazorpayCreateOrderVariantRoute =
+  ApiRazorpayCreateOrderVariantRouteImport.update({
+    id: '/api/razorpay/create-order-variant',
+    path: '/api/razorpay/create-order-variant',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiRazorpayCreateOrderRoute = ApiRazorpayCreateOrderRouteImport.update({
   id: '/api/razorpay/create-order',
   path: '/api/razorpay/create-order',
@@ -205,9 +224,11 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
+  '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/order/$orderId': typeof OrderOrderIdRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/varieties/$slug': typeof VarietiesSlugRoute
   '/collections/': typeof CollectionsIndexRoute
   '/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
@@ -215,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
+  '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
   '/api/razorpay/status': typeof ApiRazorpayStatusRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
@@ -235,9 +257,11 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
+  '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/order/$orderId': typeof OrderOrderIdRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/varieties/$slug': typeof VarietiesSlugRoute
   '/collections': typeof CollectionsIndexRoute
   '/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
@@ -245,6 +269,7 @@ export interface FileRoutesByTo {
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
+  '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
   '/api/razorpay/status': typeof ApiRazorpayStatusRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
@@ -267,9 +292,11 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/_authenticated/agent': typeof AuthenticatedAgentRoute
   '/_authenticated/partner': typeof AuthenticatedPartnerRoute
+  '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/order/$orderId': typeof OrderOrderIdRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/varieties/$slug': typeof VarietiesSlugRoute
   '/collections/': typeof CollectionsIndexRoute
   '/_authenticated/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
@@ -277,6 +304,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
+  '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
   '/api/razorpay/mark-status': typeof ApiRazorpayMarkStatusRoute
   '/api/razorpay/status': typeof ApiRazorpayStatusRoute
   '/api/razorpay/verify': typeof ApiRazorpayVerifyRoute
@@ -299,9 +327,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/agent'
     | '/partner'
+    | '/buy/$variant'
     | '/collections/$slug'
     | '/order/$orderId'
     | '/products/$slug'
+    | '/varieties/$slug'
     | '/collections/'
     | '/admin/manage-images'
     | '/admin/products'
@@ -309,6 +339,7 @@ export interface FileRouteTypes {
     | '/admin/warehouse'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
+    | '/api/razorpay/create-order-variant'
     | '/api/razorpay/mark-status'
     | '/api/razorpay/status'
     | '/api/razorpay/verify'
@@ -329,9 +360,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/agent'
     | '/partner'
+    | '/buy/$variant'
     | '/collections/$slug'
     | '/order/$orderId'
     | '/products/$slug'
+    | '/varieties/$slug'
     | '/collections'
     | '/admin/manage-images'
     | '/admin/products'
@@ -339,6 +372,7 @@ export interface FileRouteTypes {
     | '/admin/warehouse'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
+    | '/api/razorpay/create-order-variant'
     | '/api/razorpay/mark-status'
     | '/api/razorpay/status'
     | '/api/razorpay/verify'
@@ -360,9 +394,11 @@ export interface FileRouteTypes {
     | '/terms'
     | '/_authenticated/agent'
     | '/_authenticated/partner'
+    | '/buy/$variant'
     | '/collections/$slug'
     | '/order/$orderId'
     | '/products/$slug'
+    | '/varieties/$slug'
     | '/collections/'
     | '/_authenticated/admin/manage-images'
     | '/_authenticated/admin/products'
@@ -370,6 +406,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/warehouse'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
+    | '/api/razorpay/create-order-variant'
     | '/api/razorpay/mark-status'
     | '/api/razorpay/status'
     | '/api/razorpay/verify'
@@ -390,12 +427,15 @@ export interface RootRouteChildren {
   ShippingRoute: typeof ShippingRoute
   ShopRoute: typeof ShopRoute
   TermsRoute: typeof TermsRoute
+  BuyVariantRoute: typeof BuyVariantRoute
   CollectionsSlugRoute: typeof CollectionsSlugRoute
   OrderOrderIdRoute: typeof OrderOrderIdRoute
   ProductsSlugRoute: typeof ProductsSlugRoute
+  VarietiesSlugRoute: typeof VarietiesSlugRoute
   CollectionsIndexRoute: typeof CollectionsIndexRoute
   ApiPublicRazorpayWebhookRoute: typeof ApiPublicRazorpayWebhookRoute
   ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
+  ApiRazorpayCreateOrderVariantRoute: typeof ApiRazorpayCreateOrderVariantRoute
   ApiRazorpayMarkStatusRoute: typeof ApiRazorpayMarkStatusRoute
   ApiRazorpayStatusRoute: typeof ApiRazorpayStatusRoute
   ApiRazorpayVerifyRoute: typeof ApiRazorpayVerifyRoute
@@ -508,6 +548,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/varieties/$slug': {
+      id: '/varieties/$slug'
+      path: '/varieties/$slug'
+      fullPath: '/varieties/$slug'
+      preLoaderRoute: typeof VarietiesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/products/$slug': {
       id: '/products/$slug'
       path: '/products/$slug'
@@ -527,6 +574,13 @@ declare module '@tanstack/react-router' {
       path: '/collections/$slug'
       fullPath: '/collections/$slug'
       preLoaderRoute: typeof CollectionsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy/$variant': {
+      id: '/buy/$variant'
+      path: '/buy/$variant'
+      fullPath: '/buy/$variant'
+      preLoaderRoute: typeof BuyVariantRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/partner': {
@@ -562,6 +616,13 @@ declare module '@tanstack/react-router' {
       path: '/api/razorpay/mark-status'
       fullPath: '/api/razorpay/mark-status'
       preLoaderRoute: typeof ApiRazorpayMarkStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/razorpay/create-order-variant': {
+      id: '/api/razorpay/create-order-variant'
+      path: '/api/razorpay/create-order-variant'
+      fullPath: '/api/razorpay/create-order-variant'
+      preLoaderRoute: typeof ApiRazorpayCreateOrderVariantRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/razorpay/create-order': {
@@ -645,12 +706,15 @@ const rootRouteChildren: RootRouteChildren = {
   ShippingRoute: ShippingRoute,
   ShopRoute: ShopRoute,
   TermsRoute: TermsRoute,
+  BuyVariantRoute: BuyVariantRoute,
   CollectionsSlugRoute: CollectionsSlugRoute,
   OrderOrderIdRoute: OrderOrderIdRoute,
   ProductsSlugRoute: ProductsSlugRoute,
+  VarietiesSlugRoute: VarietiesSlugRoute,
   CollectionsIndexRoute: CollectionsIndexRoute,
   ApiPublicRazorpayWebhookRoute: ApiPublicRazorpayWebhookRoute,
   ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
+  ApiRazorpayCreateOrderVariantRoute: ApiRazorpayCreateOrderVariantRoute,
   ApiRazorpayMarkStatusRoute: ApiRazorpayMarkStatusRoute,
   ApiRazorpayStatusRoute: ApiRazorpayStatusRoute,
   ApiRazorpayVerifyRoute: ApiRazorpayVerifyRoute,
