@@ -40,7 +40,7 @@ function ProductPage() {
   if (!product) throw notFound();
 
   const collection = collectionBySlug(product.category);
-  const img = resolveProductImage(product.image_url);
+  const img = resolveProductImage(product.images?.[0] || product.image_url);
   const { add } = useCart();
   const [qty, setQty] = useState(1);
   const [gift, setGift] = useState<GiftOptions | null>(null);
