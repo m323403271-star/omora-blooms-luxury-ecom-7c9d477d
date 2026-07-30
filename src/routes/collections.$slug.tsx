@@ -3,10 +3,21 @@ import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { collectionBySlug, COLLECTIONS } from "@/lib/collections";
 import { SUB_CATALOG } from "@/lib/subcategories";
-import { productsQuery, resolveProductImage, type Product } from "@/lib/products";
+import { productsQuery, resolveProductImage, LOCAL_PRODUCTS, type Product } from "@/lib/products";
 import { handleImageError } from "@/lib/image-fallback";
 import { siteImagesQuery, subcategoryImages } from "@/lib/site-images";
 
+
+// Maps collection slug → LOCAL_PRODUCTS slugs shown when Supabase has no items
+const LOCAL_FALLBACK: Record<string, string[]> = {
+  "crochet-bouquets": ["signature-crochet-bouquet"],
+  "pipe-cleaner-bouquets": ["pipe-cleaner-flower-art"],
+  "airport-collection": ["luxury-airport-welcome-bouquet"],
+  "luxury-gift-boxes": ["divine-heritage-luxury-gift-box"],
+  "corporate-gifts": ["corporate-luxury-gifting"],
+  "baby-collection": ["mini-indoor-plants"],
+  "indoor-plants": ["mini-indoor-plants"],
+};
 
 export const Route = createFileRoute("/collections/$slug")({
   head: ({ params }) => {
@@ -73,7 +84,12 @@ function CollectionPage() {
   const tagline = collection?.tagline ?? "Handcrafted luxury, made to last forever.";
   const heroImg = gallery[0]?.image_url ?? collection?.image;
 
-  const items = products.filter((p) => p.category === slug);
+  const supabaseItems = products.filter((p) => p.category === slug);
+  const fallbackSlugs = LOCAL_FALLBACK[slug] ?? [];
+  const items =
+    supabaseItems.length > 0
+      ? supabaseItems
+      : LOCAL_PRODUCTS.filter((p) => fallbackSlugs.includes(p.slug));
 
   return (
     <div>

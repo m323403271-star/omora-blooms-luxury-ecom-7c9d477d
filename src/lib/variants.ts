@@ -8,6 +8,10 @@ import indoorPlantsImg from "@/assets/collection-indoor-plants.jpg";
 import framesVasesImg from "@/assets/collection-frames-vases.jpg";
 import airportImg from "@/assets/collection-airport.jpg";
 import motherImg from "@/assets/collection-mother.jpg";
+import heroBouquetImg from "@/assets/hero-bouquet.jpg";
+import bannerImg from "@/assets/banner-eternal-bond.jpg";
+import divineHerImg from "@/assets/collection-divine-heritage.jpg";
+import divineGiftboxImg from "@/assets/divine-heritage-giftbox.jpg";
 
 export type ProductVariant = {
   slug: string;
@@ -21,32 +25,232 @@ export type ProductVariant = {
   collectionSlug: string;
 };
 
-// ─── Crochet Bouquet Variants ────────────────────────────────────────────────
+// ─── Crochet Bouquet Variants — each with a distinct image ───────────────────
 const CROCHET_VARIANTS: ProductVariant[] = [
-  { slug: "crochet-rose-blush-pink", name: "Luxury Rose Bouquet — Blush Pink", price: 2799, colorName: "Blush Pink", colorHex: "#E8A0B0", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
-  { slug: "crochet-rose-crimson-red", name: "Luxury Rose Bouquet — Crimson Red", price: 3199, colorName: "Crimson Red", colorHex: "#A01020", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
-  { slug: "crochet-rose-ivory-white", name: "Luxury Rose Bouquet — Ivory White", price: 2999, colorName: "Ivory White", colorHex: "#F5F0E0", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
-  { slug: "crochet-rose-lavender", name: "Luxury Rose Bouquet — Lavender Purple", price: 3099, colorName: "Lavender", colorHex: "#9B7BB6", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
-  { slug: "crochet-rose-sunshine-yellow", name: "Luxury Rose Bouquet — Sunshine Yellow", price: 2799, colorName: "Sunshine Yellow", colorHex: "#D4A820", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
-  { slug: "crochet-rose-deep-burgundy", name: "Luxury Rose Bouquet — Deep Burgundy", price: 3299, colorName: "Deep Burgundy", colorHex: "#6D1A36", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
-  { slug: "crochet-rose-peach-coral", name: "Luxury Rose Bouquet — Peach Coral", price: 2899, colorName: "Peach Coral", colorHex: "#E07850", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
-  { slug: "crochet-rose-sage-green", name: "Luxury Rose Bouquet — Sage Green", price: 2999, colorName: "Sage Green", colorHex: "#6A9E6A", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
-  { slug: "crochet-rose-ocean-blue", name: "Luxury Rose Bouquet — Ocean Blue", price: 3199, colorName: "Ocean Blue", colorHex: "#2E6A9A", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
-  { slug: "crochet-rose-midnight-black", name: "Luxury Rose Bouquet — Midnight Black", price: 3499, colorName: "Midnight Black", colorHex: "#1E1E2E", image: crochetImg, parentName: "Luxury Crochet Rose Bouquet", parentSlug: "signature-crochet-bouquet", collectionSlug: "crochet-bouquets" },
+  {
+    slug: "crochet-rose-blush-pink",
+    name: "Luxury Rose Bouquet — Blush Pink",
+    price: 2799,
+    colorName: "Blush Pink",
+    colorHex: "#E8A0B0",
+    image: crochetImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
+  {
+    slug: "crochet-rose-crimson-red",
+    name: "Luxury Rose Bouquet — Crimson Red",
+    price: 3199,
+    colorName: "Crimson Red",
+    colorHex: "#A01020",
+    image: heroBouquetImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
+  {
+    slug: "crochet-rose-ivory-white",
+    name: "Luxury Rose Bouquet — Ivory White",
+    price: 2999,
+    colorName: "Ivory White",
+    colorHex: "#F5F0E0",
+    image: weddingImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
+  {
+    slug: "crochet-rose-lavender",
+    name: "Luxury Rose Bouquet — Lavender Purple",
+    price: 3099,
+    colorName: "Lavender",
+    colorHex: "#9B7BB6",
+    image: motherImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
+  {
+    slug: "crochet-rose-sunshine-yellow",
+    name: "Luxury Rose Bouquet — Sunshine Yellow",
+    price: 2799,
+    colorName: "Sunshine Yellow",
+    colorHex: "#D4A820",
+    image: bannerImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
+  {
+    slug: "crochet-rose-deep-burgundy",
+    name: "Luxury Rose Bouquet — Deep Burgundy",
+    price: 3299,
+    colorName: "Deep Burgundy",
+    colorHex: "#6D1A36",
+    image: divineHerImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
+  {
+    slug: "crochet-rose-peach-coral",
+    name: "Luxury Rose Bouquet — Peach Coral",
+    price: 2899,
+    colorName: "Peach Coral",
+    colorHex: "#E07850",
+    image: airportImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
+  {
+    slug: "crochet-rose-sage-green",
+    name: "Luxury Rose Bouquet — Sage Green",
+    price: 2999,
+    colorName: "Sage Green",
+    colorHex: "#6A9E6A",
+    image: indoorPlantsImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
+  {
+    slug: "crochet-rose-ocean-blue",
+    name: "Luxury Rose Bouquet — Ocean Blue",
+    price: 3199,
+    colorName: "Ocean Blue",
+    colorHex: "#2E6A9A",
+    image: framesVasesImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
+  {
+    slug: "crochet-rose-midnight-black",
+    name: "Luxury Rose Bouquet — Midnight Black",
+    price: 3499,
+    colorName: "Midnight Black",
+    colorHex: "#1E1E2E",
+    image: giftboxImg,
+    parentName: "Signature Crochet Bouquet",
+    parentSlug: "signature-crochet-bouquet",
+    collectionSlug: "crochet-bouquets",
+  },
 ];
 
-// ─── Pipe Cleaner Variants ────────────────────────────────────────────────────
+// ─── Pipe Cleaner Variants — each with a distinct image ──────────────────────
 const PIPE_CLEANER_VARIANTS: ProductVariant[] = [
-  { slug: "pipe-rose-flamingo-pink", name: "Artisan Pipe Bouquet — Flamingo Pink", price: 1799, colorName: "Flamingo Pink", colorHex: "#F06090", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
-  { slug: "pipe-rose-ruby-red", name: "Artisan Pipe Bouquet — Ruby Red", price: 1999, colorName: "Ruby Red", colorHex: "#9B1020", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
-  { slug: "pipe-rose-golden-yellow", name: "Artisan Pipe Bouquet — Golden Yellow", price: 1699, colorName: "Golden Yellow", colorHex: "#C8A200", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
-  { slug: "pipe-rose-violet", name: "Artisan Pipe Bouquet — Violet Dream", price: 1899, colorName: "Violet", colorHex: "#7B38B6", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
-  { slug: "pipe-rose-sky-blue", name: "Artisan Pipe Bouquet — Sky Blue", price: 1799, colorName: "Sky Blue", colorHex: "#4090C8", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
-  { slug: "pipe-rose-forest-green", name: "Artisan Pipe Bouquet — Forest Green", price: 1699, colorName: "Forest Green", colorHex: "#2E6E3E", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
-  { slug: "pipe-rose-sunset-orange", name: "Artisan Pipe Bouquet — Sunset Orange", price: 1799, colorName: "Sunset Orange", colorHex: "#D05020", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
-  { slug: "pipe-rose-champagne", name: "Artisan Pipe Bouquet — Champagne Gold", price: 2099, colorName: "Champagne Gold", colorHex: "#C0963C", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
-  { slug: "pipe-rose-powder-blue", name: "Artisan Pipe Bouquet — Powder Blue", price: 1799, colorName: "Powder Blue", colorHex: "#7AAAC8", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
-  { slug: "pipe-rose-rose-gold", name: "Artisan Pipe Bouquet — Rose Gold", price: 1999, colorName: "Rose Gold", colorHex: "#C07060", image: pipecleanerImg, parentName: "Pipe Cleaner Bouquet", parentSlug: "pipe-cleaner-flower-art", collectionSlug: "pipe-cleaner-bouquets" },
+  {
+    slug: "pipe-rose-flamingo-pink",
+    name: "Artisan Pipe Bouquet — Flamingo Pink",
+    price: 1799,
+    colorName: "Flamingo Pink",
+    colorHex: "#F06090",
+    image: pipecleanerImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
+  {
+    slug: "pipe-rose-ruby-red",
+    name: "Artisan Pipe Bouquet — Ruby Red",
+    price: 1999,
+    colorName: "Ruby Red",
+    colorHex: "#9B1020",
+    image: crochetImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
+  {
+    slug: "pipe-rose-golden-yellow",
+    name: "Artisan Pipe Bouquet — Golden Yellow",
+    price: 1699,
+    colorName: "Golden Yellow",
+    colorHex: "#C8A200",
+    image: giftboxImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
+  {
+    slug: "pipe-rose-violet",
+    name: "Artisan Pipe Bouquet — Violet Dream",
+    price: 1899,
+    colorName: "Violet",
+    colorHex: "#7B38B6",
+    image: motherImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
+  {
+    slug: "pipe-rose-sky-blue",
+    name: "Artisan Pipe Bouquet — Sky Blue",
+    price: 1799,
+    colorName: "Sky Blue",
+    colorHex: "#4090C8",
+    image: babyImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
+  {
+    slug: "pipe-rose-forest-green",
+    name: "Artisan Pipe Bouquet — Forest Green",
+    price: 1699,
+    colorName: "Forest Green",
+    colorHex: "#2E6E3E",
+    image: indoorPlantsImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
+  {
+    slug: "pipe-rose-sunset-orange",
+    name: "Artisan Pipe Bouquet — Sunset Orange",
+    price: 1799,
+    colorName: "Sunset Orange",
+    colorHex: "#D05020",
+    image: airportImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
+  {
+    slug: "pipe-rose-champagne",
+    name: "Artisan Pipe Bouquet — Champagne Gold",
+    price: 2099,
+    colorName: "Champagne Gold",
+    colorHex: "#C0963C",
+    image: divineGiftboxImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
+  {
+    slug: "pipe-rose-powder-blue",
+    name: "Artisan Pipe Bouquet — Powder Blue",
+    price: 1799,
+    colorName: "Powder Blue",
+    colorHex: "#7AAAC8",
+    image: framesVasesImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
+  {
+    slug: "pipe-rose-rose-gold",
+    name: "Artisan Pipe Bouquet — Rose Gold",
+    price: 1999,
+    colorName: "Rose Gold",
+    colorHex: "#C07060",
+    image: weddingImg,
+    parentName: "Pipe Cleaner Flower Art",
+    parentSlug: "pipe-cleaner-flower-art",
+    collectionSlug: "pipe-cleaner-bouquets",
+  },
 ];
 
 // ─── Generic variant generator (for collections without explicit variants) ────
@@ -65,7 +269,7 @@ function makeVariants(
     { colorName: "Ocean Blue", colorHex: "#2E6A9A", priceAdj: 400 },
     { colorName: "Midnight Black", colorHex: "#1E1E2E", priceAdj: 700 },
   ];
-  return COLORS.map((c, i) => ({
+  return COLORS.map((c) => ({
     slug: `${base.slug}-${c.colorName.toLowerCase().replace(/\s+/g, "-")}`,
     name: `${base.name} — ${c.colorName}`,
     price: base.price + c.priceAdj,
@@ -92,7 +296,7 @@ const COLLECTION_IMAGES: Record<string, string> = {
   "mother-recovery": motherImg,
 };
 
-// ─── All variants keyed by product slug ───────────────────────────────────────
+// ─── All variants keyed by product slug ──────────────────────────────────────
 const VARIANT_MAP: Record<string, ProductVariant[]> = {
   "signature-crochet-bouquet": CROCHET_VARIANTS,
   "pipe-cleaner-flower-art": PIPE_CLEANER_VARIANTS,
@@ -112,12 +316,10 @@ export function getVariantsByProductSlug(
 
 /** Lookup a single variant by slug across all known variants. */
 export function getVariantBySlug(variantSlug: string): ProductVariant | undefined {
-  // Check pre-defined maps first
   for (const variants of Object.values(VARIANT_MAP)) {
     const found = variants.find((v) => v.slug === variantSlug);
     if (found) return found;
   }
-  // Decode a generated variant slug: pattern = {parentSlug}-{colorName-kebab}
   return undefined;
 }
 
