@@ -40,7 +40,7 @@ function ProductPage() {
   if (!product) throw notFound();
 
   const collection = collectionBySlug(product.category);
-  const img = resolveProductImage(product.image_url);
+  const img = resolveProductImage(product.images?.[0] || product.image_url);
   const { add } = useCart();
   const [qty, setQty] = useState(1);
   const [gift, setGift] = useState<GiftOptions | null>(null);
@@ -179,7 +179,8 @@ function resolveGallery(product: Product, collectionImg: string | undefined, rel
     .filter((s): s is string => typeof s === "string" && s.length > 0)
     .map((s) => resolveProductImage(s));
   if (uploaded.length > 0) {
-    return Array.from(new Set([resolveProductImage(product.image_url), ...uploaded])).slice(0, 6);
+    // Uploaded photos win over the placeholder cover image.
+    return Array.from(new Set([...uploaded, resolveProductImage(product.image_url)])).slice(0, 6);
   }
   const fallback = [
     resolveProductImage(product.image_url),
