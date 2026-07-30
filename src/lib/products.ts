@@ -185,7 +185,10 @@ async function fetchProducts(): Promise<Product[]> {
 export const productsQuery = queryOptions({
   queryKey: ["products"],
   queryFn: fetchProducts,
-  staleTime: 60_000,
+  // Keep the storefront in step with admin edits/uploads.
+  staleTime: 0,
+  refetchOnMount: "always",
+  refetchOnWindowFocus: true,
 });
 
 export function formatPrice(value: number): string {
