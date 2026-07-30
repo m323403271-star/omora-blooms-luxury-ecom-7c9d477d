@@ -24,16 +24,18 @@ const BUCKET = "product-images";
 const MAX_PER_PRODUCT = 4;
 const MAX_MB = 5;
 
-function publicUrl(path: string) {
-  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
-  return data.publicUrl;
+// Bucket is private, so we store the object path and render via signed URLs.
+function storedRef(path: string) {
+  return `${BUCKET}/${path}`;
 }
 
-// Storage path from a public URL (used for delete)
+// Storage path from a stored reference (used for delete)
 function pathFromUrl(url: string): string | null {
   const marker = `/${BUCKET}/`;
   const i = url.indexOf(marker);
-  return i >= 0 ? url.slice(i + marker.length) : null;
+  if (i >= 0) return url.slice(i + marker.length).split("?")[0];
+  if (url.startsWith(`${BUCKET}/`)) return url.slice(BUCKET.length + 1).split("?")[0];
+  return null;
 }
 
 function AdminProductsPage() {
