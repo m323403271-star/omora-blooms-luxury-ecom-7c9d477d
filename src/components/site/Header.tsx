@@ -22,20 +22,6 @@ export function Header() {
 
   return (
     <>
-      {/* Airport express banner */}
-      <div className="bg-gold-gradient text-[color:var(--noir)] text-[11px] md:text-[12px] tracking-[0.18em] uppercase font-semibold py-2 text-center px-3">
-        <span className="mr-2">⚡ Express 20–30 Mins Delivery at Kempegowda International Airport!</span>
-        <Link to="/airport-pickup" className="underline underline-offset-4 hover:opacity-80 normal-case tracking-normal font-medium">
-          Check Airport Pickup Points →
-        </Link>
-        <p className="mt-1 text-[10px] tracking-[0.14em] uppercase font-normal opacity-80">
-          Due to airport security policies, deliveries are available only at designated Pickup Points.
-        </p>
-      </div>
-      {/* Announcement */}
-      <div className="bg-[color:var(--noir)] text-[color:var(--muted-foreground)] text-[11px] tracking-[0.24em] uppercase font-medium py-2 text-center border-b hairline">
-        Complimentary luxury packaging · Same-day delivery available · WhatsApp {WHATSAPP_DISPLAY}
-      </div>
       <DeliveryBanner />
 
 
