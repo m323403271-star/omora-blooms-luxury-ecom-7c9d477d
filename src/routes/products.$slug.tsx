@@ -12,6 +12,7 @@ import { Media3DViewer } from "@/components/site/Media3DViewer";
 import { GiftAndBouquetCustomizer } from "@/components/site/GiftAndBouquetCustomizer";
 import { formatGiftForWhatsApp, type CustomBouquet, type GiftOptions } from "@/lib/gifting";
 import { ReviewSection } from "@/components/site/ReviewSection";
+import { PdpAdminUpload } from "@/components/site/PdpAdminUpload";
 
 
 export const Route = createFileRoute("/products/$slug")({
@@ -73,10 +74,19 @@ function ProductPage() {
       </div>
 
       <section className="container-luxe grid lg:grid-cols-2 gap-10 md:gap-16 py-10 md:py-16">
-        <Media3DViewer
-          images={gallery}
-          alt={`${product.name}${collection ? ` — ${collection.name}` : ""} handmade luxury bouquet by OMORA BLOOMS`}
-        />
+        <div>
+          <Media3DViewer
+            images={gallery}
+            alt={`${product.name}${collection ? ` — ${collection.name}` : ""} handmade luxury bouquet by OMORA BLOOMS`}
+          />
+          <PdpAdminUpload
+            productId={product.id}
+            productName={product.name}
+            images={(product.images ?? []).filter(Boolean) as string[]}
+          />
+        </div>
+
+
 
 
         <div>
