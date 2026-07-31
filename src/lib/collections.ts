@@ -225,3 +225,47 @@ export const everlastingFloralProducts = [
     image: "https://images.unsplash.com/photo-1606041008023-472dfb5e530f?auto=format&fit=crop&q=80",
   }
 ];
+// DIVINE HERITAGE COLLECTION DATA
+
+export const divineHeritageProducts = [
+  {
+    id: "royal-brass-diya-set",
+    name: "Royal Brass Diya Set",
+    image: "https://images.unsplash.com/photo-1605885064365-e40ed3243f67?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "varamahalakshmi-vrata-luxury-puja-hamper",
+    name: "Varamahalakshmi Vrata Luxury Puja Hamper",
+    image: "https://images.unsplash.com/photo-1609102026400-3403a7e5888e?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "gouri-ganesha-festive-floral-decor-hamper",
+    name: "Gouri Ganesha Festive Floral & Decor Hamper",
+    image: "https://images.unsplash.com/photo-1605885064365-e40ed3243f67?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "sacred-herbal-dhoop-ritual-box",
+    name: "Sacred Herbal Dhoop Ritual Box",
+    image: "https://images.unsplash.com/photo-1609102026400-3403a7e5888e?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "deepavali-grand-festive-hamper",
+    name: "Deepavali Grand Festive Hamper",
+    image: "https://images.unsplash.com/photo-1605885064365-e40ed3243f67?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "everlasting-crochet-lotus",
+    name: "Everlasting Crochet Lotus",
+    image: "https://images.unsplash.com/photo-1609102026400-3403a7e5888e?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "divine-heritage-signature-gift-box",
+    name: "Divine Heritage Signature Gift Box",
+    image: "https://images.unsplash.com/photo-1605885064365-e40ed3243f67?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "maha-shivaratri-divine-peaceful-collection",
+    name: "Maha Shivaratri Divine & Peaceful Collection",
+    image: "https://images.unsplash.com/photo-1609102026400-3403a7e5888e?auto=format&fit=crop&q=80",
+  }
+];
