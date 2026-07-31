@@ -13,9 +13,10 @@ export function productImagePath(value: string): string | null {
     const rest = value.slice(i + marker.length);
     return rest.split("?")[0];
   }
-  // Raw path already stored without bucket prefix (no scheme, not a local asset)
+  // Raw path stored without a leading slash, e.g. "product-images/<id>/file.jpg"
   if (!value.startsWith("http") && !value.startsWith("/") && !value.startsWith("data:")) {
-    return value.split("?")[0];
+    const raw = value.split("?")[0];
+    return raw.startsWith(`${PRODUCT_BUCKET}/`) ? raw.slice(PRODUCT_BUCKET.length + 1) : raw;
   }
   return null;
 }

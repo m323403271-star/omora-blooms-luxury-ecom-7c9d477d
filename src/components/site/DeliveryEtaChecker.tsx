@@ -20,11 +20,15 @@ export function DeliveryEtaChecker({
   title?: string;
   locked?: boolean;
 }) {
-  const [pincode, setPincode] = useState<string>(() => getStoredPincode() ?? "");
+  // Start empty on both server and client, then hydrate from storage in an
+  // effect so SSR markup matches the first client render.
+  const [pincode, setPincode] = useState<string>("");
   const [touched, setTouched] = useState(false);
   const [tier, setTier] = useState<DeliveryTier>("regular");
 
   useEffect(() => {
+    const stored = getStoredPincode();
+    if (stored) setPincode(stored);
     setTier(getCustomerTier());
     const onPin = (e: Event) => {
       const detail = (e as CustomEvent).detail;
