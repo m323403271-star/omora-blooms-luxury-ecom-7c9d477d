@@ -1,5 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
+import { siteImagesQuery, homepageImageFor } from "@/lib/site-images";
+import { handleImageError } from "@/lib/image-fallback";
+
 
 import crochetImg from "@/assets/collection-crochet.jpg";
 import pipecleanerImg from "@/assets/collection-pipecleaner.jpg";
