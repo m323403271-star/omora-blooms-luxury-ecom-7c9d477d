@@ -309,6 +309,33 @@ export type Database = {
           },
         ]
       }
+      site_images: {
+        Row: {
+          category_name: string | null
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+          page_type: string
+        }
+        Insert: {
+          category_name?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url: string
+          page_type: string
+        }
+        Update: {
+          category_name?: string | null
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string
+          page_type?: string
+        }
+        Relationships: []
+      }
       site_settings: {
         Row: {
           default_commission_rate: number

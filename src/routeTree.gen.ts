@@ -36,6 +36,7 @@ import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/publi
 import { Route as AuthenticatedAdminWarehouseRouteImport } from './routes/_authenticated/admin.warehouse'
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
+import { Route as AuthenticatedAdminManageImagesRouteImport } from './routes/_authenticated/admin.manage-images'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -175,6 +176,12 @@ const AuthenticatedAdminProductsRoute =
     path: '/admin/products',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminManageImagesRoute =
+  AuthenticatedAdminManageImagesRouteImport.update({
+    id: '/admin/manage-images',
+    path: '/admin/manage-images',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByFullPath {
   '/order/$orderId': typeof OrderOrderIdRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
+  '/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
@@ -223,6 +231,7 @@ export interface FileRoutesByTo {
   '/order/$orderId': typeof OrderOrderIdRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/collections': typeof CollectionsIndexRoute
+  '/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
@@ -253,6 +262,7 @@ export interface FileRoutesById {
   '/order/$orderId': typeof OrderOrderIdRoute
   '/products/$slug': typeof ProductsSlugRoute
   '/collections/': typeof CollectionsIndexRoute
+  '/_authenticated/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/_authenticated/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
@@ -283,6 +293,7 @@ export interface FileRouteTypes {
     | '/order/$orderId'
     | '/products/$slug'
     | '/collections/'
+    | '/admin/manage-images'
     | '/admin/products'
     | '/admin/referrals'
     | '/admin/warehouse'
@@ -311,6 +322,7 @@ export interface FileRouteTypes {
     | '/order/$orderId'
     | '/products/$slug'
     | '/collections'
+    | '/admin/manage-images'
     | '/admin/products'
     | '/admin/referrals'
     | '/admin/warehouse'
@@ -340,6 +352,7 @@ export interface FileRouteTypes {
     | '/order/$orderId'
     | '/products/$slug'
     | '/collections/'
+    | '/_authenticated/admin/manage-images'
     | '/_authenticated/admin/products'
     | '/_authenticated/admin/referrals'
     | '/_authenticated/admin/warehouse'
@@ -566,12 +579,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/manage-images': {
+      id: '/_authenticated/admin/manage-images'
+      path: '/admin/manage-images'
+      fullPath: '/admin/manage-images'
+      preLoaderRoute: typeof AuthenticatedAdminManageImagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAgentRoute: typeof AuthenticatedAgentRoute
   AuthenticatedPartnerRoute: typeof AuthenticatedPartnerRoute
+  AuthenticatedAdminManageImagesRoute: typeof AuthenticatedAdminManageImagesRoute
   AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
   AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
   AuthenticatedAdminWarehouseRoute: typeof AuthenticatedAdminWarehouseRoute
@@ -580,6 +601,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAgentRoute: AuthenticatedAgentRoute,
   AuthenticatedPartnerRoute: AuthenticatedPartnerRoute,
+  AuthenticatedAdminManageImagesRoute: AuthenticatedAdminManageImagesRoute,
   AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
   AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,
   AuthenticatedAdminWarehouseRoute: AuthenticatedAdminWarehouseRoute,

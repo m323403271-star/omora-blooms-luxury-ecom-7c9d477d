@@ -1,5 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
+import { siteImagesQuery, homepageImageFor } from "@/lib/site-images";
+import { handleImageError } from "@/lib/image-fallback";
+
 
 import crochetImg from "@/assets/collection-crochet.jpg";
 import pipecleanerImg from "@/assets/collection-pipecleaner.jpg";
@@ -21,6 +25,8 @@ type CategoryCard = {
 };
 
 function Card({ card }: { card: CategoryCard }) {
+  const { data: siteImages } = useQuery(siteImagesQuery);
+  const src = homepageImageFor(siteImages, card.slug) ?? card.image;
   return (
     <Link
       to="/collections/$slug"
@@ -31,14 +37,16 @@ function Card({ card }: { card: CategoryCard }) {
     >
       <div className="aspect-[4/5] overflow-hidden">
         <img
-          src={card.image}
+          src={src}
           alt={`${card.title} — OMORA BLOOMS`}
           loading="lazy"
           decoding="async"
+          onError={handleImageError}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
       </div>
+
       <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
         <h3 className="font-serif text-xl md:text-2xl text-white leading-snug tracking-tight">
           {card.title}

@@ -1,10 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { collectionBySlug, COLLECTIONS } from "@/lib/collections";
 import { SUB_CATALOG } from "@/lib/subcategories";
 import { productsQuery, resolveProductImage, type Product } from "@/lib/products";
 import { handleImageError } from "@/lib/image-fallback";
+import { siteImagesQuery, subcategoryImages } from "@/lib/site-images";
+
 
 export const Route = createFileRoute("/collections/$slug")({
   head: ({ params }) => {
@@ -63,11 +65,13 @@ function ItemCard({ product }: { product: Product }) {
 function CollectionPage() {
   const { slug } = Route.useParams();
   const { data: products } = useSuspenseQuery(productsQuery);
+  const { data: siteImages } = useQuery(siteImagesQuery);
+  const gallery = subcategoryImages(siteImages, slug);
   const collection = collectionBySlug(slug);
   const catalog = SUB_CATALOG[slug];
   const name = collection?.name ?? catalog?.eyebrow ?? "Collection";
   const tagline = collection?.tagline ?? "Handcrafted luxury, made to last forever.";
-  const heroImg = collection?.image;
+  const heroImg = gallery[0]?.image_url ?? collection?.image;
 
   const items = products.filter((p) => p.category === slug);
 
@@ -75,7 +79,7 @@ function CollectionPage() {
     <div>
       <section className="relative h-[42vh] min-h-[320px] overflow-hidden bg-[color:var(--noir)]">
         {heroImg && (
-          <img src={heroImg} alt={name} className="absolute inset-0 h-full w-full object-cover opacity-70" />
+          <img src={heroImg} alt={name} onError={handleImageError} className="absolute inset-0 h-full w-full object-cover opacity-70" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
         <div className="relative container-luxe h-full flex flex-col justify-end pb-10">
@@ -85,8 +89,28 @@ function CollectionPage() {
         </div>
       </section>
 
+      {gallery.length > 0 && (
+        <section className="container-luxe pt-12 md:pt-16">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {gallery.map((g) => (
+              <div key={g.id} className="overflow-hidden rounded-2xl hairline border aspect-[4/5] bg-black/40">
+                <img
+                  src={g.image_url}
+                  alt={`${name} — OMORA BLOOMS`}
+                  loading="lazy"
+                  decoding="async"
+                  onError={handleImageError}
+                  className="h-full w-full object-cover transition-transform duration-700 hover:scale-[1.05]"
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="container-luxe py-12 md:py-16">
         {items.length > 0 ? (
+
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {items.map((p) => (
               <ItemCard key={p.id} product={p} />
