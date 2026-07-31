@@ -402,3 +402,33 @@ export const luxuryGiftBoxesProducts = [
     image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
   }
 ];
+// BABY ESSENTIALS COLLECTION DATA
+
+export const babyEssentialsProducts = [
+  {
+    id: "royal-newborn-welcome-basket",
+    name: "Royal Newborn Welcome Basket",
+    image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "gentle-care-organic-essentials-kit",
+    name: "Gentle Care Organic Essentials Kit",
+    image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "pure-joy-heritage-baby-trunk",
+    name: "Pure Joy Heritage Baby Trunk",
+    image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "baby-welcome-luxury-hamper",
+    name: "Baby Welcome Luxury Hamper",
+    image: "https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "newborn-essentials-kit",
+    name: "Newborn Essentials Kit",
+    image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80",
+  }
+];
+
