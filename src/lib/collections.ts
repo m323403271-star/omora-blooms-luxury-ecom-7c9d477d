@@ -460,4 +460,28 @@ export const motherRecoveryProducts = [
     image: "https://images.unsplash.com/photo-1512290900673-05047f3bfa3d?auto=format&fit=crop&q=80",
   }
 ];
+// WEDDING GIFTS COLLECTION DATA
+
+export const weddingGiftsProducts = [
+  {
+    id: "omora-imperial-box",
+    name: "Omora Imperial Box",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "omora-gold-crest-hamper",
+    name: "Omora Gold Crest Hamper",
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd481d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "omora-heritage-luxe-box",
+    name: "Omora Heritage Luxe Box",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "wedding-crochet-bouquet",
+    name: "Wedding Crochet Bouquet",
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd481d?auto=format&fit=crop&q=80",
+  }
+];
 
