@@ -269,3 +269,67 @@ export const divineHeritageProducts = [
     image: "https://images.unsplash.com/photo-1609102026400-3403a7e5888e?auto=format&fit=crop&q=80",
   }
 ];
+// INDOOR PLANTS COLLECTION DATA
+
+export const indoorPlantsProducts = [
+  {
+    id: "golden-ceramic-succulent",
+    name: "Golden Ceramic Succulent",
+    image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "desk-peace-lily",
+    name: "Desk Peace Lily",
+    image: "https://images.unsplash.com/photo-1593691509543-c55fb32e7355?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "lucky-bamboo-gold-pot",
+    name: "Lucky Bamboo Gold Pot",
+    image: "https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "mini-monstera-delight",
+    name: "Mini Monstera Delight",
+    image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "luxe-jade-plant",
+    name: "Luxe Jade Plant",
+    image: "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "tabletop-bonsai-grace",
+    name: "Tabletop Bonsai Grace",
+    image: "https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "snake-plants",
+    name: "Snake Plants",
+    image: "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "zz-plants",
+    name: "ZZ Plants",
+    image: "https://images.unsplash.com/photo-1614594975525-e45190c55d0b?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "money-and-pothos-plants",
+    name: "Money & Pothos Plants",
+    image: "https://images.unsplash.com/photo-1593691509543-c55fb32e7355?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "spider-plants",
+    name: "Spider Plants",
+    image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "areca-palm-plants",
+    name: "Areca Palm Plants",
+    image: "https://images.unsplash.com/photo-1512428559087-560fa5ceab42?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "jade-plants",
+    name: "Jade Plants",
+    image: "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?auto=format&fit=crop&q=80",
+  }
+];
