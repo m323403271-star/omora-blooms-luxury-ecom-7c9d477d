@@ -333,3 +333,72 @@ export const indoorPlantsProducts = [
     image: "https://images.unsplash.com/photo-1509423350716-97f9360b4e09?auto=format&fit=crop&q=80",
   }
 ];
+// LUXURY GIFT BOXES COLLECTION DATA
+
+export const luxuryGiftBoxesProducts = [
+  {
+    id: "airport-welcome-gift-box",
+    name: "Airport Welcome Gift Box",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "corporate-gift-box",
+    name: "Corporate Gift Box",
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd481d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "executive-gift-box",
+    name: "Executive Gift Box",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "business-partner-gift-box",
+    name: "Business Partner Gift Box",
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd481d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "hotel-resort-welcome-box",
+    name: "Hotel & Resort Welcome Box",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "baby-welcome-gift-box",
+    name: "Baby Welcome Gift Box",
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd481d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "wedding-gift-box",
+    name: "Wedding Gift Box",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "anniversary-gift-box",
+    name: "Anniversary Gift Box",
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd481d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "birthday-gift-box",
+    name: "Birthday Gift Box",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "festive-gift-box",
+    name: "Festive Gift Box",
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd481d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "premium-magnetic-gift-box",
+    name: "Premium Magnetic Gift Box",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "thank-you-appreciation-gift-box",
+    name: "Thank You & Appreciation Gift Box",
+    image: "https://images.unsplash.com/photo-1513885535751-8b9238bd481d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "signature-luxury-gift-hamper",
+    name: "Signature Luxury Gift Hamper",
+    image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&q=80",
+  }
+];
