@@ -1,10 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { collectionBySlug, COLLECTIONS } from "@/lib/collections";
 import { SUB_CATALOG } from "@/lib/subcategories";
 import { productsQuery, resolveProductImage, type Product } from "@/lib/products";
 import { handleImageError } from "@/lib/image-fallback";
+import { siteImagesQuery, subcategoryImages } from "@/lib/site-images";
+
 
 export const Route = createFileRoute("/collections/$slug")({
   head: ({ params }) => {
