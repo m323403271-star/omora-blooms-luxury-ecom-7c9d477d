@@ -146,3 +146,82 @@ export const airportWelcomeProducts = [
     image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80",
   }
 ];
+// EVERLASTING FLORAL FRAMES & VASES COLLECTION DATA
+
+export const everlastingFloralProducts = [
+  {
+    id: "crochet-flower-frame",
+    name: "Crochet Flower Frame",
+    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "golden-rose-wall-frame",
+    name: "Golden Rose Wall Frame",
+    image: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "noir-crystal-luxury-vase",
+    name: "Noir Crystal Luxury Vase",
+    image: "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "pipe-cleaner-frame",
+    name: "Pipe Cleaner Frame",
+    image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "blush-eternal-floral-frame",
+    name: "Blush Eternal Floral Frame",
+    image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "mixed-flower-frame",
+    name: "Mixed Flower Frame",
+    image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "gilded-duo-vase-set",
+    name: "Gilded Duo Vase Set",
+    image: "https://images.unsplash.com/photo-1508610048659-a06b669e3321?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "photo-floral-frame",
+    name: "Photo Floral Frame",
+    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "couple-anniversary-frame",
+    name: "Couple Anniversary Frame",
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "baby-welcome-frame",
+    name: "Baby Welcome Frame",
+    image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "birthday-floral-frame",
+    name: "Birthday Floral Frame",
+    image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "heart-shape-floral-frame",
+    name: "Heart Shape Floral Frame",
+    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "3d-luxury-floral-frame",
+    name: "3D Luxury Floral Frame",
+    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "wall-hanging-floral-frame",
+    name: "Wall Hanging Floral Frame",
+    image: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "table-top-floral-frame",
+    name: "Table Top Floral Frame",
+    image: "https://images.unsplash.com/photo-1606041008023-472dfb5e530f?auto=format&fit=crop&q=80",
+  }
+];
