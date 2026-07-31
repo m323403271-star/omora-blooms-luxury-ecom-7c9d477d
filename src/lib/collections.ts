@@ -19,6 +19,16 @@ export type Collection = {
 
 export const COLLECTIONS: Collection[] = [
   { slug: "crochet-bouquets", name: "Crochet Bouquets", tagline: "Handcrafted with love, made to last forever", image: crochetImg },
+  { slug: "rose-bouquets", name: "Rose Bouquets", tagline: "Handcrafted crochet roses", image: crochetImg },
+  { slug: "sunflower-bouquets", name: "Sunflower Bouquets", tagline: "Vibrant crochet sunflowers", image: crochetImg },
+  { slug: "tulip-bouquets", name: "Tulip Bouquets", tagline: "Elegant crochet tulips", image: crochetImg },
+  { slug: "daisy-bouquets", name: "Daisy Bouquets", tagline: "Charming crochet daisies", image: crochetImg },
+  { slug: "petite-crochet-posy", name: "Petite Crochet Posy", tagline: "Delicate small crochet posies", image: crochetImg },
+  { slug: "luxury-crochet-rose-bouquet", name: "Luxury Crochet Rose Bouquet", tagline: "Premium luxury rose arrangement", image: crochetImg },
+  { slug: "lily-bouquets", name: "Lily Bouquets", tagline: "Gorgeous crochet lilies", image: crochetImg },
+  { slug: "mixed-flower-bouquets", name: "Mixed Flower Bouquets", tagline: "A blend of handcrafted flowers", image: crochetImg },
+  { slug: "mini-potted-bouquets", name: "Mini Potted Bouquets", tagline: "Cute potted crochet plants", image: crochetImg },
+  { slug: "lavender-bouquets", name: "Lavender Bouquets", tagline: "Calming crochet lavender blooms", image: crochetImg },
   { slug: "frames-vases", name: "Everlasting Floral Frames & Vases", tagline: "Elegant wall frames & luxury glass vases decor", image: framesVasesImg },
   { slug: "divine-heritage", name: "Divine Heritage Collection", tagline: "Timeless brass diyas, organic dhoop, & everlasting crochet lotus", image: divineHeritageImg },
   { slug: "pipe-cleaner-bouquets", name: "Pipe Cleaner Bouquets", tagline: "Whimsical everlasting florals", image: pipecleanerImg },
