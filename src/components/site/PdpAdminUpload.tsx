@@ -14,6 +14,11 @@ const MAX_MB = 5;
  * Invisible to customers; uploads land in the private product-images bucket
  * and are rendered through signed URLs, same as the storefront.
  */
+function toStoredRef(value: string): string {
+  const path = productImagePath(value);
+  return path ? `${PRODUCT_BUCKET}/${path}` : value;
+}
+
 export function PdpAdminUpload({
   productId,
   productName,
@@ -29,7 +34,10 @@ export function PdpAdminUpload({
   const [rows, setRows] = useState<string[]>(images);
   const [signed, setSigned] = useState<Record<string, string>>({});
 
-  useEffect(() => setRows(images), [images.join("|")]);
+  // Incoming values may already be signed URLs; store canonical bucket refs.
+  useEffect(() => {
+    setRows(images.map(toStoredRef));
+  }, [images.join("|")]);
 
   useEffect(() => {
     let active = true;
