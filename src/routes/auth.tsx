@@ -43,9 +43,8 @@ function AuthPage() {
       const uid = userData.user?.id;
       if (uid) {
         const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-        const isAdmin = roles?.some((r) => r.role === "admin");
-        navigate({ to: isAdmin ? "/admin/referrals" : "/partner" });
-      }
+        const isAdmin = roles?.some((r) => r.role === "admin"); 
+      }navigate({ to: "/admin/referrals" });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Authentication failed");
     } finally {
