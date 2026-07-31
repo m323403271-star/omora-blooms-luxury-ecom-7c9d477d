@@ -431,4 +431,33 @@ export const babyEssentialsProducts = [
     image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80",
   }
 ];
+// MOTHER RECOVERY COLLECTION DATA
+
+export const motherRecoveryProducts = [
+  {
+    id: "new-mom-recovery-kit",
+    name: "New Mom Recovery Kit",
+    image: "https://images.unsplash.com/photo-1512290900673-05047f3bfa3d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "the-eternal-bond-luxury-kit",
+    name: "The Eternal Bond Luxury Kit",
+    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "hospital-care-recovery-kit",
+    name: "Hospital Care Recovery Kit",
+    image: "https://images.unsplash.com/photo-1512290900673-05047f3bfa3d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "luxury-mother-recovery-kit",
+    name: "Luxury Mother Recovery Kit",
+    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "hospital-recovery-kit",
+    name: "Hospital Recovery Kit",
+    image: "https://images.unsplash.com/photo-1512290900673-05047f3bfa3d?auto=format&fit=crop&q=80",
+  }
+];
 
