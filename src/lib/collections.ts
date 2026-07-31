@@ -1,50 +1,99 @@
-import crochetImg from "@/assets/collection-crochet.jpg";
-import pipecleanerImg from "@/assets/collection-pipecleaner.jpg";
-import babyImg from "@/assets/collection-baby.jpg";
-import motherImg from "@/assets/collection-mother.jpg";
-import airportImg from "@/assets/collection-airport.jpg";
-import giftboxImg from "@/assets/collection-giftbox.jpg";
-import corporateImg from "@/assets/collection-corporate.jpg";
-import weddingImg from "@/assets/collection-wedding.jpg";
-import indoorPlantsImg from "@/assets/collection-indoor-plants.jpg";
-import framesVasesImg from "@/assets/collection-frames-vases.jpg";
-import divineHeritageImg from "@/assets/collection-divine-heritage.jpg";
+// FULL UPDATED CATEGORY DATA FOR PIPE CLEANER BOUQUETS
 
-export type Collection = {
-  slug: string;
-  name: string;
-  tagline: string;
-  image: string;
-};
-
-export const COLLECTIONS: Collection[] = [
-  { slug: "crochet-bouquets", name: "Crochet Bouquets", tagline: "Handcrafted with love, made to last forever", image: crochetImg },
-  { slug: "rose-bouquets", name: "Rose Bouquets", tagline: "Handcrafted crochet roses", image: crochetImg },
-  { slug: "sunflower-bouquets", name: "Sunflower Bouquets", tagline: "Vibrant crochet sunflowers", image: crochetImg },
-  { slug: "tulip-bouquets", name: "Tulip Bouquets", tagline: "Elegant crochet tulips", image: crochetImg },
-  { slug: "daisy-bouquets", name: "Daisy Bouquets", tagline: "Charming crochet daisies", image: crochetImg },
-  { slug: "petite-crochet-posy", name: "Petite Crochet Posy", tagline: "Delicate small crochet posies", image: crochetImg },
-  { slug: "luxury-crochet-rose-bouquet", name: "Luxury Crochet Rose Bouquet", tagline: "Premium luxury rose arrangement", image: crochetImg },
-  { slug: "lily-bouquets", name: "Lily Bouquets", tagline: "Gorgeous crochet lilies", image: crochetImg },
-  { slug: "mixed-flower-bouquets", name: "Mixed Flower Bouquets", tagline: "A blend of handcrafted flowers", image: crochetImg },
-  { slug: "mini-potted-bouquets", name: "Mini Potted Bouquets", tagline: "Cute potted crochet plants", image: crochetImg },
-  { slug: "lavender-bouquets", name: "Lavender Bouquets", tagline: "Calming crochet lavender blooms", image: crochetImg },
-  { slug: "frames-vases", name: "Everlasting Floral Frames & Vases", tagline: "Elegant wall frames & luxury glass vases decor", image: framesVasesImg },
-  { slug: "divine-heritage", name: "Divine Heritage Collection", tagline: "Timeless brass diyas, organic dhoop, & everlasting crochet lotus", image: divineHeritageImg },
-  { slug: "pipe-cleaner-bouquets", name: "Pipe Cleaner Bouquets", tagline: "Whimsical everlasting florals", image: pipecleanerImg },
-  { slug: "indoor-plants", name: "Indoor Plants", tagline: "Bring nature indoors with beautiful greenery", image: indoorPlantsImg },
-  { slug: "baby-collection", name: "Baby Essentials", tagline: "Welcome the little one", image: babyImg },
-  { slug: "mother-recovery", name: "Mother Recovery", tagline: "Postpartum care, elevated", image: motherImg },
-  { slug: "airport-collection", name: "Airport Welcome", tagline: "Homecomings, made memorable", image: airportImg },
-  { slug: "luxury-gift-boxes", name: "Luxury Gift Boxes", tagline: "The signature OMORA box", image: giftboxImg },
-  { slug: "corporate-gifts", name: "Corporate Gifts", tagline: "Impress clients & team", image: corporateImg },
-  { slug: "wedding-gifts", name: "Wedding Gifts", tagline: "A forever keepsake", image: weddingImg },
-  { slug: "anniversary-gifts", name: "Anniversary Gifts", tagline: "Love that lasts forever", image: giftboxImg },
-  { slug: "birthday-gifts", name: "Birthday Gifts", tagline: "Make their day unforgettable", image: giftboxImg },
-  { slug: "graduation-gifts", name: "Graduation Gifts", tagline: "Celebrate milestones", image: giftboxImg },
-  { slug: "personalized-gifts", name: "Personalized Gifts", tagline: "Made just for them", image: crochetImg },
+export const pipeCleanerProducts = [
+  {
+    id: "rose-bouquets",
+    name: "Rose Bouquets",
+    image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "tulip-bouquets",
+    name: "Tulip Bouquets",
+    image: "https://images.unsplash.com/photo-1520763185298-1b434c919102?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "pipe-cleaner-blush",
+    name: "Pipe Cleaner Blush Bouquet",
+    image: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "sunflower-bouquets",
+    name: "Sunflower Bouquets",
+    image: "https://images.unsplash.com/photo-1597848212624-a19eb35e2651?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "lily-flower-bouquets",
+    name: "Lily Flower Bouquets",
+    image: "https://images.unsplash.com/photo-1508610048659-a06b669e3321?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "pipe-cleaner-noir",
+    name: "Pipe Cleaner Noir Bouquet",
+    image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "lavender-flower-bouquets",
+    name: "Lavender Flower Bouquets",
+    image: "https://images.unsplash.com/photo-1528722828814-77b9b83aafb2?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "daisy-bouquets",
+    name: "Daisy Bouquets",
+    image: "https://images.unsplash.com/photo-1606041008023-472dfb5e530f?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "peony-bouquets",
+    name: "Peony Bouquets",
+    image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "mixed-flower-bouquets",
+    name: "Mixed Flower Bouquets",
+    image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "heart-shape-bouquets",
+    name: "Heart Shape Bouquets",
+    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "graduation-bouquets",
+    name: "Graduation Bouquets",
+    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "baby-welcome-bouquets",
+    name: "Baby Welcome Bouquets",
+    image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "anniversary-bouquets",
+    name: "Anniversary Bouquets",
+    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "birthday-bouquets",
+    name: "Birthday Bouquets",
+    image: "https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "bride-bouquets",
+    name: "Bride Bouquets",
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "teddy-bouquets",
+    name: "Teddy Bouquets",
+    image: "https://images.unsplash.com/photo-1559454403-b8fb88521f11?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "chocolate-bouquets",
+    name: "Chocolate Bouquets",
+    image: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&q=80",
+  },
+  {
+    id: "led-light-bouquets",
+    name: "LED Light Bouquets",
+    image: "https://images.unsplash.com/photo-1513151233558-d860c5398176?auto=format&fit=crop&q=80",
+  }
 ];
-
-export function collectionBySlug(slug: string) {
-  return COLLECTIONS.find((c) => c.slug === slug);
-}
