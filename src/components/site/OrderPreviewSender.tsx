@@ -48,14 +48,15 @@ export function OrderPreviewSender({
     setUploading(true);
     try {
       const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-      const key = `previews/${orderId}/${Date.now()}.${ext}`;
+      const key = `${orderId}/${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from(BUCKET).upload(key, file, {
         cacheControl: "31536000",
         contentType: file.type,
         upsert: false,
       });
       if (error) { toast.error(error.message); return; }
-      const { data: signed, error: sErr } = await supabase.storage.from(BUCKET).createSignedUrl(key, 60 * 60 * 24 * 365);
+      // Short-lived signed URL: the private bucket is admin-only, links expire in 7 days.
+      const { data: signed, error: sErr } = await supabase.storage.from(BUCKET).createSignedUrl(key, 60 * 60 * 24 * 7);
       if (sErr || !signed?.signedUrl) { toast.error(sErr?.message ?? "Could not sign URL"); return; }
       const publicUrl = signed.signedUrl;
       const { error: uErr } = await supabase
