@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createHmac } from "node:crypto";
 
 type Item = { id: string; quantity: number };
 
@@ -109,8 +110,12 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         }
 
 
+        // Capability token: proves this browser created the order.
+        const orderToken = createHmac("sha256", keySecret).update(`mark-status:${order.id}`).digest("hex");
+
         return Response.json({
           orderId: order.id,
+          orderToken,
           amount: order.amount,
           currency: order.currency,
           keyId,
