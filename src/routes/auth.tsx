@@ -80,6 +80,9 @@ function AuthPage() {
       <p className="eyebrow mb-3">Partner Portal</p>
       <h1 className="font-serif text-4xl md:text-5xl mb-8">{mode === "signin" ? "Sign in" : "Create account"}</h1>
       <form onSubmit={handleSubmit} className="space-y-5 glass-card rounded-2xl p-6">
+        {notice && (
+          <p className="text-xs text-[color:var(--gold)] border hairline rounded-xl px-4 py-3">{notice}</p>
+        )}
         <div>
           <label className="text-xs eyebrow block mb-2">Email</label>
           <input
