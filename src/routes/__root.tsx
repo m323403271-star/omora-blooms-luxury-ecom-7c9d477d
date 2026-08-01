@@ -19,7 +19,7 @@ import { CartDrawer } from "@/components/site/CartDrawer";
 import { WhatsAppFab } from "@/components/site/WhatsAppFab";
 import { RefCapture } from "@/components/site/RefCapture";
 import { Analytics } from "@/components/site/Analytics";
-import logoAsset from "@/assets/omora-logo.asset.json";
+import { LOGO_SRC } from "@/lib/logo";
 
 function NotFoundComponent() {
   return (
@@ -74,18 +74,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "OMORA BLOOMS — Luxury Handmade Bouquets That Last Forever" },
       { property: "og:description", content: "OMORA BLOOMS crafts luxury handmade crochet & pipe cleaner bouquets, mother recovery kits, baby essentials and premium gift boxes. Handmade with love, crafted to last forever." },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: logoAsset.url },
+      { property: "og:image", content: LOGO_SRC },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "OMORA BLOOMS — Luxury Handmade Bouquets That Last Forever" },
       { name: "twitter:description", content: "OMORA BLOOMS crafts luxury handmade crochet & pipe cleaner bouquets, mother recovery kits, baby essentials and premium gift boxes. Handmade with love, crafted to last forever." },
-      { name: "twitter:image", content: logoAsset.url },
+      { name: "twitter:image", content: LOGO_SRC },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/533c9fec-a0ee-4af6-b723-e8b6418f7eb4/id-preview-d8737fa4--9b70daa9-6a74-48da-91ba-28f391def9de.lovable.app-1784644894065.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/533c9fec-a0ee-4af6-b723-e8b6418f7eb4/id-preview-d8737fa4--9b70daa9-6a74-48da-91ba-28f391def9de.lovable.app-1784644894065.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/jpeg", href: logoAsset.url },
-      { rel: "apple-touch-icon", href: logoAsset.url },
+      { rel: "icon", type: "image/jpeg", href: LOGO_SRC },
+      { rel: "apple-touch-icon", href: LOGO_SRC },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" },
