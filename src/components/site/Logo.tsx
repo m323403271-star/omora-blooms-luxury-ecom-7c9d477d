@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logoAsset from "@/assets/omora-logo.asset.json";
+import { LOGO_SRC, LOGO_FALLBACK_SRC } from "@/lib/logo";
 
 export function Logo({ className = "", size = "md" }: { className?: string; size?: "sm" | "md" | "lg" | "xl" }) {
   const sizes = {
@@ -11,10 +11,17 @@ export function Logo({ className = "", size = "md" }: { className?: string; size
   return (
     <Link to="/" className={`inline-flex items-center gap-3 ${className}`} aria-label="OMORA BLOOMS home">
       <img
-        src={logoAsset.url}
+        src={LOGO_SRC}
         alt="OMORA BLOOMS"
         width={200}
         height={200}
+        loading="eager"
+        decoding="async"
+        onError={(e) => {
+          const img = e.currentTarget;
+          if (img.src.endsWith(LOGO_FALLBACK_SRC)) return;
+          img.src = LOGO_FALLBACK_SRC;
+        }}
         className={`${sizes[size]} rounded-full object-cover shrink-0 ring-1 ring-[color:var(--gold)]/30`}
       />
       <span className="sr-only">OMORA BLOOMS</span>
