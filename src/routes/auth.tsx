@@ -14,43 +14,66 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  const routeByRole = async (userId: string) => {
+    try {
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+      if (roles?.some((r) => r.role === "admin")) return navigate({ to: "/admin/referrals" });
+    } catch {
+      /* fall through to partner dashboard */
+    }
+    navigate({ to: "/partner" });
+  };
 
   useEffect(() => {
+    let active = true;
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/partner" });
+      if (active && data.user) void routeByRole(data.user.id);
     });
-  }, [navigate]);
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
+    setNotice(null);
     try {
       if (mode === "signin") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        if (!data.user) throw new Error("Sign in failed. Please try again.");
         toast.success("Welcome back");
+        await routeByRole(data.user.id);
       } else {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        toast.success("Account created");
+        if (!data.session) {
+          setNotice("Account created. Check your email to confirm, then sign in.");
+          toast.success("Check your email to confirm your account");
+          setMode("signin");
+        } else {
+          toast.success("Account created");
+          await routeByRole(data.user!.id);
+        }
       }
-      // Route by role
-      const { data: userData } = await supabase.auth.getUser();
-      const uid = userData.user?.id;
-      if (uid) {
-        const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", uid);
-        const isAdmin = roles?.some((r) => r.role === "admin"); 
-      }navigate({ to: "/admin/referrals" });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Authentication failed");
+      const msg = err instanceof Error ? err.message : "Authentication failed";
+      setNotice(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
   }
+
 
   return (
     <div className="container-luxe py-16 md:py-24 max-w-md">
