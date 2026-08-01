@@ -98,10 +98,11 @@ function BuyPage() {
   const navigate = useNavigate();
 
   const allVariants = getAllVariants();
-  const variant: ProductVariant | undefined =
+  const foundVariant =
     getVariantBySlug(variantSlug) ?? allVariants.find((v) => v.slug === variantSlug);
 
-  if (!variant) throw notFound();
+  if (!foundVariant) throw notFound();
+  const variant: ProductVariant = foundVariant;
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
