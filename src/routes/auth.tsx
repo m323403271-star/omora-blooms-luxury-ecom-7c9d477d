@@ -4,9 +4,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — OMORA BLOOMS" }, { name: "robots", content: "noindex" }] }),
+  head: () => ({
+    meta: [
+      { title: "Partner Sign in — OMORA BLOOMS" },
+      { name: "description", content: "Sign in to the OMORA BLOOMS partner portal to track referrals, commissions and orders." },
+      { property: "og:title", content: "Partner Sign in — OMORA BLOOMS" },
+      { property: "og:description", content: "Sign in to the OMORA BLOOMS partner portal to track referrals, commissions and orders." },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: AuthPage,
 });
+
+function friendlyError(message: string): string {
+  const m = message.toLowerCase();
+  if (m.includes("invalid login credentials")) return "Invalid email or password. Try again, or reset your password below.";
+  if (m.includes("user already registered")) return "This email already has an account. Please sign in instead.";
+  if (m.includes("email not confirmed")) return "Email not confirmed yet. Use “Resend confirmation email” below.";
+  if (m.includes("rate limit") || m.includes("too many")) return "Too many attempts. Please wait a minute and try again.";
+  return message;
+}
 
 function AuthPage() {
   const navigate = useNavigate();
@@ -14,12 +31,16 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [busy, setBusy] = useState<"reset" | "resend" | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
 
   const routeByRole = async (userId: string) => {
     try {
       const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", userId);
-      if (roles?.some((r) => r.role === "admin")) return navigate({ to: "/admin/referrals" });
+      if (roles?.some((r) => r.role === "admin")) {
+        navigate({ to: "/admin/referrals" });
+        return;
+      }
     } catch {
       /* fall through to partner dashboard */
     }
@@ -66,7 +87,7 @@ function AuthPage() {
         }
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : "Authentication failed";
+      const msg = friendlyError(err instanceof Error ? err.message : "Authentication failed");
       setNotice(msg);
       toast.error(msg);
     } finally {
@@ -74,6 +95,55 @@ function AuthPage() {
     }
   }
 
+  async function handleForgotPassword() {
+    if (busy || loading) return;
+    if (!email) {
+      setNotice("Enter your email address first, then tap “Forgot password”.");
+      return;
+    }
+    setBusy("reset");
+    setNotice(null);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      setNotice("Password reset link sent. Check your inbox (and spam folder).");
+      toast.success("Reset link sent");
+    } catch (err) {
+      const msg = friendlyError(err instanceof Error ? err.message : "Could not send reset email");
+      setNotice(msg);
+      toast.error(msg);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function handleResendConfirmation() {
+    if (busy || loading) return;
+    if (!email) {
+      setNotice("Enter your email address first, then tap “Resend confirmation email”.");
+      return;
+    }
+    setBusy("resend");
+    setNotice(null);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email,
+        options: { emailRedirectTo: window.location.origin },
+      });
+      if (error) throw error;
+      setNotice("Confirmation email sent. Check your inbox (and spam folder).");
+      toast.success("Confirmation email sent");
+    } catch (err) {
+      const msg = friendlyError(err instanceof Error ? err.message : "Could not resend confirmation");
+      setNotice(msg);
+      toast.error(msg);
+    } finally {
+      setBusy(null);
+    }
+  }
 
   return (
     <div className="container-luxe py-16 md:py-24 max-w-md">
@@ -107,9 +177,29 @@ function AuthPage() {
         <button disabled={loading} type="submit" className="btn-gold w-full py-3 rounded-full text-sm">
           {loading ? "Please wait…" : mode === "signin" ? "Sign in" : "Sign up"}
         </button>
+
+        <div className="flex flex-col gap-2 pt-1">
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            disabled={busy !== null || loading}
+            className="btn-outline-gold w-full py-2.5 rounded-full text-xs"
+          >
+            {busy === "reset" ? "Sending…" : "Forgot password?"}
+          </button>
+          <button
+            type="button"
+            onClick={handleResendConfirmation}
+            disabled={busy !== null || loading}
+            className="btn-outline-gold w-full py-2.5 rounded-full text-xs"
+          >
+            {busy === "resend" ? "Sending…" : "Resend confirmation email"}
+          </button>
+        </div>
+
         <p className="text-xs text-center text-[color:var(--muted-foreground)]">
           {mode === "signin" ? "Need an account?" : "Have an account?"}{" "}
-          <button type="button" onClick={() => setMode(mode === "signin" ? "signup" : "signin")} className="text-[color:var(--gold)] underline underline-offset-2">
+          <button type="button" onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setNotice(null); }} className="text-[color:var(--gold)] underline underline-offset-2">
             {mode === "signin" ? "Sign up" : "Sign in"}
           </button>
         </p>
