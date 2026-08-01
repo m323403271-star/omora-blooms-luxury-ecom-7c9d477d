@@ -8,7 +8,7 @@ import { whatsappLink } from "@/lib/whatsapp";
  * Reusable hook UI for admins & delivery to attach a live bouquet preview photo
  * to an order and dispatch it via WhatsApp or Email before shipping.
  *
- * - Uploads to the existing public `product-images` bucket under `previews/{orderId}/`.
+ * - Uploads to the private `order-previews` bucket (admin-only) under `{orderId}/`.
  * - Persists preview_photo_url / preview_sent_at / preview_channel on payments row.
  * - Generates ready-to-send WhatsApp link and mailto payload with the image URL.
  */
@@ -25,7 +25,7 @@ type Props = {
   onSent?: (url: string, channel: "whatsapp" | "email") => void;
 };
 
-const BUCKET = "product-images";
+const BUCKET = "order-previews";
 
 export function OrderPreviewSender({
   orderId,
