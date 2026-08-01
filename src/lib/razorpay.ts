@@ -91,6 +91,7 @@ export async function startRazorpayCheckout(
   }
   const order = (await orderRes.json()) as {
     orderId: string;
+    orderToken?: string;
     amount: number;
     currency: string;
     keyId: string;
@@ -100,7 +101,7 @@ export async function startRazorpayCheckout(
     fetch("/api/razorpay/mark-status", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId: order.orderId, status, error: err }),
+      body: JSON.stringify({ orderId: order.orderId, orderToken: order.orderToken, status, error: err }),
       keepalive: true,
     }).catch(() => {});
   };
