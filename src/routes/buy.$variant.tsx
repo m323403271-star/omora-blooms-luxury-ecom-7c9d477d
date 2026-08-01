@@ -35,14 +35,8 @@ export const Route = createFileRoute("/buy/$variant")({
 });
 
 // ─── Razorpay types ───────────────────────────────────────────────────────────
-declare global {
-  interface Window {
-    Razorpay?: new (opts: Record<string, unknown>) => {
-      open: () => void;
-      on: (e: string, cb: (r: unknown) => void) => void;
-    };
-  }
-}
+// Window.Razorpay is declared globally in "@/lib/razorpay".
+
 
 async function loadRazorpay(): Promise<boolean> {
   if (typeof window === "undefined") return false;
