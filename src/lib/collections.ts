@@ -485,3 +485,88 @@ export const weddingGiftsProducts = [
   }
 ];
 
+
+// ---------------------------------------------------------------------------
+// Top-level collections used by header, homepage, shop filters and admin tools.
+// ---------------------------------------------------------------------------
+
+export type Collection = {
+  slug: string;
+  name: string;
+  tagline: string;
+  image: string;
+};
+
+export const COLLECTIONS: Collection[] = [
+  {
+    slug: "crochet-bouquets",
+    name: "Crochet Bouquets",
+    tagline: "Handmade to last forever",
+    image: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "pipe-cleaner-bouquets",
+    name: "Pipe Cleaner Bouquets",
+    tagline: "Playful, plush, everlasting",
+    image: "https://images.unsplash.com/photo-1520763185298-1b434c919102?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "frames-vases",
+    name: "Everlasting Frames & Vases",
+    tagline: "Floral art for your walls",
+    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "airport-collection",
+    name: "Airport Welcome Collection",
+    tagline: "Express 20-30 min at BLR",
+    image: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "divine-heritage",
+    name: "Divine Heritage Collection",
+    tagline: "Rituals, gilded with grace",
+    image: "https://images.unsplash.com/photo-1605885064365-e40ed3243f67?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "baby-collection",
+    name: "Baby Essentials",
+    tagline: "Softest welcome gifts",
+    image: "https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "mother-recovery",
+    name: "Mother Recovery Kits",
+    tagline: "Care, curated with love",
+    image: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "indoor-plants",
+    name: "Mini Plants",
+    tagline: "Little green luxuries",
+    image: "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "luxury-gift-boxes",
+    name: "Luxury Gift Boxes",
+    tagline: "Signature presentation",
+    image: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "wedding-gifts",
+    name: "Wedding Gifts",
+    tagline: "For the forever moments",
+    image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80",
+  },
+  {
+    slug: "eternal-bond-luxury-kit",
+    name: "Eternal Bond Luxury Kit",
+    tagline: "Our most gifted set",
+    image: "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80",
+  },
+];
+
+export function collectionBySlug(slug: string | null | undefined): Collection | undefined {
+  if (!slug) return undefined;
+  return COLLECTIONS.find((c) => c.slug === slug);
+}
