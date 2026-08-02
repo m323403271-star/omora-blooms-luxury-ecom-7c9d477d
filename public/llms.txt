@@ -1,0 +1,29 @@
+# OMORA BLOOMS
+
+> Luxury handmade crochet and pipe-cleaner flower bouquets, gift boxes, mother recovery kits and baby essentials — everlasting blooms, never fresh flowers. Express 20-30 minute delivery at Kempegowda International Airport (BLR), Bengaluru.
+
+OMORA BLOOMS is an Indian luxury gifting brand. Every bouquet is handmade with love and crafted to last forever. Orders can be placed online (Razorpay) or on WhatsApp.
+
+## Pages
+
+- [Home](/): Signature collections, featured bouquets and express airport delivery.
+- [Shop](/shop): Full catalogue of handmade bouquets, gift boxes and kits.
+- [Collections](/collections): Browse by collection.
+- [About](/about): The story and craft behind OMORA BLOOMS.
+- [Contact](/contact): Reach the team on WhatsApp, phone or email.
+- [Airport Pickup](/airport-pickup): BLR pickup points and 20-30 minute express delivery.
+- [FAQ](/faq): Materials, customisation, delivery and payment questions.
+
+## Collections
+
+- [Crochet Bouquets](/collections/crochet-bouquets): Hand-crocheted everlasting flowers.
+- [Pipe Cleaner Bouquets](/collections/pipe-cleaner-bouquets): Playful plush everlasting stems.
+- [Everlasting Frames & Vases](/collections/frames-vases): Floral art for walls and tables.
+- [Airport Collection](/collections/airport-collection): Welcome bouquets for BLR arrivals.
+
+## Optional
+
+- [Shipping](/shipping): Delivery zones and timelines.
+- [Returns](/returns): Return and refund policy.
+- [Privacy](/privacy): Privacy policy.
+- [Terms](/terms): Terms of service.
