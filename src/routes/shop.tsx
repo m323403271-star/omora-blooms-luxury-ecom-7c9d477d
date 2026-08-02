@@ -4,13 +4,15 @@ import { useMemo, useState } from "react";
 import { productsQuery } from "@/lib/products";
 import { COLLECTIONS } from "@/lib/collections";
 import { ProductCard } from "@/components/site/ProductCard";
+import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/shop")({
   head: () => ({
-    meta: [
-      { title: "Shop — OMORA BLOOMS" },
-      { name: "description", content: "Browse our luxury handmade bouquets, gift boxes and curated hampers. Crafted to last forever." },
-    ],
+    ...pageSeo({
+      path: "/shop",
+      title: "Shop — OMORA BLOOMS",
+      description: "Browse our luxury handmade bouquets, gift boxes and curated hampers. Crafted to last forever.",
+    }),
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery),
   component: ShopPage,
@@ -49,10 +51,13 @@ function ShopPage() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search bouquets, hampers, kits..."
+              aria-label="Search products"
+              type="search"
               className="w-full bg-transparent hairline border rounded-full px-4 py-2.5 text-sm placeholder:text-[color:var(--muted-foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
             />
           </div>
           <select
+            aria-label="Sort products"
             value={sort}
             onChange={(e) => setSort(e.target.value as typeof sort)}
             className="bg-transparent hairline border rounded-full px-4 py-2.5 text-sm focus:outline-none"

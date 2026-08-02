@@ -1,12 +1,14 @@
+import { pageSeo } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { COLLECTIONS } from "@/lib/collections";
 
 export const Route = createFileRoute("/collections/")({
   head: () => ({
-    meta: [
-      { title: "Collections — OMORA BLOOMS" },
-      { name: "description", content: "Explore OMORA BLOOMS collections — crochet bouquets, mother recovery, baby essentials, wedding gifts and more." },
-    ],
+    ...pageSeo({
+      path: "/collections",
+      title: 'Collections — OMORA BLOOMS',
+      description: 'Explore OMORA BLOOMS collections — crochet bouquets, mother recovery, baby essentials, wedding gifts and more.',
+    }),
   }),
   component: CollectionsIndex,
 });

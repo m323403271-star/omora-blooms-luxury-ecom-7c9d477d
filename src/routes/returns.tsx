@@ -1,8 +1,15 @@
+import { pageSeo } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { PolicyLayout } from "./shipping";
 
 export const Route = createFileRoute("/returns")({
-  head: () => ({ meta: [{ title: "Returns — OMORA BLOOMS" }] }),
+  head: () => ({
+    ...pageSeo({
+      path: "/returns",
+      title: 'Return Policy — OMORA BLOOMS',
+      description: 'Returns, replacements and cancellations for OMORA BLOOMS handmade-to-order bouquets, hampers and gift boxes.',
+    }),
+  }),
   component: () => (
     <PolicyLayout eyebrow="Policy" title="Return Policy">
       <p>Every OMORA BLOOMS piece is handmade to order with love. Because of the personal nature of our craft, we handle returns on a case-by-case basis.</p>

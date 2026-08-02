@@ -1,3 +1,4 @@
+import { pageSeo } from "@/lib/seo";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
@@ -26,12 +27,11 @@ export const Route = createFileRoute("/collections/$slug")({
     const title = c?.name ?? cat?.eyebrow ?? "Collection";
     const desc = c?.tagline ?? "OMORA BLOOMS luxury handmade collection.";
     return {
-      meta: [
-        { title: `${title} — OMORA BLOOMS` },
-        { name: "description", content: desc },
-        { property: "og:title", content: `${title} — OMORA BLOOMS` },
-        { property: "og:description", content: desc },
-      ],
+      ...pageSeo({
+        path: `/collections/${params.slug}`,
+        title: `${title} — OMORA BLOOMS`,
+        description: desc,
+      }),
     };
   },
   loader: ({ context, params }) => {

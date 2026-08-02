@@ -1,3 +1,4 @@
+import { pageSeo } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Mail, MessageCircle, Phone, MapPin } from "lucide-react";
@@ -8,10 +9,11 @@ import { toast } from "sonner";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
-    meta: [
-      { title: "Contact — OMORA BLOOMS" },
-      { name: "description", content: "Get in touch with the OMORA BLOOMS concierge team for luxury gifting, bespoke bouquets and corporate orders." },
-    ],
+    ...pageSeo({
+      path: "/contact",
+      title: 'Contact — OMORA BLOOMS',
+      description: 'Get in touch with the OMORA BLOOMS concierge team for luxury gifting, bespoke bouquets and corporate orders.',
+    }),
   }),
   component: ContactPage,
 });

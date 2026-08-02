@@ -1,3 +1,4 @@
+import { pageSeo } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
@@ -14,7 +15,13 @@ export function PolicyLayout({ title, eyebrow, children }: { title: string; eyeb
 }
 
 export const Route = createFileRoute("/shipping")({
-  head: () => ({ meta: [{ title: "Shipping — OMORA BLOOMS" }] }),
+  head: () => ({
+    ...pageSeo({
+      path: "/shipping",
+      title: 'Shipping & Delivery — OMORA BLOOMS',
+      description: 'Same-day Bengaluru delivery, pan-India shipping, worldwide DHL/FedEx and our signature airport welcome service.',
+    }),
+  }),
   component: () => (
     <PolicyLayout eyebrow="Policy" title="Shipping & Delivery">
       <p>We offer luxury delivery experiences across India and worldwide. Every parcel is dispatched in our signature packaging with tracking provided.</p>

@@ -1,8 +1,15 @@
+import { pageSeo } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { PolicyLayout } from "./shipping";
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({ meta: [{ title: "Privacy Policy — OMORA BLOOMS" }] }),
+  head: () => ({
+    ...pageSeo({
+      path: "/privacy",
+      title: 'Privacy Policy — OMORA BLOOMS',
+      description: 'How OMORA BLOOMS collects, uses and protects your personal information when you shop our handmade luxury gifts.',
+    }),
+  }),
   component: () => (
     <PolicyLayout eyebrow="Policy" title="Privacy Policy">
       <p>Your trust is essential to us. This policy explains what information we collect, how we use it and your rights.</p>

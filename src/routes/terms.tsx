@@ -1,8 +1,15 @@
+import { pageSeo } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { PolicyLayout } from "./shipping";
 
 export const Route = createFileRoute("/terms")({
-  head: () => ({ meta: [{ title: "Terms & Conditions — OMORA BLOOMS" }] }),
+  head: () => ({
+    ...pageSeo({
+      path: "/terms",
+      title: 'Terms & Conditions — OMORA BLOOMS',
+      description: 'The terms that apply when you browse omorablooms.in and order handmade bouquets, gift boxes and kits from OMORA BLOOMS.',
+    }),
+  }),
   component: () => (
     <PolicyLayout eyebrow="Policy" title="Terms & Conditions">
       <p>By using this website and placing an order with OMORA BLOOMS, you agree to the following terms.</p>

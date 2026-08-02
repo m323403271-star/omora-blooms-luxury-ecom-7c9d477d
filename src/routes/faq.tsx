@@ -1,11 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-
-export const Route = createFileRoute("/faq")({
-  head: () => ({ meta: [{ title: "FAQ — OMORA BLOOMS" }, { name: "description", content: "Answers about OMORA BLOOMS handmade bouquets, shipping, custom orders and more." }] }),
-  component: FaqPage,
-});
+import { pageSeo } from "@/lib/seo";
 
 const FAQS: { q: string; a: string }[] = [
   { q: "What are OMORA BLOOMS bouquets made of?", a: "Our bouquets are handmade using premium yarn (crochet) and pipe cleaner. We do not sell fresh flowers — every bloom is designed to last forever." },
@@ -17,6 +13,32 @@ const FAQS: { q: string; a: string }[] = [
   { q: "Do you offer corporate gifting?", a: "Yes. We work with brands and companies on bulk gifting, custom packaging and full branding. Contact us for a proposal." },
   { q: "What is your return policy?", a: "Because every piece is handmade to order, we do not accept returns on completed items. Damaged-in-transit pieces are replaced free of charge." },
 ];
+
+export const Route = createFileRoute("/faq")({
+  head: () => ({
+    ...pageSeo({
+      path: "/faq",
+      title: "FAQ — OMORA BLOOMS",
+      description: "Answers about OMORA BLOOMS handmade bouquets, shipping, custom orders and more.",
+    }),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQS.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }),
+      },
+    ],
+  }),
+  component: FaqPage,
+});
+
 
 function FaqPage() {
   const [open, setOpen] = useState<number | null>(0);

@@ -13,20 +13,53 @@ import { GiftAndBouquetCustomizer } from "@/components/site/GiftAndBouquetCustom
 import { formatGiftForWhatsApp, type CustomBouquet, type GiftOptions } from "@/lib/gifting";
 import { ReviewSection } from "@/components/site/ReviewSection";
 import { PdpAdminUpload } from "@/components/site/PdpAdminUpload";
+import { pageSeo, SITE_URL } from "@/lib/seo";
 
 
 export const Route = createFileRoute("/products/$slug")({
-  head: ({ params }) => {
-    const title = params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-    const desc = `Shop ${title} — handmade luxury bouquet by OMORA BLOOMS. Everlasting crochet & pipe-cleaner flowers, gift-boxed with same-day delivery in Bengaluru.`;
+  head: ({ params, loaderData }) => {
+    const list = (Array.isArray(loaderData) ? loaderData : []) as Product[];
+    const product = list.find((p) => p.slug === params.slug);
+    const title = product?.name ?? params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+    const desc =
+      product?.description ??
+      `Shop ${title} — handmade luxury bouquet by OMORA BLOOMS. Everlasting crochet & pipe-cleaner flowers, gift-boxed with same-day delivery in Bengaluru.`;
+    const rawImage = product ? resolveProductImage(product.images?.[0] || product.image_url) : undefined;
+    const image = rawImage?.startsWith("http") ? rawImage : undefined;
+    const seo = pageSeo({
+      path: `/products/${params.slug}`,
+      title: `${title} — OMORA BLOOMS`,
+      description: desc.slice(0, 155),
+      image,
+      type: "product",
+    });
     return {
-      meta: [
-        { title: `${title} — OMORA BLOOMS` },
-        { name: "description", content: desc },
-        { property: "og:title", content: `${title} — OMORA BLOOMS` },
-        { property: "og:description", content: desc },
-        { property: "og:type", content: "product" },
-        { name: "twitter:card", content: "summary_large_image" },
+      ...seo,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: title,
+            description: desc,
+            ...(image ? { image } : {}),
+            brand: { "@type": "Brand", name: "OMORA BLOOMS" },
+            ...(product
+              ? {
+                  offers: {
+                    "@type": "Offer",
+                    price: String(product.price),
+                    priceCurrency: "INR",
+                    availability: product.available
+                      ? "https://schema.org/InStock"
+                      : "https://schema.org/OutOfStock",
+                    url: `${SITE_URL}/products/${params.slug}`,
+                  },
+                }
+              : {}),
+          }),
+        },
       ],
     };
   },

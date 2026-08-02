@@ -1,13 +1,15 @@
+import { pageSeo } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Logo } from "@/components/site/Logo";
 import heroBouquet from "@/assets/hero-bouquet.jpg";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
-    meta: [
-      { title: "About — OMORA BLOOMS" },
-      { name: "description", content: "OMORA BLOOMS crafts luxury handmade bouquets, mother recovery kits, baby essentials, and premium gift boxes with love in India." },
-    ],
+    ...pageSeo({
+      path: "/about",
+      title: 'About — OMORA BLOOMS',
+      description: 'OMORA BLOOMS crafts luxury handmade bouquets, mother recovery kits, baby essentials and premium gift boxes with love in India.',
+    }),
   }),
   component: AboutPage,
 });
