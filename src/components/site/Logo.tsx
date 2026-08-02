@@ -22,7 +22,7 @@ export function Logo({ className = "", size = "md" }: { className?: string; size
           if (img.src.endsWith(LOGO_FALLBACK_SRC)) return;
           img.src = LOGO_FALLBACK_SRC;
         }}
-        className={`${sizes[size]} rounded-full object-cover shrink-0 ring-1 ring-[color:var(--gold)]/30`}
+        className={`${sizes[size]} rounded-full object-cover shrink-0 border-2 border-[color:var(--gold)] p-[2px] shadow-[0_0_16px_-4px_color-mix(in_oklab,var(--gold)_60%,transparent)]`}
       />
       <span className="sr-only">OMORA BLOOMS</span>
     </Link>
