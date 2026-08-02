@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /agent
+Disallow: /partner
+Disallow: /api/
+Disallow: /auth
+Disallow: /reset-password
+Disallow: /order/
+
+Sitemap: https://omorablooms.in/sitemap.xml
