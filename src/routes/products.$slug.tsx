@@ -18,7 +18,8 @@ import { pageSeo, SITE_URL } from "@/lib/seo";
 
 export const Route = createFileRoute("/products/$slug")({
   head: ({ params, loaderData }) => {
-    const product = Array.isArray(loaderData) ? loaderData.find((p) => p.slug === params.slug) : undefined;
+    const list = (Array.isArray(loaderData) ? loaderData : []) as Product[];
+    const product = list.find((p) => p.slug === params.slug);
     const title = product?.name ?? params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     const desc =
       product?.description ??
