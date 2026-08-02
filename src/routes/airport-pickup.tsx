@@ -1,15 +1,15 @@
+import { pageSeo } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { MapPin, Clock, ShieldCheck } from "lucide-react";
 import { PICKUP_POINTS } from "@/lib/pickup";
 
 export const Route = createFileRoute("/airport-pickup")({
   head: () => ({
-    meta: [
-      { title: "Airport Pickup Points — OMORA BLOOMS" },
-      { name: "description", content: "Express 20-30 minute delivery at Kempegowda International Airport (BLR). See our three designated pickup points for luxury handmade bouquets and gifts." },
-      { property: "og:title", content: "Airport Pickup Points — OMORA BLOOMS" },
-      { property: "og:description", content: "Express 20-30 minute delivery at Kempegowda International Airport. Meet our agent at one of three designated pickup points." },
-    ],
+    ...pageSeo({
+      path: "/airport-pickup",
+      title: 'Airport Pickup Points — OMORA BLOOMS',
+      description: 'Express 20-30 minute delivery at Kempegowda International Airport (BLR). See our three designated pickup points.',
+    }),
   }),
   component: AirportPickupPage,
 });
