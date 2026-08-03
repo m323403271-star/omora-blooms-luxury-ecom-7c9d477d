@@ -25,10 +25,19 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           return Response.json({ error: "Invalid JSON" }, { status: 400 });
         }
 
-        const { variantSlug, variantName, amount } = body;
-        if (!variantSlug || !variantName || !amount || amount < 1) {
+        const { variantSlug } = body;
+        if (!variantSlug || typeof variantSlug !== "string") {
           return Response.json({ error: "Missing required fields" }, { status: 400 });
         }
+
+        // Authoritative price/name resolved server-side; client-sent amount is ignored.
+        const { getVariantBySlug } = await import("@/lib/variants");
+        const variant = getVariantBySlug(variantSlug);
+        if (!variant) {
+          return Response.json({ error: "Unknown variant" }, { status: 400 });
+        }
+        const amount = variant.price;
+        const variantName = variant.name;
 
         const cleanName = typeof body.customerName === "string" ? body.customerName.slice(0, 120) : null;
         const cleanPhone = typeof body.customerPhone === "string" ? body.customerPhone.replace(/\D/g, "").slice(0, 15) : null;
