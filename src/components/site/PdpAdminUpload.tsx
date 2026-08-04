@@ -8,6 +8,8 @@ import { handleImageError } from "@/lib/image-fallback";
 
 const MAX_PER_PRODUCT = 4;
 const MAX_MB = 5;
+const MAX_VIDEO_MB = 25;
+const isVideoFile = (v: string) => /\.(mp4|webm|ogg|ogv|mov|m4v)(\?|#|$)/i.test(v);
 
 /**
  * Admin-only inline photo manager rendered on the product detail page.
@@ -78,8 +80,10 @@ export function PdpAdminUpload({
       const uploaded: string[] = [];
       for (const file of Array.from(list)) {
         if (rows.length + uploaded.length >= MAX_PER_PRODUCT) { toast.error(`Max ${MAX_PER_PRODUCT} photos`); break; }
-        if (!file.type.startsWith("image/")) { toast.error(`${file.name}: not an image`); continue; }
-        if (file.size > MAX_MB * 1024 * 1024) { toast.error(`${file.name}: over ${MAX_MB}MB`); continue; }
+        const isVid = file.type.startsWith("video/");
+        if (!file.type.startsWith("image/") && !isVid) { toast.error(`${file.name}: not an image or video`); continue; }
+        const cap = isVid ? MAX_VIDEO_MB : MAX_MB;
+        if (file.size > cap * 1024 * 1024) { toast.error(`${file.name}: over ${cap}MB`); continue; }
         const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
         const key = `${productId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
         const { error } = await supabase.storage.from(PRODUCT_BUCKET).upload(key, file, {
@@ -112,19 +116,23 @@ export function PdpAdminUpload({
     <div className="mt-8 rounded-2xl border hairline p-4 md:p-5 bg-[color:var(--card)]">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <p className="inline-flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
-          <ShieldCheck className="h-3.5 w-3.5" /> Admin · Product photos ({rows.length}/{MAX_PER_PRODUCT})
+          <ShieldCheck className="h-3.5 w-3.5" /> Admin · Photos & videos ({rows.length}/{MAX_PER_PRODUCT})
         </p>
         <label className={`btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 cursor-pointer ${remaining === 0 || busy ? "opacity-50 pointer-events-none" : ""}`}>
           {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
           {remaining === 0 ? "Gallery full" : `Upload (${remaining} left)`}
-          <input type="file" accept="image/*" multiple hidden onChange={(e) => { onFiles(e.target.files); e.currentTarget.value = ""; }} />
+          <input type="file" accept="image/*,video/*" multiple hidden onChange={(e) => { onFiles(e.target.files); e.currentTarget.value = ""; }} />
         </label>
       </div>
       {rows.length > 0 && (
         <div className="mt-4 grid grid-cols-4 gap-2">
           {rows.map((url, i) => (
             <div key={url} className="relative group aspect-square rounded-xl overflow-hidden hairline border">
-              <img src={signed[url] ?? url} alt={`${productName} ${i + 1}`} onError={handleImageError} className="h-full w-full object-cover" />
+              {isVideoFile(url) ? (
+                <video src={signed[url] ?? url} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+              ) : (
+                <img src={signed[url] ?? url} alt={`${productName} ${i + 1}`} onError={handleImageError} className="h-full w-full object-cover" />
+              )}
               <button
                 onClick={() => removeAt(i)}
                 disabled={busy}
@@ -138,7 +146,7 @@ export function PdpAdminUpload({
         </div>
       )}
       <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)]">
-        The first photo becomes the storefront cover. Changes go live immediately.
+        The first item becomes the storefront cover. Short videos (max 25MB) are supported. Changes go live immediately.
       </p>
     </div>
   );
