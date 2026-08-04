@@ -129,7 +129,7 @@ export function PdpAdminUpload({
                 onClick={() => removeAt(i)}
                 disabled={busy}
                 aria-label="Remove photo"
-                className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition"
+                className="absolute top-1 right-1 bg-black/80 text-white rounded-full p-1.5 shadow-md transition hover:bg-red-600 disabled:opacity-50"
               >
                 <Trash2 className="h-3 w-3" />
               </button>
