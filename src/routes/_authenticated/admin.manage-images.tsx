@@ -167,7 +167,7 @@ function ProductImageRow({ product, busy, setBusy }: { product: Product; busy: b
                 disabled={busy}
                 onClick={() => removeAt(i)}
                 aria-label="Remove photo"
-                className="absolute top-1 right-1 rounded-full bg-black/70 p-1.5 text-white opacity-0 transition group-hover:opacity-100 disabled:opacity-50"
+                className="absolute top-1 right-1 rounded-full bg-black/80 p-1.5 text-white shadow-md transition hover:bg-red-600 disabled:opacity-50"
               >
                 <Trash2 className="h-3 w-3" />
               </button>
