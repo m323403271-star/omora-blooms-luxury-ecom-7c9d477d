@@ -171,8 +171,8 @@ async function fetchProducts(): Promise<Product[]> {
 
     return data.map((p) => ({
       ...p,
-      image_url: signed[p.image_url] ?? p.image_url,
-      images: (p.images ?? []).map((u) => signed[u] ?? u),
+      image_url: resolveProductImage(signed[p.image_url] ?? p.image_url),
+      images: (p.images ?? []).map((u) => resolveProductImage(signed[u] ?? u)),
       price: Number(p.price),
       compare_at_price: p.compare_at_price === null ? null : Number(p.compare_at_price),
     })) as Product[];
