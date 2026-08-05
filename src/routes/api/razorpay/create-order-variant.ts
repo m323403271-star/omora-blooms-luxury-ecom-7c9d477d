@@ -31,13 +31,47 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
         }
 
         // Authoritative price/name resolved server-side; client-sent amount is ignored.
-        const { getVariantBySlug } = await import("@/lib/variants");
-        const variant = getVariantBySlug(variantSlug);
-        if (!variant) {
-          return Response.json({ error: "Unknown variant" }, { status: 400 });
+        let amount: number | null = null;
+        let variantName = variantSlug;
+        try {
+          const { createClient } = await import("@supabase/supabase-js");
+          const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
+          const supabasePublic = createClient(process.env["SUPABASE_URL"]!, key, {
+            auth: { persistSession: false, autoRefreshToken: false },
+            global: {
+              fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+                const h = new Headers(init?.headers);
+                if (key.startsWith("sb_") && h.get("Authorization") === `Bearer ${key}`) h.delete("Authorization");
+                h.set("apikey", key);
+                return fetch(input, { ...init, headers: h });
+              },
+            },
+          });
+          const { data } = await supabasePublic
+            .from("product_variants")
+            .select("name, price")
+            .eq("slug", variantSlug)
+            .eq("active", true)
+            .maybeSingle();
+          if (data) {
+            amount = Number((data as { price: number }).price);
+            variantName = (data as { name: string }).name;
+          }
+        } catch (e) {
+          console.error("Variant price lookup failed", e);
         }
-        const amount = variant.price;
-        const variantName = variant.name;
+
+        if (amount === null) {
+          // Legacy static catalogue fallback
+          const { getVariantBySlug } = await import("@/lib/variants");
+          const variant = getVariantBySlug(variantSlug);
+          if (!variant) {
+            return Response.json({ error: "Unknown variant" }, { status: 400 });
+          }
+          amount = variant.price;
+          variantName = variant.name;
+        }
+
 
         const cleanName = typeof body.customerName === "string" ? body.customerName.slice(0, 120) : null;
         const cleanPhone = typeof body.customerPhone === "string" ? body.customerPhone.replace(/\D/g, "").slice(0, 15) : null;
