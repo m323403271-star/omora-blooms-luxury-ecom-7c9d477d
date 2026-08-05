@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { signProductImages } from "@/lib/storage-image";
 import { Upload, Trash2, Image as ImageIcon, Search, ArrowLeft, Loader2, Save } from "lucide-react";
+import { VariantManager } from "@/components/site/VariantManager";
 
 export const Route = createFileRoute("/_authenticated/admin/products")({
   component: AdminProductsPage,
@@ -90,7 +91,7 @@ function AdminProductsPage() {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <p className="eyebrow">Admin</p>
-          <h1 className="font-serif text-3xl md:text-4xl mt-1">Product Photos</h1>
+          <h1 className="font-serif text-3xl md:text-4xl mt-1">Products &amp; Shades</h1>
           <p className="text-sm text-[color:var(--muted-foreground)] mt-1">Upload up to {MAX_PER_PRODUCT} gallery images per product (max {MAX_MB}MB each), and edit price & description — changes go live instantly.</p>
         </div>
         <Link to="/" className="btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2"><ArrowLeft className="h-3 w-3" /> Back to site</Link>
@@ -111,6 +112,8 @@ function AdminProductsPage() {
           ))}
         </div>
       )}
+
+      <VariantManager productId={product.id} productName={product.name} productPrice={Number(product.price ?? 0)} />
     </div>
   );
 }
@@ -226,11 +229,11 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
         <div className="flex-1 min-w-[200px]">
           <p className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">{product.category}</p>
           <p className="font-serif text-lg leading-tight">{product.name}</p>
-          <p className="text-xs text-[color:var(--muted-foreground)] mt-0.5">{images.length}/{MAX_PER_PRODUCT} gallery photos{pending.length > 0 ? ` · ${pending.length} pending` : ""}</p>
+          <p className="text-xs text-[color:var(--muted-foreground)] mt-0.5">{images.length}/{MAX_PER_PRODUCT} main image{pending.length > 0 ? ` · ${pending.length} pending` : ""}</p>
         </div>
         <label className={`btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 cursor-pointer ${remaining === 0 || busy ? "opacity-50 pointer-events-none" : ""}`}>
           <Upload className="h-3 w-3" />
-          {remaining === 0 ? "Full" : `Add photos (${remaining} left)`}
+          {remaining === 0 ? "Replace below" : "Add main image"}
           <input type="file" accept="image/*" multiple hidden onChange={(e) => { stageFiles(e.target.files); e.currentTarget.value = ""; }} />
         </label>
       </div>
@@ -317,6 +320,8 @@ function ProductRow({ product, onChanged }: { product: Product; onChanged: () =>
           ))}
         </div>
       )}
+
+      <VariantManager productId={product.id} productName={product.name} productPrice={Number(product.price ?? 0)} />
     </div>
   );
 }
