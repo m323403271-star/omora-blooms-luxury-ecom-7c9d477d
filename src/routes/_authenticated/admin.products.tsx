@@ -112,8 +112,6 @@ function AdminProductsPage() {
           ))}
         </div>
       )}
-
-      <VariantManager productId={product.id} productName={product.name} productPrice={Number(product.price ?? 0)} />
     </div>
   );
 }
