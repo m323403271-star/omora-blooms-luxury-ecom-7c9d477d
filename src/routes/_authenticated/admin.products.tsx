@@ -22,8 +22,10 @@ type Product = {
 };
 
 const BUCKET = "product-images";
-const MAX_PER_PRODUCT = 4;
+// Sub-category listing cards need only one main thumbnail; shade galleries live per variant.
+const MAX_PER_PRODUCT = 1;
 const MAX_MB = 5;
+
 
 // Bucket is private, so we store the object path and render via signed URLs.
 function storedRef(path: string) {
