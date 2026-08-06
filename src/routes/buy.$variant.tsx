@@ -94,8 +94,10 @@ function BuyPage() {
   const [city, setCity] = useState("");
   const [pincode, setPincode] = useState("");
   const [pickup, setPickup] = useState("");
+  const [payMode, setPayMode] = useState<"full" | "advance">("full");
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
+
 
   if (isLoading) {
     return (
