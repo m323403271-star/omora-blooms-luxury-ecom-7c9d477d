@@ -496,9 +496,10 @@ function BuyPage() {
                 </a>
 
                 <p className="text-[10px] text-[color:var(--muted-foreground)] text-center leading-relaxed">
-                  UPI · Cards · Net Banking · Wallets via Razorpay<br />
+                  UPI · Cards · Net Banking · Wallets via Razorpay. Cash on delivery is not available.<br />
                   Or confirm instantly with our concierge on WhatsApp.
                 </p>
+
               </div>
             </div>
           </aside>
