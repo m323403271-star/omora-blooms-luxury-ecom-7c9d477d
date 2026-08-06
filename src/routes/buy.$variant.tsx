@@ -94,8 +94,10 @@ function BuyPage() {
   const [city, setCity] = useState("");
   const [pincode, setPincode] = useState("");
   const [pickup, setPickup] = useState("");
+  const [payMode, setPayMode] = useState<"full" | "advance">("full");
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
+
 
   if (isLoading) {
     return (
@@ -124,12 +126,24 @@ function BuyPage() {
     (airportOnly ? pickup : address.trim() && city.trim()),
   );
 
+  // Pricing (mirrors the authoritative server-side calculation)
+  const round2 = (n: number) => Math.round(n * 100) / 100;
+  const listTotal = round2(variant.price);
+  const discount = payMode === "full" ? round2(listTotal * 0.05) : 0;
+  const orderTotal = round2(listTotal - discount);
+  const payNow = payMode === "advance" ? round2(orderTotal * 0.3) : orderTotal;
+  const balanceDue = round2(orderTotal - payNow);
+
   const waMessage =
     `Hello OMORA BLOOMS! I'd like to order:\n\n` +
     `• ${variant.name} — ${formatPrice(variant.price)}\n` +
-    `\nShipping Details:\n` +
+    (payMode === "full"
+      ? `\nPayment: Full online payment (5% OFF) — ${formatPrice(orderTotal)}`
+      : `\nPayment: 30% advance booking — ${formatPrice(payNow)} now, ${formatPrice(balanceDue)} on delivery`) +
+    `\n\nShipping Details:\n` +
     `Name: ${name || "—"}\nPhone: ${phone || "—"}\n${deliveryLine}` +
     `\n\nPlease confirm availability & delivery time.`;
+
 
   async function handleRazorpay() {
     if (!variant) return;
@@ -150,6 +164,8 @@ function BuyPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           variantSlug: variant.slug,
+          paymentMode: payMode,
+
           customerName: name,
           customerPhone: phone,
           pincode,
@@ -375,19 +391,84 @@ function BuyPage() {
                 </div>
               </div>
 
+              {/* Payment options */}
+              <div className="border-t hairline pt-5">
+                <p className="eyebrow mb-3 text-[color:var(--gold)]">Payment Option</p>
+                <div className="space-y-3">
+                  <button
+                    type="button"
+                    onClick={() => setPayMode("full")}
+                    className={`w-full text-left rounded-xl border px-4 py-3.5 transition ${
+                      payMode === "full"
+                        ? "border-[color:var(--gold)] bg-[color:var(--gold)]/10"
+                        : "hairline hover:border-[color:var(--gold)]/50"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-medium">Pay Full Amount Online</p>
+                        <p className="text-xs text-[color:var(--muted-foreground)]">UPI · Cards · NetBanking</p>
+                      </div>
+                      <span className="rounded-full bg-[color:var(--gold)] px-2.5 py-1 text-[10px] font-semibold tracking-[0.12em] uppercase text-[color:var(--noir)]">
+                        5% OFF
+                      </span>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPayMode("advance")}
+                    className={`w-full text-left rounded-xl border px-4 py-3.5 transition ${
+                      payMode === "advance"
+                        ? "border-[color:var(--gold)] bg-[color:var(--gold)]/10"
+                        : "hairline hover:border-[color:var(--gold)]/50"
+                    }`}
+                  >
+                    <p className="text-sm font-medium">Advance Booking — Pay 30% Now</p>
+                    <p className="text-xs text-[color:var(--muted-foreground)]">
+                      70% balance payable on delivery
+                    </p>
+                  </button>
+                </div>
+              </div>
+
               <div className="space-y-2.5 text-sm border-t hairline pt-4">
                 <div className="flex justify-between">
                   <span className="text-[color:var(--muted-foreground)]">Subtotal</span>
-                  <span>{formatPrice(variant.price)}</span>
+                  <span>{formatPrice(listTotal)}</span>
                 </div>
+                {discount > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-[color:var(--muted-foreground)]">Online payment discount (5%)</span>
+                    <span className="text-[color:var(--gold)]">− {formatPrice(discount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-[color:var(--muted-foreground)]">Shipping</span>
                   <span className="text-[color:var(--gold)]">Calculated at dispatch</span>
                 </div>
                 <div className="border-t hairline pt-2.5 flex justify-between font-serif text-xl">
-                  <span>Total</span>
-                  <span className="text-[color:var(--gold)]">{formatPrice(variant.price)}</span>
+                  <span>Order Total</span>
+                  <span className="text-[color:var(--gold)]">{formatPrice(orderTotal)}</span>
                 </div>
+
+                {payMode === "advance" ? (
+                  <div className="mt-3 rounded-xl border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/5 p-3.5 space-y-1.5">
+                    <div className="flex justify-between">
+                      <span className="text-[color:var(--muted-foreground)]">Pay now (30% advance)</span>
+                      <span className="text-[color:var(--gold)] font-medium">{formatPrice(payNow)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-[color:var(--muted-foreground)]">Due on delivery (70%)</span>
+                      <span className="font-medium">{formatPrice(balanceDue)}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-3 rounded-xl border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/5 p-3.5 flex justify-between">
+                    <span className="text-[color:var(--muted-foreground)]">Pay now (full)</span>
+                    <span className="text-[color:var(--gold)] font-medium">{formatPrice(payNow)}</span>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -397,8 +478,13 @@ function BuyPage() {
                   className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <CreditCard className="h-4 w-4" />
-                  {paying ? "Opening payment…" : "Order Now — Pay Securely"}
+                  {paying
+                    ? "Opening payment…"
+                    : payMode === "advance"
+                      ? `Pay ${formatPrice(payNow)} Advance`
+                      : `Pay ${formatPrice(payNow)} & Save 5%`}
                 </button>
+
 
                 <a
                   href={whatsappLink(waMessage)}
@@ -410,9 +496,10 @@ function BuyPage() {
                 </a>
 
                 <p className="text-[10px] text-[color:var(--muted-foreground)] text-center leading-relaxed">
-                  UPI · Cards · Net Banking · Wallets via Razorpay<br />
+                  UPI · Cards · Net Banking · Wallets via Razorpay. Cash on delivery is not available.<br />
                   Or confirm instantly with our concierge on WhatsApp.
                 </p>
+
               </div>
             </div>
           </aside>

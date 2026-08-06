@@ -89,14 +89,18 @@ export type Database = {
       payments: {
         Row: {
           amount: number
+          balance_due: number
           created_at: string
           currency: string
           customer_name: string | null
           customer_phone: string | null
           customer_tier: string
+          discount_amount: number
           error_message: string | null
           id: string
           items: Json
+          order_total: number | null
+          payment_mode: string
           pickup_point_id: string | null
           pincode: string | null
           preview_channel: string | null
@@ -111,14 +115,18 @@ export type Database = {
         }
         Insert: {
           amount: number
+          balance_due?: number
           created_at?: string
           currency?: string
           customer_name?: string | null
           customer_phone?: string | null
           customer_tier?: string
+          discount_amount?: number
           error_message?: string | null
           id?: string
           items?: Json
+          order_total?: number | null
+          payment_mode?: string
           pickup_point_id?: string | null
           pincode?: string | null
           preview_channel?: string | null
@@ -133,14 +141,18 @@ export type Database = {
         }
         Update: {
           amount?: number
+          balance_due?: number
           created_at?: string
           currency?: string
           customer_name?: string | null
           customer_phone?: string | null
           customer_tier?: string
+          discount_amount?: number
           error_message?: string | null
           id?: string
           items?: Json
+          order_total?: number | null
+          payment_mode?: string
           pickup_point_id?: string | null
           pincode?: string | null
           preview_channel?: string | null
