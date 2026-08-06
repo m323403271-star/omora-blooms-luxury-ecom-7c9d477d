@@ -9,7 +9,7 @@ import { getStoredRef } from "@/lib/referral";
 import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
 import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
-import { EXPRESS_PINCODES, getStoredPincode } from "@/lib/delivery";
+import {  getStoredPincode , isAirportPincode as isAirportPincodeFn } from "@/lib/delivery";
 import { formatGiftForWhatsApp } from "@/lib/gifting";
 
 export function CartDrawer() {
@@ -31,8 +31,8 @@ export function CartDrawer() {
 
   if (!isOpen) return null;
 
-  const isAirportPincode = !!(pincode && EXPRESS_PINCODES[pincode]);
-  const showPickup = isAirportPincode || airportOverride;
+  const isAirport = isAirportPincodeFn(pincode);
+  const showPickup = isAirport || airportOverride;
   const pickupRequired = showPickup;
 
   const ref = getStoredRef();
@@ -113,7 +113,7 @@ export function CartDrawer() {
             </div>
             <div className="border-t hairline px-6 py-5 space-y-4">
               {/* Airport pickup toggle for non-airport pincodes */}
-              {!isAirportPincode && (
+              {!isAirport && (
                 <label className="flex items-center gap-2 text-[11px] text-[color:var(--muted-foreground)] cursor-pointer select-none">
                   <input
                     type="checkbox"

@@ -18,6 +18,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           customerPhone?: string | null;
           pincode?: string | null;
           address?: string | null;
+          pickupPointId?: string | null;
         };
         try {
           body = await request.json();
@@ -118,6 +119,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
             pincode: cleanPincode,
             customer_name: cleanName,
             customer_phone: cleanPhone,
+            pickup_point_id: typeof body.pickupPointId === "string" ? body.pickupPointId.slice(0, 60) : null,
           } as never);
         } catch (e) {
           console.error("Payment log insert failed", e);

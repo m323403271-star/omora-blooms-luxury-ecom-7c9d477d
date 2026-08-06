@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
 import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
-import { EXPRESS_PINCODES, getStoredPincode } from "@/lib/delivery";
+import {  getStoredPincode , isAirportPincode as isAirportPincodeFn } from "@/lib/delivery";
 import { formatGiftForWhatsApp } from "@/lib/gifting";
 import { toast } from "sonner";
 
@@ -35,8 +35,8 @@ function CartPage() {
     return () => window.removeEventListener("omora:pincode-changed", handler as EventListener);
   }, []);
 
-  const isAirportPincode = !!(pincode && EXPRESS_PINCODES[pincode]);
-  const showPickup = isAirportPincode || airportOverride;
+  const isAirport = isAirportPincodeFn(pincode);
+  const showPickup = isAirport || airportOverride;
   const pickupRequired = showPickup;
 
   const ref = typeof window !== "undefined" ? getStoredRef() : null;
@@ -127,7 +127,7 @@ function CartPage() {
             <p className="eyebrow mb-4">Order Summary</p>
 
             {/* Airport pickup toggle for non-airport pincodes */}
-            {!isAirportPincode && (
+            {!isAirport && (
               <label className="mb-3 flex items-center gap-2 text-xs text-[color:var(--muted-foreground)] cursor-pointer select-none">
                 <input
                   type="checkbox"
