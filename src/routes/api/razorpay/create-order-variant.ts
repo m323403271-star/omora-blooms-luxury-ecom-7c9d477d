@@ -14,6 +14,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           variantSlug?: string;
           variantName?: string;
           amount?: number; // rupees
+          paymentMode?: string;
           customerName?: string | null;
           customerPhone?: string | null;
           pincode?: string | null;
@@ -30,6 +31,9 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
         if (!variantSlug || typeof variantSlug !== "string") {
           return Response.json({ error: "Missing required fields" }, { status: 400 });
         }
+
+        const paymentMode: "full" | "advance" = body.paymentMode === "advance" ? "advance" : "full";
+
 
         // Authoritative price/name resolved server-side; client-sent amount is ignored.
         let amount: number | null = null;
