@@ -17,8 +17,19 @@ export type DeliveryResult = {
 
 export const EXPRESS_PINCODES: Record<string, string> = {
   "562110": "Devanahalli",
+  "560030": "Kempegowda International Airport",
   "560300": "Kempegowda International Airport",
 };
+
+/** Pincodes served exclusively via airport pickup points (no doorstep address). */
+export const AIRPORT_PINCODES: Record<string, string> = {
+  "560030": "Kempegowda International Airport",
+  "560300": "Kempegowda International Airport",
+};
+
+export function isAirportPincode(pincode: string | null | undefined): boolean {
+  return !!pincode && !!AIRPORT_PINCODES[pincode];
+}
 
 export const REGIONAL_PINCODES: Record<string, string> = {
   "562101": "Regional Express Zone",
@@ -102,16 +113,19 @@ export function checkDelivery(pincodeInput: string, tier: DeliveryTier = getCust
   const pincode = parsed.data;
 
   if (EXPRESS_PINCODES[pincode]) {
+    const airport = isAirportPincode(pincode);
     return {
       pincode,
       zone: "express",
       serviceable: true,
       eta: "20 – 30 Minutes",
-      label: "Express Delivery",
+      label: airport ? "Airport Express Pickup" : "Express Delivery",
       area: EXPRESS_PINCODES[pincode],
       tier,
       badge: "green",
-      message: `Express delivery in 20–30 minutes to ${EXPRESS_PINCODES[pincode]}.`,
+      message: airport
+        ? "Express 20–30 minute handover at your chosen airport pickup point."
+        : `Express doorstep delivery in 20–30 minutes to ${EXPRESS_PINCODES[pincode]}.`,
     };
   }
 
