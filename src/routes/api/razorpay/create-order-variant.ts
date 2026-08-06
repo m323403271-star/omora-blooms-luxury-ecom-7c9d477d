@@ -82,7 +82,17 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
         const cleanPhone = typeof body.customerPhone === "string" ? body.customerPhone.replace(/\D/g, "").slice(0, 15) : null;
         const cleanPincode = typeof body.pincode === "string" && /^[1-9]\d{5}$/.test(body.pincode) ? body.pincode : null;
 
-        const amountPaise = Math.round(amount * 100);
+        // Authoritative pricing rules (never trust the client):
+        //  - full    → 5% discount on the whole order, paid now
+        //  - advance → 30% booking amount now, 70% due on delivery (no discount)
+        const round2 = (n: number) => Math.round(n * 100) / 100;
+        const listTotal = round2(amount);
+        const discountAmount = paymentMode === "full" ? round2(listTotal * 0.05) : 0;
+        const orderTotal = round2(listTotal - discountAmount);
+        const payNow = paymentMode === "advance" ? round2(orderTotal * 0.3) : orderTotal;
+        const balanceDue = round2(orderTotal - payNow);
+
+        const amountPaise = Math.round(payNow * 100);
         if (amountPaise < 100) {
           return Response.json({ error: "Amount too low" }, { status: 400 });
         }
@@ -99,7 +109,13 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
             amount: amountPaise,
             currency: "INR",
             receipt,
-            notes: { variant: variantSlug, name: variantName },
+            notes: {
+              variant: variantSlug,
+              name: variantName,
+              payment_mode: paymentMode,
+              order_total: String(orderTotal),
+              balance_due: String(balanceDue),
+            },
           }),
         });
 
@@ -116,10 +132,14 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           await supabaseAdmin.from("payments").insert({
             razorpay_order_id: order.id,
-            amount,
+            amount: payNow,
             currency: order.currency,
             status: "created",
-            items: [{ id: variantSlug, name: variantName, price: amount, quantity: 1 }] as never,
+            payment_mode: paymentMode,
+            discount_amount: discountAmount,
+            order_total: orderTotal,
+            balance_due: balanceDue,
+            items: [{ id: variantSlug, name: variantName, price: listTotal, quantity: 1 }] as never,
             pincode: cleanPincode,
             customer_name: cleanName,
             customer_phone: cleanPhone,
@@ -128,6 +148,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
         } catch (e) {
           console.error("Payment log insert failed", e);
         }
+
 
         return Response.json({
           orderId: order.id,
