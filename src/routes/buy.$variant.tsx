@@ -11,6 +11,8 @@ import { VariantGallery } from "@/components/site/VariantGallery";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { whatsappLink } from "@/lib/whatsapp";
 import { toast } from "sonner";
+import { isAirportPincode } from "@/lib/delivery";
+import { PICKUP_POINTS, findPickup } from "@/lib/pickup";
 
 export const Route = createFileRoute("/buy/$variant")({
   head: ({ params }) => {
@@ -91,6 +93,7 @@ function BuyPage() {
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [pincode, setPincode] = useState("");
+  const [pickup, setPickup] = useState("");
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -106,18 +109,26 @@ function BuyPage() {
   const parent = products.find((p) => p.id === variant.product_id);
   const media = [...(variant.images ?? []), ...(variant.video_url ? [variant.video_url] : [])].filter(Boolean);
 
-  const isFormValid =
+  const airportOnly = isAirportPincode(pincode.trim());
+  const pickupObj = findPickup(pickup);
+  const deliveryLine = airportOnly
+    ? pickupObj
+      ? `Airport Pickup: ${pickupObj.label} (${pickupObj.detail})`
+      : "Airport Pickup: —"
+    : `Address: ${address || "—"}, ${city || "—"} — ${pincode || "—"}`;
+
+  const isFormValid = Boolean(
     name.trim() &&
     phone.trim().length >= 10 &&
-    address.trim() &&
-    city.trim() &&
-    pincode.trim().length === 6;
+    pincode.trim().length === 6 &&
+    (airportOnly ? pickup : address.trim() && city.trim()),
+  );
 
   const waMessage =
     `Hello OMORA BLOOMS! I'd like to order:\n\n` +
     `• ${variant.name} — ${formatPrice(variant.price)}\n` +
     `\nShipping Details:\n` +
-    `Name: ${name || "—"}\nPhone: ${phone || "—"}\nAddress: ${address || "—"}, ${city || "—"} — ${pincode || "—"}` +
+    `Name: ${name || "—"}\nPhone: ${phone || "—"}\n${deliveryLine}` +
     `\n\nPlease confirm availability & delivery time.`;
 
   async function handleRazorpay() {
@@ -142,7 +153,8 @@ function BuyPage() {
           customerName: name,
           customerPhone: phone,
           pincode,
-          address: `${address}, ${city} — ${pincode}`,
+          address: airportOnly ? deliveryLine : `${address}, ${city} — ${pincode}`,
+          pickupPointId: airportOnly ? pickup : null,
         }),
       });
 
@@ -278,9 +290,39 @@ function BuyPage() {
               <div className="space-y-4">
                 <Field label="Full Name" icon={User} value={name} onChange={setName} placeholder="Your full name" required />
                 <Field label="Phone Number" icon={Phone} value={phone} onChange={setPhone} type="tel" placeholder="10-digit mobile number" required />
-                <Field label="Delivery Address" icon={Home} value={address} onChange={setAddress} placeholder="Flat / Building / Street" required />
+                {airportOnly ? (
+                  <div>
+                    <label className="mb-2 flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
+                      <MapPin className="h-3.5 w-3.5" /> Airport Pickup Point <span className="text-[color:var(--destructive)]">*</span>
+                    </label>
+                    <div className="space-y-2">
+                      {PICKUP_POINTS.map((pt) => (
+                        <button
+                          key={pt.id}
+                          type="button"
+                          onClick={() => setPickup(pt.id)}
+                          className={`w-full text-left rounded-xl border px-4 py-3 transition ${
+                            pickup === pt.id
+                              ? "border-[color:var(--gold)] bg-[color:var(--gold)]/10"
+                              : "hairline hover:border-[color:var(--gold)]/50"
+                          }`}
+                        >
+                          <p className="text-sm font-medium">{pt.label}</p>
+                          <p className="text-xs text-[color:var(--muted-foreground)]">{pt.detail}</p>
+                        </button>
+                      ))}
+                    </div>
+                    <p className="mt-2 text-[11px] text-[color:var(--muted-foreground)]">
+                      Express 20–30 min handover. Security rules restrict entry to gate check-in areas — please meet our agent at your chosen point.
+                    </p>
+                  </div>
+                ) : (
+                  <Field label="Delivery Address" icon={Home} value={address} onChange={setAddress} placeholder="Flat / Building / Street" required />
+                )}
                 <div className="grid grid-cols-2 gap-4">
-                  <Field label="City" icon={MapPin} value={city} onChange={setCity} placeholder="City" required />
+                  {!airportOnly && (
+                    <Field label="City" icon={MapPin} value={city} onChange={setCity} placeholder="City" required />
+                  )}
                   <Field label="Pincode" icon={MapPin} value={pincode} onChange={setPincode} placeholder="6-digit pincode" required />
                 </div>
               </div>
