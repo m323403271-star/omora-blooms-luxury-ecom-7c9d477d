@@ -164,6 +164,8 @@ function BuyPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           variantSlug: variant.slug,
+          paymentMode: payMode,
+
           customerName: name,
           customerPhone: phone,
           pincode,
