@@ -126,12 +126,24 @@ function BuyPage() {
     (airportOnly ? pickup : address.trim() && city.trim()),
   );
 
+  // Pricing (mirrors the authoritative server-side calculation)
+  const round2 = (n: number) => Math.round(n * 100) / 100;
+  const listTotal = round2(variant.price);
+  const discount = payMode === "full" ? round2(listTotal * 0.05) : 0;
+  const orderTotal = round2(listTotal - discount);
+  const payNow = payMode === "advance" ? round2(orderTotal * 0.3) : orderTotal;
+  const balanceDue = round2(orderTotal - payNow);
+
   const waMessage =
     `Hello OMORA BLOOMS! I'd like to order:\n\n` +
     `• ${variant.name} — ${formatPrice(variant.price)}\n` +
-    `\nShipping Details:\n` +
+    (payMode === "full"
+      ? `\nPayment: Full online payment (5% OFF) — ${formatPrice(orderTotal)}`
+      : `\nPayment: 30% advance booking — ${formatPrice(payNow)} now, ${formatPrice(balanceDue)} on delivery`) +
+    `\n\nShipping Details:\n` +
     `Name: ${name || "—"}\nPhone: ${phone || "—"}\n${deliveryLine}` +
     `\n\nPlease confirm availability & delivery time.`;
+
 
   async function handleRazorpay() {
     if (!variant) return;
