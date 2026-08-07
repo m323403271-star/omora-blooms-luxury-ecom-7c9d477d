@@ -32,6 +32,23 @@ export const Route = createFileRoute("/collections/$slug")({
         title: `${title} — OMORA BLOOMS`,
         description: desc,
       }),
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: `${title} — OMORA BLOOMS`,
+            description: desc,
+            url: `https://omorablooms.in/collections/${params.slug}`,
+            isPartOf: {
+              "@type": "WebSite",
+              name: "OMORA BLOOMS",
+              url: "https://omorablooms.in",
+            },
+          }),
+        },
+      ],
     };
   },
   loader: ({ context, params }) => {
@@ -107,6 +124,7 @@ function CollectionPage() {
 
       {gallery.length > 0 && (
         <section className="container-luxe pt-12 md:pt-16">
+          <h2 className="sr-only">{name} gallery</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {gallery.map((g) => (
               <div key={g.id} className="overflow-hidden rounded-2xl hairline border aspect-[4/5] bg-black/40">
@@ -125,8 +143,8 @@ function CollectionPage() {
       )}
 
       <section className="container-luxe py-12 md:py-16">
+        <h2 className="eyebrow mb-6">Pieces in this collection</h2>
         {items.length > 0 ? (
-
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {items.map((p) => (
               <ItemCard key={p.id} product={p} />

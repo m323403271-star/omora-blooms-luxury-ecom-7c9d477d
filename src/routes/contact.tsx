@@ -14,6 +14,46 @@ export const Route = createFileRoute("/contact")({
       title: 'Contact — OMORA BLOOMS',
       description: 'Get in touch with the OMORA BLOOMS concierge team for luxury gifting, bespoke bouquets and corporate orders.',
     }),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: "OMORA BLOOMS",
+          description:
+            "Luxury handmade crochet and pipe cleaner bouquets, gift boxes and curated hampers.",
+          url: "https://omorablooms.in",
+          telephone: "+91 98454 87271",
+          email: "hello@omorablooms.com",
+          address: {
+            "@type": "PostalAddress",
+            addressLocality: "Bengaluru",
+            addressRegion: "Karnataka",
+            addressCountry: "IN",
+          },
+          openingHoursSpecification: [
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+              ],
+              opens: "10:00",
+              closes: "19:00",
+            },
+          ],
+          sameAs: [
+            "https://instagram.com/omorablooms",
+            "https://facebook.com/omorablooms",
+          ],
+        }),
+      },
+    ],
   }),
   component: ContactPage,
 });
