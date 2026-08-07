@@ -83,6 +83,20 @@ function Field({
   );
 }
 
+type DeliveryMode = "local" | "airport" | "prestige";
+
+const ETA_BY_MODE: Record<DeliveryMode, string> = {
+  local: "20 – 30 Minutes",
+  airport: "30 – 45 Minutes",
+  prestige: "45 Minutes – 1 Hour",
+};
+
+const SHARED_PIN_OPTIONS: { value: DeliveryMode; label: string }[] = [
+  { value: "local", label: "Devanahalli Local / General Customer" },
+  { value: "airport", label: "Airport Customer (KIA Pickup)" },
+  { value: "prestige", label: "Prestige Golfshire Customer" },
+];
+
 function BuyPage() {
   const { variant: variantSlug } = Route.useParams();
   const { data: products } = useSuspenseQuery(productsQuery);
