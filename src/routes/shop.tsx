@@ -98,6 +98,7 @@ function ShopPage() {
           </div>
           </>
         )}
+      </section>
     </div>
   );
 }
