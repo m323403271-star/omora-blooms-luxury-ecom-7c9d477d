@@ -111,20 +111,31 @@ function BuyPage() {
   const parent = products.find((p) => p.id === variant.product_id);
   const media = [...(variant.images ?? []), ...(variant.video_url ? [variant.video_url] : [])].filter(Boolean);
 
-  const airportOnly = isAirportPincode(pincode.trim());
+  const pin = pincode.trim();
+  const isSharedPin = pin === "562110";
+  const autoMode: DeliveryMode | null =
+    pin === "560300" || isAirportPincode(pin) ? "airport" : pin === "562164" ? "prestige" : null;
+  const mode: DeliveryMode = autoMode ?? (isSharedPin ? sharedMode : "local");
+  const airportOnly = mode === "airport";
+  const isPrestige = mode === "prestige";
+  const eta = ETA_BY_MODE[mode];
+
   const pickupObj = findPickup(pickup);
   const deliveryLine = airportOnly
     ? pickupObj
       ? `Airport Pickup: ${pickupObj.label} (${pickupObj.detail})`
       : "Airport Pickup: —"
-    : `Address: ${address || "—"}, ${city || "—"} — ${pincode || "—"}`;
+    : isPrestige
+      ? `Prestige Golfshire — Villa: ${address || "—"} (Pincode ${pincode || "—"})`
+      : `Address: ${address || "—"}, ${city || "—"} — ${pincode || "—"}`;
 
   const isFormValid = Boolean(
     name.trim() &&
     phone.trim().length >= 10 &&
-    pincode.trim().length === 6 &&
-    (airportOnly ? pickup : address.trim() && city.trim()),
+    pin.length === 6 &&
+    (airportOnly ? pickup : isPrestige ? address.trim() : address.trim() && city.trim()),
   );
+
 
   // Pricing (mirrors the authoritative server-side calculation)
   const round2 = (n: number) => Math.round(n * 100) / 100;
