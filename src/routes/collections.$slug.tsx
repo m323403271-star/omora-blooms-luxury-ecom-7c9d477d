@@ -32,6 +32,23 @@ export const Route = createFileRoute("/collections/$slug")({
         title: `${title} — OMORA BLOOMS`,
         description: desc,
       }),
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: `${title} — OMORA BLOOMS`,
+            description: desc,
+            url: `https://omorablooms.in/collections/${params.slug}`,
+            isPartOf: {
+              "@type": "WebSite",
+              name: "OMORA BLOOMS",
+              url: "https://omorablooms.in",
+            },
+          }),
+        },
+      ],
     };
   },
   loader: ({ context, params }) => {
