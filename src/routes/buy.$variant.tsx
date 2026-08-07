@@ -83,6 +83,20 @@ function Field({
   );
 }
 
+type DeliveryMode = "local" | "airport" | "prestige";
+
+const ETA_BY_MODE: Record<DeliveryMode, string> = {
+  local: "20 – 30 Minutes",
+  airport: "30 – 45 Minutes",
+  prestige: "45 Minutes – 1 Hour",
+};
+
+const SHARED_PIN_OPTIONS: { value: DeliveryMode; label: string }[] = [
+  { value: "local", label: "Devanahalli Local / General Customer" },
+  { value: "airport", label: "Airport Customer (KIA Pickup)" },
+  { value: "prestige", label: "Prestige Golfshire Customer" },
+];
+
 function BuyPage() {
   const { variant: variantSlug } = Route.useParams();
   const { data: products } = useSuspenseQuery(productsQuery);
@@ -94,6 +108,8 @@ function BuyPage() {
   const [city, setCity] = useState("");
   const [pincode, setPincode] = useState("");
   const [pickup, setPickup] = useState("");
+  const [sharedMode, setSharedMode] = useState<DeliveryMode>("local");
+
   const [payMode, setPayMode] = useState<"full" | "advance">("full");
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -111,20 +127,31 @@ function BuyPage() {
   const parent = products.find((p) => p.id === variant.product_id);
   const media = [...(variant.images ?? []), ...(variant.video_url ? [variant.video_url] : [])].filter(Boolean);
 
-  const airportOnly = isAirportPincode(pincode.trim());
+  const pin = pincode.trim();
+  const isSharedPin = pin === "562110";
+  const autoMode: DeliveryMode | null =
+    pin === "560300" || isAirportPincode(pin) ? "airport" : pin === "562164" ? "prestige" : null;
+  const mode: DeliveryMode = autoMode ?? (isSharedPin ? sharedMode : "local");
+  const airportOnly = mode === "airport";
+  const isPrestige = mode === "prestige";
+  const eta = ETA_BY_MODE[mode];
+
   const pickupObj = findPickup(pickup);
   const deliveryLine = airportOnly
     ? pickupObj
       ? `Airport Pickup: ${pickupObj.label} (${pickupObj.detail})`
       : "Airport Pickup: —"
-    : `Address: ${address || "—"}, ${city || "—"} — ${pincode || "—"}`;
+    : isPrestige
+      ? `Prestige Golfshire — Villa: ${address || "—"} (Pincode ${pincode || "—"})`
+      : `Address: ${address || "—"}, ${city || "—"} — ${pincode || "—"}`;
 
   const isFormValid = Boolean(
     name.trim() &&
     phone.trim().length >= 10 &&
-    pincode.trim().length === 6 &&
-    (airportOnly ? pickup : address.trim() && city.trim()),
+    pin.length === 6 &&
+    (airportOnly ? pickup : isPrestige ? address.trim() : address.trim() && city.trim()),
   );
+
 
   // Pricing (mirrors the authoritative server-side calculation)
   const round2 = (n: number) => Math.round(n * 100) / 100;
@@ -306,6 +333,34 @@ function BuyPage() {
               <div className="space-y-4">
                 <Field label="Full Name" icon={User} value={name} onChange={setName} placeholder="Your full name" required />
                 <Field label="Phone Number" icon={Phone} value={phone} onChange={setPhone} type="tel" placeholder="10-digit mobile number" required />
+                <Field label="Pincode" icon={MapPin} value={pincode} onChange={setPincode} placeholder="6-digit pincode" required />
+
+                {isSharedPin && (
+                  <div>
+                    <label className="mb-2 flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
+                      <MapPin className="h-3.5 w-3.5" /> Location / Customer Type <span className="text-[color:var(--destructive)]">*</span>
+                    </label>
+                    <select
+                      value={sharedMode}
+                      onChange={(e) => setSharedMode(e.target.value as DeliveryMode)}
+                      className="w-full rounded-xl border hairline bg-[color:var(--noir)] px-4 py-3 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                    >
+                      {SHARED_PIN_OPTIONS.map((o) => (
+                        <option key={o.value} value={o.value}>
+                          {o.label} — {ETA_BY_MODE[o.value]}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {pin.length === 6 && (
+                  <p className="text-[11px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
+                    {isPrestige ? "Prestige Golfshire Customer · " : airportOnly ? "Airport Pickup · " : "Doorstep Delivery · "}
+                    ETA {eta}
+                  </p>
+                )}
+
                 {airportOnly ? (
                   <div>
                     <label className="mb-2 flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
@@ -329,18 +384,25 @@ function BuyPage() {
                       ))}
                     </div>
                     <p className="mt-2 text-[11px] text-[color:var(--muted-foreground)]">
-                      Express 20–30 min handover. Security rules restrict entry to gate check-in areas — please meet our agent at your chosen point.
+                      30–45 min handover. Security rules restrict entry to gate check-in areas — please meet our agent at your chosen point.
                     </p>
                   </div>
+                ) : isPrestige ? (
+                  <Field
+                    label="Prestige Golfshire Villa Address"
+                    icon={Home}
+                    value={address}
+                    onChange={setAddress}
+                    placeholder="Villa / Block number, Prestige Golfshire"
+                    required
+                  />
                 ) : (
-                  <Field label="Delivery Address" icon={Home} value={address} onChange={setAddress} placeholder="Flat / Building / Street" required />
-                )}
-                <div className="grid grid-cols-2 gap-4">
-                  {!airportOnly && (
+                  <>
+                    <Field label="Delivery Address" icon={Home} value={address} onChange={setAddress} placeholder="Flat / Building / Street" required />
                     <Field label="City" icon={MapPin} value={city} onChange={setCity} placeholder="City" required />
-                  )}
-                  <Field label="Pincode" icon={MapPin} value={pincode} onChange={setPincode} placeholder="6-digit pincode" required />
-                </div>
+                  </>
+                )}
+
               </div>
             </div>
 
