@@ -3,13 +3,35 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { COLLECTIONS } from "@/lib/collections";
 
 export const Route = createFileRoute("/collections/")({
-  head: () => ({
-    ...pageSeo({
+  head: () => {
+    const seo = pageSeo({
       path: "/collections",
       title: 'Collections — OMORA BLOOMS',
       description: 'Explore OMORA BLOOMS collections — crochet bouquets, mother recovery, baby essentials, wedding gifts and more.',
-    }),
-  }),
+    });
+    return {
+      ...seo,
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "Collections — OMORA BLOOMS",
+            description:
+              "Explore OMORA BLOOMS collections — crochet bouquets, mother recovery, baby essentials, wedding gifts and more.",
+            url: "https://omorablooms.in/collections",
+            hasPart: COLLECTIONS.map((c) => ({
+              "@type": "CollectionPage",
+              name: c.name,
+              description: c.tagline,
+              url: `https://omorablooms.in/collections/${c.slug}`,
+            })),
+          }),
+        },
+      ],
+    };
+  },
   component: CollectionsIndex,
 });
 
