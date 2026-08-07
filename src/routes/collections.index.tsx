@@ -21,6 +21,7 @@ function CollectionsIndex() {
         <h1 className="font-serif text-5xl md:text-6xl">Curated for every occasion</h1>
         <p className="mt-4 text-[color:var(--muted-foreground)]">Discover luxury handmade collections thoughtfully crafted for life's most meaningful moments.</p>
       </div>
+      <h2 className="sr-only">Browse all OMORA BLOOMS collections</h2>
       <div className="mt-16 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {COLLECTIONS.map((c) => (
           <Link key={c.slug} to="/collections/$slug" params={{ slug: c.slug }} className="group block">

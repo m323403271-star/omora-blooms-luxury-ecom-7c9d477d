@@ -91,6 +91,8 @@ function ShopPage() {
             <Link to="/contact" className="btn-outline-gold mt-6 inline-block px-6 py-3 rounded-full text-sm">Contact us</Link>
           </div>
         ) : (
+          <>
+          <h2 className="sr-only">Handmade bouquets, gift boxes and hampers</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-8 pb-24">
             {filtered.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
