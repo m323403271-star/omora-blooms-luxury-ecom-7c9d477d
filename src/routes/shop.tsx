@@ -96,8 +96,8 @@ function ShopPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-8 pb-24">
             {filtered.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
+          </>
         )}
-      </section>
     </div>
   );
 }
