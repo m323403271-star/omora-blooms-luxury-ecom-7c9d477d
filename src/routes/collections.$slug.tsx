@@ -143,8 +143,8 @@ function CollectionPage() {
       )}
 
       <section className="container-luxe py-12 md:py-16">
+        <h2 className="eyebrow mb-6">Pieces in this collection</h2>
         {items.length > 0 ? (
-
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {items.map((p) => (
               <ItemCard key={p.id} product={p} />
