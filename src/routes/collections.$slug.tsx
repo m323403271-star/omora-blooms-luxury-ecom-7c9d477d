@@ -124,6 +124,7 @@ function CollectionPage() {
 
       {gallery.length > 0 && (
         <section className="container-luxe pt-12 md:pt-16">
+          <h2 className="sr-only">{name} gallery</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {gallery.map((g) => (
               <div key={g.id} className="overflow-hidden rounded-2xl hairline border aspect-[4/5] bg-black/40">
