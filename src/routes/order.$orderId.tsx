@@ -19,6 +19,7 @@ type PaymentRow = {
   status: "created" | "pending" | "paid" | "failed" | "cancelled" | string;
   items: PaymentItem[] | null;
   error_message: string | null;
+  delivery_notes?: string | null;
   created_at: string;
   updated_at: string;
 };
