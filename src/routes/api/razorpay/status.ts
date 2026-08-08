@@ -16,7 +16,7 @@ export const Route = createFileRoute("/api/razorpay/status")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
         const { data, error } = await supabaseAdmin
           .from("payments")
-          .select("razorpay_order_id, razorpay_payment_id, amount, currency, status, items, error_message, created_at, updated_at")
+          .select("razorpay_order_id, razorpay_payment_id, amount, currency, status, items, error_message, delivery_notes, created_at, updated_at")
           .eq("razorpay_order_id", orderId)
           .maybeSingle();
 
