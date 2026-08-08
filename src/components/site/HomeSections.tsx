@@ -267,20 +267,21 @@ export function BestSellers() {
 
 export function StoryBand() {
   return (
-    <section className="container-luxe py-16 md:py-24">
-      <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
+    <section className="container-luxe py-9 md:py-24">
+      <div className="grid md:grid-cols-2 gap-5 md:gap-16 items-center">
         <div>
-          <p className="eyebrow mb-4">Our Story</p>
-          <h2 className="font-serif text-3xl md:text-5xl leading-tight">Handmade with Love, Crafted to Last Forever</h2>
-          <p className="mt-5 text-[color:var(--muted-foreground)] leading-relaxed">
+          <p className="eyebrow mb-2 md:mb-4">Our Story</p>
+          <h2 className="font-serif text-2xl md:text-5xl leading-tight">Handmade with Love, Crafted to Last Forever</h2>
+          <p className="mt-3 md:mt-5 text-sm md:text-base text-[color:var(--muted-foreground)] leading-relaxed">
             Every OMORA piece is thoughtfully handcrafted in India by skilled artisans. From crochet bouquets to heritage gift boxes, our creations turn everyday moments into forever memories.
           </p>
-          <Link to="/about" className="mt-6 inline-flex items-center gap-1.5 text-sm text-[color:var(--gold)]">
+          <Link to="/about" className="mt-4 md:mt-6 inline-flex items-center gap-1.5 text-sm text-[color:var(--gold)]">
             Discover the Craft <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
-        <div className="glass-card rounded-3xl p-3">
-          <img src={heroBouquet} alt="OMORA BLOOMS artisan craft" loading="lazy" decoding="async" className="w-full h-[420px] object-cover rounded-2xl" />
+        <div className="glass-card rounded-3xl p-2 md:p-3">
+          <img src={heroBouquet} alt="OMORA BLOOMS artisan craft" loading="lazy" decoding="async" className="w-full h-[220px] sm:h-[320px] md:h-[420px] object-cover rounded-2xl" />
+
         </div>
       </div>
     </section>
