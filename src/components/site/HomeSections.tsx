@@ -313,17 +313,18 @@ export function FeatureGrid() {
 
 export function PackagingBand() {
   return (
-    <section className="container-luxe py-16 md:py-24">
-      <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-        <div className="glass-card rounded-3xl p-3 order-2 md:order-1">
-          <img src={giftboxImg} alt="OMORA BLOOMS signature luxury packaging" loading="lazy" decoding="async" className="w-full h-[420px] object-cover rounded-2xl" />
+    <section className="container-luxe py-9 md:py-24">
+      <div className="grid md:grid-cols-2 gap-5 md:gap-16 items-center">
+        <div className="glass-card rounded-3xl p-2 md:p-3 order-2 md:order-1">
+          <img src={giftboxImg} alt="OMORA BLOOMS signature luxury packaging" loading="lazy" decoding="async" className="w-full h-[220px] sm:h-[320px] md:h-[420px] object-cover rounded-2xl" />
         </div>
         <div className="order-1 md:order-2">
-          <p className="eyebrow mb-4">Signature Packaging</p>
-          <h2 className="font-serif text-3xl md:text-5xl leading-tight">Unboxing, Reimagined</h2>
-          <p className="mt-5 text-[color:var(--muted-foreground)] leading-relaxed">
+          <p className="eyebrow mb-2 md:mb-4">Signature Packaging</p>
+          <h2 className="font-serif text-2xl md:text-5xl leading-tight">Unboxing, Reimagined</h2>
+          <p className="mt-3 md:mt-5 text-sm md:text-base text-[color:var(--muted-foreground)] leading-relaxed">
             Every order arrives in our signature OMORA heritage box — matte black finish, gold-foil crest, and satin ribbon. A gift within a gift.
           </p>
+
         </div>
       </div>
     </section>
