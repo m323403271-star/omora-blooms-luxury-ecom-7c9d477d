@@ -13,29 +13,29 @@ import { ProductCard } from "@/components/site/ProductCard";
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="container-luxe grid lg:grid-cols-2 gap-10 lg:gap-16 items-center pt-14 pb-20 lg:pt-24 lg:pb-32">
+      <div className="container-luxe grid lg:grid-cols-2 gap-6 lg:gap-16 items-center pt-8 pb-10 lg:pt-24 lg:pb-32">
         <div className="relative z-10 max-w-xl">
-          <p className="eyebrow mb-6">Est. Handmade Luxury · India · Worldwide</p>
-          <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight">
+          <p className="eyebrow mb-3 md:mb-6">Est. Handmade Luxury · India · Worldwide</p>
+          <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-[1.08] md:leading-[1.05] tracking-tight">
             Luxury Handmade <span className="text-gold-gradient italic">Bouquets</span> That Last Forever
           </h1>
-          <p className="mt-6 text-base md:text-lg text-[color:var(--muted-foreground)] leading-relaxed max-w-lg">
+          <p className="mt-3 md:mt-6 text-sm md:text-lg text-[color:var(--muted-foreground)] leading-relaxed max-w-lg line-clamp-3 md:line-clamp-none">
             Beautiful crochet flowers, pipe cleaner bouquets, mother recovery kits and baby essentials — thoughtfully handcrafted for every special occasion.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link to="/shop" className="btn-gold px-8 py-3.5 rounded-full text-sm inline-flex items-center gap-2">
+          <div className="mt-5 md:mt-8 flex flex-wrap gap-2.5 md:gap-3">
+            <Link to="/shop" className="btn-gold px-6 md:px-8 py-3 md:py-3.5 rounded-full text-sm inline-flex items-center gap-2">
               Shop Now <ArrowRight className="h-4 w-4" />
             </Link>
             <a
               href={whatsappLink("Hello OMORA BLOOMS! I'd like to place an order.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-gold px-8 py-3.5 rounded-full text-sm inline-flex items-center gap-2"
+              className="btn-outline-gold px-6 md:px-8 py-3 md:py-3.5 rounded-full text-sm inline-flex items-center gap-2"
             >
               <MessageCircle className="h-4 w-4" /> Order on WhatsApp
             </a>
           </div>
-          <div className="mt-10 flex items-center gap-6 text-xs text-[color:var(--muted-foreground)]">
+          <div className="mt-5 md:mt-10 flex items-center gap-4 md:gap-6 text-[11px] md:text-xs text-[color:var(--muted-foreground)]">
             <span className="inline-flex items-center gap-2"><Sparkles className="h-3.5 w-3.5 text-[color:var(--gold)]" /> Handmade to order</span>
             <span className="inline-flex items-center gap-2"><Package className="h-3.5 w-3.5 text-[color:var(--gold)]" /> Luxury packaging</span>
             <span className="inline-flex items-center gap-2 hidden sm:inline-flex"><Truck className="h-3.5 w-3.5 text-[color:var(--gold)]" /> Same-day delivery</span>
@@ -43,11 +43,11 @@ export function Hero() {
         </div>
         <div className="relative">
           <div className="absolute -inset-10 bg-gradient-to-br from-[color:var(--gold)]/20 via-transparent to-[color:var(--blush)]/10 blur-3xl -z-10" />
-          <div className="glass-card rounded-3xl p-3 md:p-4">
+          <div className="glass-card rounded-3xl p-2 md:p-4">
             <img
               src={heroBouquet}
               alt="Luxury OMORA BLOOMS handmade bouquet"
-              className="w-full h-[520px] md:h-[620px] object-cover rounded-2xl"
+              className="w-full h-[300px] sm:h-[420px] md:h-[620px] object-cover rounded-2xl"
             />
           </div>
           <div className="absolute -bottom-6 -left-6 glass-card rounded-2xl px-5 py-4 hidden md:block">
@@ -56,6 +56,7 @@ export function Hero() {
             <p className="text-[color:var(--gold)] text-sm mt-0.5">from ₹3,499</p>
           </div>
         </div>
+
       </div>
     </section>
   );
