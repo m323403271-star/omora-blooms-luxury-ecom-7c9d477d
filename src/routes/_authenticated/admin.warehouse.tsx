@@ -12,13 +12,23 @@ import {
   Phone,
   AlertTriangle,
   Truck,
+  StickyNote,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { findPickup } from "@/lib/pickup";
 import { OrderPreviewSender } from "@/components/site/OrderPreviewSender";
+import { handleImageError } from "@/lib/image-fallback";
 
 type Priority = "airport" | "prestige" | "standard";
+
+type OrderItem = {
+  name: string;
+  quantity: number;
+  image?: string | null;
+  color_name?: string | null;
+  color_hex?: string | null;
+};
 
 type OrderRow = {
   id: string;
@@ -30,9 +40,10 @@ type OrderRow = {
   pickup_point_id: string | null;
   customer_name: string | null;
   customer_phone: string | null;
+  delivery_notes: string | null;
   priority: Priority;
   created_at: string;
-  items: Array<{ name: string; quantity: number }> | null;
+  items: OrderItem[] | null;
   preview_photo_url: string | null;
   preview_sent_at: string | null;
   preview_channel: string | null;
@@ -275,12 +286,54 @@ function OrderRowCard({ order, now, position }: { order: OrderRow; now: number; 
         />
       </div>
 
+      {order.delivery_notes && (
+        <div className="mt-3 rounded-lg border hairline bg-[color:var(--noir)]/40 p-3 flex items-start gap-2">
+          <StickyNote className="h-3.5 w-3.5 mt-0.5 text-[color:var(--gold)] flex-shrink-0" />
+          <div>
+            <p className="text-[10px] tracking-[0.2em] uppercase text-[color:var(--muted-foreground)]">Delivery Notes</p>
+            <p className="mt-0.5 text-sm text-[color:var(--foreground)] whitespace-pre-wrap">{order.delivery_notes}</p>
+          </div>
+        </div>
+      )}
+
       {itemsList.length > 0 && (
-        <div className="mt-3 flex flex-wrap gap-1.5">
+        <div className="mt-3 space-y-2">
           {itemsList.map((it, i) => (
-            <span key={i} className="text-[11px] rounded-full border hairline px-2.5 py-1 text-[color:var(--muted-foreground)]">
-              {it.name} × {it.quantity}
-            </span>
+            <div key={i} className="flex items-center gap-3 rounded-xl border hairline bg-[color:var(--noir)]/40 p-2.5">
+              {it.image ? (
+                <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-black/40">
+                  <img
+                    src={it.image}
+                    alt={it.name}
+                    onError={handleImageError}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-lg bg-black/40 text-[color:var(--muted-foreground)]">
+                  <Package className="h-5 w-5" />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-[color:var(--foreground)]">{it.name}</p>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-[11px] rounded-full border hairline px-2 py-0.5 text-[color:var(--muted-foreground)]">
+                    Qty {it.quantity}
+                  </span>
+                  {it.color_name && (
+                    <span className="inline-flex items-center gap-1.5 text-[11px] rounded-full border hairline px-2 py-0.5 text-[color:var(--muted-foreground)]">
+                      {it.color_hex && (
+                        <span
+                          className="h-3 w-3 rounded-full ring-1 ring-white/25"
+                          style={{ backgroundColor: it.color_hex }}
+                        />
+                      )}
+                      {it.color_name}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       )}

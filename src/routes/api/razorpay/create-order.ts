@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac } from "node:crypto";
 
-type Item = { id: string; quantity: number };
+type Item = { id: string; quantity: number; image?: string | null };
 
 export const Route = createFileRoute("/api/razorpay/create-order")({
   server: {
@@ -22,6 +22,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
             pickupPointId?: string | null;
             customerName?: string | null;
             customerPhone?: string | null;
+            deliveryNotes?: string | null;
           };
         };
         try {
@@ -40,6 +41,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         const cleanPickup = typeof meta.pickupPointId === "string" ? meta.pickupPointId.slice(0, 60) : null;
         const cleanName = typeof meta.customerName === "string" ? meta.customerName.slice(0, 120) : null;
         const cleanPhone = typeof meta.customerPhone === "string" ? meta.customerPhone.replace(/\D/g, "").slice(0, 15) : null;
+        const cleanNotes = typeof meta.deliveryNotes === "string" ? meta.deliveryNotes.slice(0, 300) : null;
 
 
         // Load trusted prices from DB
@@ -47,20 +49,22 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         const ids = items.map((i) => String(i.id));
         const { data: products, error } = await supabaseAdmin
           .from("products")
-          .select("id, name, price")
+          .select("id, name, price, image_url")
           .in("id", ids);
         if (error || !products) {
           return Response.json({ error: "Product lookup failed" }, { status: 500 });
         }
 
         let totalRupees = 0;
-        const clean: Array<{ id: string; name: string; price: number; quantity: number }> = [];
+        const clean: Array<{ id: string; name: string; price: number; quantity: number; image: string | null }> = [];
         for (const it of items) {
           const p = products.find((x) => x.id === it.id);
           if (!p) return Response.json({ error: "Unknown product" }, { status: 400 });
           const qty = Math.max(1, Math.min(100, Math.floor(Number(it.quantity) || 1)));
           totalRupees += Number(p.price) * qty;
-          clean.push({ id: p.id, name: p.name, price: Number(p.price), quantity: qty });
+          // Use the server-resolved image_url as the authoritative product image.
+          // The client-sent image (if any) is ignored to prevent spoofing.
+          clean.push({ id: p.id, name: p.name, price: Number(p.price), quantity: qty, image: (p as { image_url?: string }).image_url ?? null });
         }
 
         const amountPaise = Math.round(totalRupees * 100);
@@ -104,6 +108,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
             pickup_point_id: cleanPickup,
             customer_name: cleanName,
             customer_phone: cleanPhone,
+            delivery_notes: cleanNotes,
           } as never);
         } catch (e) {
           console.error("Payment log insert failed", e);

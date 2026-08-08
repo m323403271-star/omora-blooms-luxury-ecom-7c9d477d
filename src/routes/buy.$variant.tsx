@@ -3,7 +3,7 @@ import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   ChevronRight, CreditCard, MessageCircle, ShieldCheck,
-  Truck, Sparkles, MapPin, User, Phone, Home, CheckCircle, Loader2,
+  Truck, Sparkles, MapPin, User, Phone, Home, CheckCircle, Loader2, StickyNote,
 } from "lucide-react";
 import { productsQuery, formatPrice } from "@/lib/products";
 import { variantBySlugQuery } from "@/lib/product-variants";
@@ -108,11 +108,13 @@ function BuyPage() {
   const [city, setCity] = useState("");
   const [pincode, setPincode] = useState("");
   const [pickup, setPickup] = useState("");
+  const [deliveryNotes, setDeliveryNotes] = useState("");
   const [sharedMode, setSharedMode] = useState<DeliveryMode>("local");
 
   const [payMode, setPayMode] = useState<"full" | "advance">("full");
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string>("");
 
 
   if (isLoading) {
@@ -126,6 +128,7 @@ function BuyPage() {
 
   const parent = products.find((p) => p.id === variant.product_id);
   const media = [...(variant.images ?? []), ...(variant.video_url ? [variant.video_url] : [])].filter(Boolean);
+  const displayImage = selectedImage || variant.images?.[0] || parent?.image_url || "";
 
   const pin = pincode.trim();
   const isSharedPin = pin === "562110";
@@ -169,6 +172,7 @@ function BuyPage() {
       : `\nPayment: 30% advance booking — ${formatPrice(payNow)} now, ${formatPrice(balanceDue)} on delivery`) +
     `\n\nShipping Details:\n` +
     `Name: ${name || "—"}\nPhone: ${phone || "—"}\n${deliveryLine}` +
+    (deliveryNotes.trim() ? `\nDelivery Notes: ${deliveryNotes.trim()}` : "") +
     `\n\nPlease confirm availability & delivery time.`;
 
 
@@ -198,6 +202,11 @@ function BuyPage() {
           pincode,
           address: airportOnly ? deliveryLine : `${address}, ${city} — ${pincode}`,
           pickupPointId: airportOnly ? pickup : null,
+          deliveryNotes: deliveryNotes.trim() || null,
+
+          selectedImage: displayImage,
+          colorName: variant.color_name,
+          colorHex: variant.color_hex,
         }),
       });
 
@@ -297,7 +306,13 @@ function BuyPage() {
         <div className="grid lg:grid-cols-5 gap-10 md:gap-14">
           {/* Left: gallery + details + shipping */}
           <div className="lg:col-span-3 space-y-8">
-            {media.length > 0 && <VariantGallery media={media} alt={variant.name} />}
+            {media.length > 0 && (
+              <VariantGallery
+                media={media}
+                alt={variant.name}
+                onActiveImageChange={(img) => setSelectedImage(img)}
+              />
+            )}
 
             <div className="glass-card rounded-2xl p-6">
               <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -403,6 +418,20 @@ function BuyPage() {
                   </>
                 )}
 
+                <div>
+                  <label className="flex items-center gap-1.5 text-[11px] tracking-[0.18em] uppercase text-[color:var(--gold)] mb-1.5">
+                    <StickyNote className="h-3.5 w-3.5" />
+                    Delivery Notes / Instructions
+                  </label>
+                  <textarea
+                    value={deliveryNotes}
+                    onChange={(e) => setDeliveryNotes(e.target.value)}
+                    placeholder="Gate number, villa number, or flight details — anything that helps our delivery executive find you easily"
+                    rows={2}
+                    maxLength={300}
+                    className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-4 py-3 text-sm text-[color:var(--foreground)] placeholder:text-[color:var(--muted-foreground)]/60 focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)] transition resize-none"
+                  />
+                </div>
               </div>
             </div>
 
@@ -431,8 +460,8 @@ function BuyPage() {
                 <p className="eyebrow mb-4 text-[color:var(--gold)]">Your Order</p>
                 <div className="flex gap-4 p-4 hairline border rounded-xl">
                   <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-black/40">
-                    {variant.images?.[0] ? (
-                      <img src={variant.images[0]} alt={variant.name} className="h-full w-full object-cover" />
+                    {displayImage ? (
+                      <img src={displayImage} alt={variant.name} className="h-full w-full object-cover" />
                     ) : null}
                   </div>
                   <div className="flex-1 min-w-0">
