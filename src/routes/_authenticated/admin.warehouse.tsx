@@ -12,6 +12,7 @@ import {
   Phone,
   AlertTriangle,
   Truck,
+  StickyNote,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
