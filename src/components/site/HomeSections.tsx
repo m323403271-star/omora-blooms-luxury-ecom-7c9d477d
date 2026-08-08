@@ -333,16 +333,17 @@ export function PackagingBand() {
 
 export function DeliveryBand() {
   return (
-    <section className="container-luxe py-12 md:py-16">
-      <div className="glass-card rounded-3xl p-6 md:p-10 text-center">
-        <p className="eyebrow mb-3 text-[color:var(--gold)]">⚡ Express Delivery</p>
-        <h3 className="font-serif text-2xl md:text-4xl">20–30 Mins at Kempegowda International Airport</h3>
-        <p className="mt-3 text-sm md:text-base text-[color:var(--muted-foreground)] max-w-2xl mx-auto">
+    <section className="container-luxe py-7 md:py-16">
+      <div className="glass-card rounded-3xl p-4 md:p-10 text-center">
+        <p className="eyebrow mb-2 md:mb-3 text-[color:var(--gold)]">⚡ Express Delivery</p>
+        <h3 className="font-serif text-xl md:text-4xl leading-snug">20–30 Mins at Kempegowda International Airport</h3>
+        <p className="mt-2 md:mt-3 text-[13px] md:text-base text-[color:var(--muted-foreground)] max-w-2xl mx-auto">
           Same-day delivery in Bengaluru. Prestige VIP 45m–1hr. Airport Express pickup at T1 / T2 / The Quad.
         </p>
-        <Link to="/airport-pickup" className="mt-6 btn-outline-gold px-6 py-3 rounded-full text-sm inline-flex items-center gap-2">
+        <Link to="/airport-pickup" className="mt-4 md:mt-6 btn-outline-gold px-5 md:px-6 py-2.5 md:py-3 rounded-full text-sm inline-flex items-center gap-2">
           Check Airport Pickup Points <ArrowRight className="h-4 w-4" />
         </Link>
+
       </div>
     </section>
   );
