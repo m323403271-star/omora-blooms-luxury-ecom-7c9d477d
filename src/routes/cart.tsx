@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert, Plane } from "lucide-react";
+import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert, Plane, StickyNote } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
@@ -24,6 +24,7 @@ function CartPage() {
   const [pickup, setPickup] = useState<string>(() => getSelectedPickup() ?? "");
   const [pincode, setPincode] = useState<string | null>(() => getStoredPincode());
   const [airportOverride, setAirportOverride] = useState(false);
+  const [deliveryNotes, setDeliveryNotes] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -172,6 +173,21 @@ function CartPage() {
             )}
 
             <div className="mb-5">
+              <label className="flex items-center gap-1.5 text-[11px] tracking-[0.18em] uppercase text-[color:var(--gold)] mb-1.5">
+                <StickyNote className="h-3.5 w-3.5" />
+                Delivery Notes / Instructions
+              </label>
+              <textarea
+                value={deliveryNotes}
+                onChange={(e) => setDeliveryNotes(e.target.value)}
+                placeholder="Gate number, villa number, or flight details — anything that helps our delivery executive find you easily"
+                rows={2}
+                maxLength={300}
+                className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-4 py-3 text-sm text-[color:var(--foreground)] placeholder:text-[color:var(--muted-foreground)]/60 focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)] transition resize-none"
+              />
+            </div>
+
+            <div className="mb-5">
               <DeliveryEtaChecker variant="checkout" title="Delivery SLA" locked />
             </div>
 
@@ -199,6 +215,7 @@ function CartPage() {
                     pincode: pincode,
                     customerTier: getCustomerTier(),
                     pickupPointId: showPickup ? pickup || null : null,
+                    deliveryNotes: deliveryNotes.trim() || null,
                   });
                 } finally {
                   setPaying(false);

@@ -20,6 +20,10 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           pincode?: string | null;
           address?: string | null;
           pickupPointId?: string | null;
+          deliveryNotes?: string | null;
+          selectedImage?: string | null;
+          colorName?: string | null;
+          colorHex?: string | null;
         };
         try {
           body = await request.json();
@@ -35,9 +39,13 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
         const paymentMode: "full" | "advance" = body.paymentMode === "advance" ? "advance" : "full";
 
 
-        // Authoritative price/name resolved server-side; client-sent amount is ignored.
+        // Authoritative price/name/image/color resolved server-side; client-sent amount is ignored.
         let amount: number | null = null;
         let variantName = variantSlug;
+        let variantImage: string | null = null;
+        let variantColorName: string | null = null;
+        let variantColorHex: string | null = null;
+        let variantImages: string[] = [];
         try {
           const { createClient } = await import("@supabase/supabase-js");
           const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
@@ -54,13 +62,17 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           });
           const { data } = await supabasePublic
             .from("product_variants")
-            .select("name, price")
+            .select("name, price, color_name, color_hex, images")
             .eq("slug", variantSlug)
             .eq("active", true)
             .maybeSingle();
           if (data) {
             amount = Number((data as { price: number }).price);
             variantName = (data as { name: string }).name;
+            variantColorName = (data as { color_name: string }).color_name || null;
+            variantColorHex = (data as { color_hex: string }).color_hex || null;
+            variantImages = Array.isArray((data as { images: string[] }).images) ? (data as { images: string[] }).images : [];
+            variantImage = variantImages[0] ?? null;
           }
         } catch (e) {
           console.error("Variant price lookup failed", e);
@@ -75,12 +87,31 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           }
           amount = variant.price;
           variantName = variant.name;
+          variantColorName = variant.colorName || null;
+          variantColorHex = variant.colorHex || null;
+          variantImage = variant.image || null;
+          variantImages = variant.image ? [variant.image] : [];
         }
+
+        // Validate client-sent selectedImage against the variant's actual images.
+        // Only accept it if it matches one of the variant's real images (prevents spoofing).
+        let resolvedImage = variantImage;
+        if (
+          typeof body.selectedImage === "string" &&
+          body.selectedImage.length > 0 &&
+          body.selectedImage.length < 2048 &&
+          variantImages.some((img) => img === body.selectedImage || img.split("?")[0] === body.selectedImage!.split("?")[0])
+        ) {
+          resolvedImage = body.selectedImage;
+        }
+        const resolvedColorName = variantColorName ?? (typeof body.colorName === "string" ? body.colorName.slice(0, 60) : null);
+        const resolvedColorHex = variantColorHex ?? (typeof body.colorHex === "string" ? body.colorHex.slice(0, 20) : null);
 
 
         const cleanName = typeof body.customerName === "string" ? body.customerName.slice(0, 120) : null;
         const cleanPhone = typeof body.customerPhone === "string" ? body.customerPhone.replace(/\D/g, "").slice(0, 15) : null;
         const cleanPincode = typeof body.pincode === "string" && /^[1-9]\d{5}$/.test(body.pincode) ? body.pincode : null;
+        const cleanNotes = typeof body.deliveryNotes === "string" ? body.deliveryNotes.slice(0, 300) : null;
 
         // Authoritative pricing rules (never trust the client):
         //  - full    → 5% discount on the whole order, paid now
@@ -139,11 +170,12 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
             discount_amount: discountAmount,
             order_total: orderTotal,
             balance_due: balanceDue,
-            items: [{ id: variantSlug, name: variantName, price: listTotal, quantity: 1 }] as never,
+            items: [{ id: variantSlug, name: variantName, price: listTotal, quantity: 1, image: resolvedImage, color_name: resolvedColorName, color_hex: resolvedColorHex }] as never,
             pincode: cleanPincode,
             customer_name: cleanName,
             customer_phone: cleanPhone,
             pickup_point_id: typeof body.pickupPointId === "string" ? body.pickupPointId.slice(0, 60) : null,
+            delivery_notes: cleanNotes,
           } as never);
         } catch (e) {
           console.error("Payment log insert failed", e);

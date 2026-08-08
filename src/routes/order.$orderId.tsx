@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer, StickyNote } from "lucide-react";
 import { formatPrice } from "@/lib/products";
 import { getPickupForOrder } from "@/lib/pickup";
 
@@ -132,7 +132,19 @@ function OrderStatusPage() {
               </div>
             )}
 
-
+            {data.delivery_notes && (
+              <div className="glass-card rounded-2xl p-6 border hairline">
+                <div className="flex items-start gap-4">
+                  <div className="p-2 rounded-full bg-[color:var(--gold)]/15 text-[color:var(--gold)]">
+                    <StickyNote className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="eyebrow">Delivery Notes / Instructions</p>
+                    <p className="text-sm text-[color:var(--foreground)] mt-2 whitespace-pre-wrap">{data.delivery_notes}</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {data.items && data.items.length > 0 && (
               <div className="glass-card rounded-2xl p-6">

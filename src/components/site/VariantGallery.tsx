@@ -7,11 +7,24 @@ import { handleImageError } from "@/lib/image-fallback";
  * One large preview + small thumbnails (photos and one short video).
  * Tapping a thumbnail instantly loads it into the main view.
  */
-export function VariantGallery({ media, alt }: { media: string[]; alt: string }) {
+export function VariantGallery({
+  media,
+  alt,
+  onActiveImageChange,
+}: {
+  media: string[];
+  alt: string;
+  onActiveImageChange?: (image: string) => void;
+}) {
   const [index, setIndex] = useState(0);
   const [full, setFull] = useState(false);
 
   useEffect(() => { setIndex(0); }, [media.join("|")]);
+  useEffect(() => {
+    if (media.length === 0) return;
+    const active = media[Math.min(index, media.length - 1)];
+    if (active && !isVideoRef(active)) onActiveImageChange?.(active);
+  }, [index, media, onActiveImageChange]);
   useEffect(() => {
     if (!full) return;
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setFull(false); };
