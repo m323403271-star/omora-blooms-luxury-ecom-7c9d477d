@@ -296,15 +296,16 @@ export function FeatureGrid() {
     { icon: Truck, title: "Fast Delivery", desc: "Same-day in Bengaluru, worldwide shipping" },
   ];
   return (
-    <section className="container-luxe py-12 md:py-16">
-      <div className="grid gap-4 md:gap-6 grid-cols-2 lg:grid-cols-4">
+    <section className="container-luxe py-7 md:py-16">
+      <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-4">
         {items.map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="glass-card rounded-2xl p-5 md:p-6 text-center">
-            <Icon className="h-6 w-6 mx-auto text-[color:var(--gold)]" />
-            <p className="mt-3 font-serif text-lg">{title}</p>
-            <p className="mt-1.5 text-xs text-[color:var(--muted-foreground)] leading-relaxed">{desc}</p>
+          <div key={title} className="glass-card rounded-2xl p-3.5 md:p-6 text-center">
+            <Icon className="h-5 w-5 md:h-6 md:w-6 mx-auto text-[color:var(--gold)]" />
+            <p className="mt-2 md:mt-3 font-serif text-base md:text-lg leading-snug">{title}</p>
+            <p className="mt-1 text-[11px] md:text-xs text-[color:var(--muted-foreground)] leading-relaxed">{desc}</p>
           </div>
         ))}
+
       </div>
     </section>
   );
