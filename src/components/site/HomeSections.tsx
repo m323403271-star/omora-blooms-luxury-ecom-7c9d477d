@@ -351,22 +351,23 @@ export function DeliveryBand() {
 
 export function FinalCta() {
   return (
-    <section className="container-luxe py-16 md:py-24">
-      <div className="relative overflow-hidden rounded-3xl hairline border p-10 md:p-16 text-center bg-[color:var(--noir)]/60">
-        <p className="eyebrow mb-3">Ready to Gift Forever?</p>
-        <h2 className="font-serif text-3xl md:text-5xl leading-tight">Create a Memory That Lasts</h2>
-        <div className="mt-6 flex flex-wrap justify-center gap-3">
-          <Link to="/shop" className="btn-gold px-8 py-3.5 rounded-full text-sm inline-flex items-center gap-2">
+    <section className="container-luxe py-9 md:py-24">
+      <div className="relative overflow-hidden rounded-3xl hairline border p-6 md:p-16 text-center bg-[color:var(--noir)]/60">
+        <p className="eyebrow mb-2 md:mb-3">Ready to Gift Forever?</p>
+        <h2 className="font-serif text-2xl md:text-5xl leading-tight">Create a Memory That Lasts</h2>
+        <div className="mt-4 md:mt-6 flex flex-wrap justify-center gap-2.5 md:gap-3">
+          <Link to="/shop" className="btn-gold px-6 md:px-8 py-3 md:py-3.5 rounded-full text-sm inline-flex items-center gap-2">
             Shop Now <ArrowRight className="h-4 w-4" />
           </Link>
           <a
             href={whatsappLink("Hello OMORA BLOOMS! I'd like to place an order.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-outline-gold px-8 py-3.5 rounded-full text-sm inline-flex items-center gap-2"
+            className="btn-outline-gold px-6 md:px-8 py-3 md:py-3.5 rounded-full text-sm inline-flex items-center gap-2"
           >
             <MessageCircle className="h-4 w-4" /> Order on WhatsApp
           </a>
+
         </div>
       </div>
     </section>
