@@ -43,14 +43,19 @@ export const Route = createFileRoute("/api/track")({
           if (phone.length !== 10) return Response.json({ error: "Enter a valid 10-digit phone number" }, { status: 400 });
           const { data, error } = await supabaseAdmin
             .from("payments")
-            .select(SELECT + ", customer_phone")
+            .select(
+              "razorpay_order_id, amount, currency, status, items, delivery_notes, pickup_point_id, priority, created_at, updated_at, customer_phone",
+            )
             .order("created_at", { ascending: false })
             .limit(200);
           if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
           const orders = (data ?? [])
             .filter((r) => normalizePhone(String(r.customer_phone ?? "")) === phone)
             .slice(0, 10)
-            .map(({ customer_phone: _p, ...rest }) => rest);
+            .map((r) => {
+              const { customer_phone: _p, ...rest } = r;
+              return rest;
+            });
           return Response.json({ orders });
         }
 
