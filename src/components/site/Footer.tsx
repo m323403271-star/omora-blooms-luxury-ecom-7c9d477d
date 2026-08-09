@@ -32,10 +32,10 @@ export function Footer() {
             <p className="eyebrow mb-4">Shop</p>
             <ul className="space-y-2.5 text-sm text-[color:var(--muted-foreground)]">
               <li><Link to="/shop" className="hover:text-[color:var(--gold)]">All Products</Link></li>
-              <li><Link to="/collections/crochet-bouquets" className="hover:text-[color:var(--gold)]">Crochet Bouquets</Link></li>
-              <li><Link to="/collections/airport-collection" className="hover:text-[color:var(--gold)]">Airport Welcome</Link></li>
-              <li><Link to="/collections/mother-recovery" className="hover:text-[color:var(--gold)]">Mother Recovery</Link></li>
-              <li><Link to="/collections/baby-collection" className="hover:text-[color:var(--gold)]">Baby Collection</Link></li>
+              <li><Link to="/collections/$slug" params={{ slug: "crochet-bouquets" }} className="hover:text-[color:var(--gold)]">Crochet Bouquets</Link></li>
+              <li><Link to="/collections/$slug" params={{ slug: "airport-collection" }} className="hover:text-[color:var(--gold)]">Airport Welcome</Link></li>
+              <li><Link to="/collections/$slug" params={{ slug: "mother-recovery" }} className="hover:text-[color:var(--gold)]">Mother Recovery</Link></li>
+              <li><Link to="/collections/$slug" params={{ slug: "baby-collection" }} className="hover:text-[color:var(--gold)]">Baby Collection</Link></li>
             </ul>
           </div>
 
