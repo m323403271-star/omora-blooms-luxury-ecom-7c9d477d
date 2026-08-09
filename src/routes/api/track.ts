@@ -27,7 +27,7 @@ export const Route = createFileRoute("/api/track")({
           if (orderId.length > 80) return Response.json({ error: "Invalid order ID" }, { status: 400 });
           const { data, error } = await supabaseAdmin
             .from("payments")
-            .select(SELECT)
+            .select("razorpay_order_id, amount, currency, status, items, delivery_notes, pickup_point_id, priority, created_at, updated_at")
             .eq("razorpay_order_id", orderId)
             .maybeSingle();
           if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
