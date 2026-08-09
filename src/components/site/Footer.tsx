@@ -34,6 +34,7 @@ export function Footer() {
         <div>
           <p className="eyebrow mb-4">Help</p>
           <ul className="space-y-2 text-sm text-[color:var(--muted-foreground)]">
+            <li><Link to="/track" className="hover:text-[color:var(--gold)]">Track Order</Link></li>
             <li><Link to="/about" className="hover:text-[color:var(--gold)]">About Us</Link></li>
             <li><Link to="/contact" className="hover:text-[color:var(--gold)]">Contact</Link></li>
             <li><Link to="/faq" className="hover:text-[color:var(--gold)]">FAQ</Link></li>

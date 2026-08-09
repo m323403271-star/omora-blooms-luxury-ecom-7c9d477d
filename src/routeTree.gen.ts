@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrackRouteImport } from './routes/track'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ShopRouteImport } from './routes/shop'
@@ -30,6 +31,7 @@ import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as OrderOrderIdRouteImport } from './routes/order.$orderId'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as BuyVariantRouteImport } from './routes/buy.$variant'
+import { Route as ApiTrackRouteImport } from './routes/api/track'
 import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
 import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/agent'
 import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
@@ -43,6 +45,11 @@ import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
 import { Route as AuthenticatedAdminManageImagesRouteImport } from './routes/_authenticated/admin.manage-images'
 
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -147,6 +154,11 @@ const BuyVariantRoute = BuyVariantRouteImport.update({
   path: '/buy/$variant',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiTrackRoute = ApiTrackRouteImport.update({
+  id: '/api/track',
+  path: '/api/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedPartnerRoute = AuthenticatedPartnerRouteImport.update({
   id: '/partner',
   path: '/partner',
@@ -229,8 +241,10 @@ export interface FileRoutesByFullPath {
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/track': typeof TrackRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
+  '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/order/$orderId': typeof OrderOrderIdRoute
@@ -263,8 +277,10 @@ export interface FileRoutesByTo {
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/track': typeof TrackRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
+  '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/order/$orderId': typeof OrderOrderIdRoute
@@ -299,8 +315,10 @@ export interface FileRoutesById {
   '/shop': typeof ShopRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
+  '/track': typeof TrackRoute
   '/_authenticated/agent': typeof AuthenticatedAgentRoute
   '/_authenticated/partner': typeof AuthenticatedPartnerRoute
+  '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
   '/order/$orderId': typeof OrderOrderIdRoute
@@ -335,8 +353,10 @@ export interface FileRouteTypes {
     | '/shop'
     | '/sitemap.xml'
     | '/terms'
+    | '/track'
     | '/agent'
     | '/partner'
+    | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
     | '/order/$orderId'
@@ -369,8 +389,10 @@ export interface FileRouteTypes {
     | '/shop'
     | '/sitemap.xml'
     | '/terms'
+    | '/track'
     | '/agent'
     | '/partner'
+    | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
     | '/order/$orderId'
@@ -404,8 +426,10 @@ export interface FileRouteTypes {
     | '/shop'
     | '/sitemap.xml'
     | '/terms'
+    | '/track'
     | '/_authenticated/agent'
     | '/_authenticated/partner'
+    | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
     | '/order/$orderId'
@@ -440,6 +464,8 @@ export interface RootRouteChildren {
   ShopRoute: typeof ShopRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
+  TrackRoute: typeof TrackRoute
+  ApiTrackRoute: typeof ApiTrackRoute
   BuyVariantRoute: typeof BuyVariantRoute
   CollectionsSlugRoute: typeof CollectionsSlugRoute
   OrderOrderIdRoute: typeof OrderOrderIdRoute
@@ -456,6 +482,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -603,6 +636,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BuyVariantRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/track': {
+      id: '/api/track'
+      path: '/api/track'
+      fullPath: '/api/track'
+      preLoaderRoute: typeof ApiTrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/partner': {
       id: '/_authenticated/partner'
       path: '/partner'
@@ -727,6 +767,8 @@ const rootRouteChildren: RootRouteChildren = {
   ShopRoute: ShopRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
+  TrackRoute: TrackRoute,
+  ApiTrackRoute: ApiTrackRoute,
   BuyVariantRoute: BuyVariantRoute,
   CollectionsSlugRoute: CollectionsSlugRoute,
   OrderOrderIdRoute: OrderOrderIdRoute,
