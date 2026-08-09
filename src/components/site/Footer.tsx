@@ -75,6 +75,13 @@ export function Footer() {
           </div>
         </div>
       </div>
+
+      <div className="border-t hairline">
+        <div className="container-luxe py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-[color:var(--muted-foreground)]">
+          <p>© {new Date().getFullYear()} OMORA BLOOMS · Handmade with Love, Crafted to Last Forever.</p>
+          <p className="tracking-widest uppercase">Bengaluru · India · Ships Worldwide</p>
+        </div>
+      </div>
     </footer>
   );
 }
