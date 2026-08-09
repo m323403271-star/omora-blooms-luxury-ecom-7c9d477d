@@ -118,14 +118,14 @@ export function checkDelivery(pincodeInput: string, tier: DeliveryTier = getCust
       pincode,
       zone: "express",
       serviceable: true,
-      eta: "20 – 30 Minutes",
+      eta: "30 – 45 Minutes",
       label: airport ? "Airport Express Pickup" : "Express Delivery",
       area: EXPRESS_PINCODES[pincode],
       tier,
       badge: "green",
       message: airport
-        ? "Express 20–30 minute handover at your chosen airport pickup point."
-        : `Express doorstep delivery in 20–30 minutes to ${EXPRESS_PINCODES[pincode]}.`,
+        ? "Express 30–45 minute handover at your chosen airport pickup point."
+        : `Express doorstep delivery in 30–45 minutes to ${EXPRESS_PINCODES[pincode]}.`,
     };
   }
 

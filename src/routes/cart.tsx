@@ -168,7 +168,7 @@ function CartPage() {
                   <ShieldAlert className="h-3.5 w-3.5 mt-0.5 text-[color:var(--gold)] flex-shrink-0" />
                   <span><strong className="text-[color:var(--foreground)]">Note:</strong> Security rules restrict delivery executives from entering gate check-in areas. Please meet our delivery agent at your chosen Pickup Point.</span>
                 </p>
-                <p className="mt-2 text-[11px] text-[color:var(--gold)]">⚡ Express 20–30 minute delivery window.</p>
+                <p className="mt-2 text-[11px] text-[color:var(--gold)]">⚡ Express 30–45 minute delivery window.</p>
               </div>
             )}
 

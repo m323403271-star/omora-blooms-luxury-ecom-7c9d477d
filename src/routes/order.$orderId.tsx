@@ -123,7 +123,7 @@ function OrderStatusPage() {
                     <p className="font-serif text-2xl mt-1">{pickup.label}</p>
                     <p className="text-sm text-[color:var(--muted-foreground)] mt-1">{pickup.detail}</p>
                     <p className="mt-4 inline-flex items-center gap-2 text-xs text-[color:var(--gold)] border hairline rounded-full px-3 py-1.5">
-                      <Timer className="h-3.5 w-3.5" /> Express 20–30 minute delivery window
+                      <Timer className="h-3.5 w-3.5" /> Express 30–45 minute delivery window
                     </p>
                     <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)]">
                       Security rules restrict delivery executives from entering gate check-in areas. Please meet our delivery agent at the Pickup Point above.

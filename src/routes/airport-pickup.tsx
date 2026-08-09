@@ -8,7 +8,7 @@ export const Route = createFileRoute("/airport-pickup")({
     ...pageSeo({
       path: "/airport-pickup",
       title: 'Airport Pickup Points — OMORA BLOOMS',
-      description: 'Express 20-30 minute delivery at Kempegowda International Airport (BLR). See our three designated pickup points.',
+      description: 'Express 30-45 minute delivery at Kempegowda International Airport (BLR). See our three designated pickup points.',
     }),
   }),
   component: AirportPickupPage,
@@ -20,13 +20,13 @@ function AirportPickupPage() {
       <p className="eyebrow mb-3">Kempegowda International Airport · BLR</p>
       <h1 className="font-serif text-4xl md:text-6xl mb-4">Airport Pickup Points</h1>
       <p className="text-[color:var(--muted-foreground)] max-w-2xl">
-        Express delivery in 20–30 minutes across Kempegowda International Airport. Due to airport security policies,
+        Express delivery in 30–45 minutes across Kempegowda International Airport. Due to airport security policies,
         our concierge cannot enter gate check-in areas — please meet us at one of the three designated pickup points below.
       </p>
 
       <div className="mt-8 flex flex-wrap gap-3">
         <span className="inline-flex items-center gap-2 rounded-full border hairline px-4 py-2 text-xs text-[color:var(--gold)]">
-          <Clock className="h-3.5 w-3.5" /> 20–30 minute express window
+          <Clock className="h-3.5 w-3.5" /> 30–45 minute express window
         </span>
         <span className="inline-flex items-center gap-2 rounded-full border hairline px-4 py-2 text-xs text-[color:var(--muted-foreground)]">
           <ShieldCheck className="h-3.5 w-3.5" /> Security-compliant hand-off
