@@ -86,7 +86,7 @@ function Field({
 type DeliveryMode = "local" | "airport" | "prestige";
 
 const ETA_BY_MODE: Record<DeliveryMode, string> = {
-  local: "20 – 30 Minutes",
+  local: "30 – 45 Minutes",
   airport: "30 – 45 Minutes",
   prestige: "45 Minutes – 1 Hour",
 };

@@ -71,7 +71,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "OMORA BLOOMS — Luxury Handmade Bouquets That Last Forever" },
       { name: "description", content: "Luxury handmade crochet & pipe cleaner bouquets, mother recovery kits, baby essentials and premium gift boxes — crafted to last forever." },
       { name: "author", content: "OMORA BLOOMS" },
-      { name: "theme-color", content: "#0B0B0B" },
+      { name: "theme-color", content: "#173F3A" },
       { name: "google-site-verification", content: "GRQPsgq7L4BPucJDzYqtP1qlHZNWBHkeWRgYSwdR-mU" },
       { property: "og:title", content: "OMORA BLOOMS — Luxury Handmade Bouquets That Last Forever" },
       { property: "og:description", content: "Luxury handmade crochet & pipe cleaner bouquets, mother recovery kits, baby essentials and premium gift boxes — crafted to last forever." },

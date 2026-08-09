@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { Menu, ShoppingBag, Search, X } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "./Logo";
@@ -19,10 +19,14 @@ const NAV = [
 export function Header() {
   const { count, open } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  // Final checkout & order pages must stay strictly clean — no promotional
+  // slider/carousel banner, just navigation and the essential flow.
+  const isCheckout = pathname === "/cart" || pathname.startsWith("/order");
 
   return (
     <>
-      <DeliveryBanner />
+      {!isCheckout && <DeliveryBanner />}
 
 
       <header className="sticky top-0 z-40 backdrop-blur-xl bg-[color:var(--noir)]/80 border-b hairline">

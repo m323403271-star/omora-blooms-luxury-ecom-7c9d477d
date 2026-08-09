@@ -336,7 +336,7 @@ export function DeliveryBand() {
     <section className="container-luxe py-7 md:py-16">
       <div className="glass-card rounded-3xl p-4 md:p-10 text-center">
         <p className="eyebrow mb-2 md:mb-3 text-[color:var(--gold)]">⚡ Express Delivery</p>
-        <h3 className="font-serif text-xl md:text-4xl leading-snug">20–30 Mins at Kempegowda International Airport</h3>
+        <h3 className="font-serif text-xl md:text-4xl leading-snug">30–45 Mins at Kempegowda International Airport</h3>
         <p className="mt-2 md:mt-3 text-[13px] md:text-base text-[color:var(--muted-foreground)] max-w-2xl mx-auto">
           Same-day delivery in Bengaluru. Prestige VIP 45m–1hr. Airport Express pickup at T1 / T2 / The Quad.
         </p>

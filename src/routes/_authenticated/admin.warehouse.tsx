@@ -372,7 +372,7 @@ export function PriorityBadge({ priority }: { priority: Priority }) {
   if (priority === "airport") {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 border border-emerald-400/60 px-3 py-1 text-[11px] tracking-widest uppercase font-bold text-emerald-200">
-        <Plane className="h-3.5 w-3.5" /> ✈️ Airport Express VIP · 20–30m SLA
+        <Plane className="h-3.5 w-3.5" /> ✈️ Airport Express VIP · 30–45m SLA
       </span>
     );
   }

@@ -519,7 +519,7 @@ export const COLLECTIONS: Collection[] = [
   {
     slug: "airport-collection",
     name: "Airport Welcome Collection",
-    tagline: "Express 20-30 min at BLR",
+    tagline: "Express 30-45 min at BLR",
     image: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&q=80",
   },
   {

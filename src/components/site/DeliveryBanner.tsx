@@ -9,7 +9,7 @@ const SLIDES = [
       <>
         ⚡{" "}
         <span className="font-semibold">
-          Express 20–30 Mins Delivery at Kempegowda International Airport!
+          Express 30–45 Mins Delivery at Kempegowda International Airport!
         </span>
         &ensp;
         <Link
@@ -47,7 +47,7 @@ const SLIDES = [
       <>
         🚀{" "}
         <span className="font-semibold">Express Zone</span>
-        <span className="opacity-70">&ensp;20–30 mins&ensp;</span>
+        <span className="opacity-70">&ensp;30–45 mins&ensp;</span>
         <span className="opacity-40">|</span>
         <span className="font-semibold">&ensp;Regional</span>
         <span className="opacity-70">&ensp;1–2 hrs&ensp;</span>

@@ -149,7 +149,7 @@ export function CartDrawer() {
                     <ShieldAlert className="h-3 w-3 mt-0.5 text-[color:var(--gold)] flex-shrink-0" />
                     <span>Security rules restrict entry to gate check-in areas. Meet our agent at your chosen Pickup Point.</span>
                   </p>
-                  <p className="mt-1 text-[10px] text-[color:var(--gold)]">⚡ Express 20–30 min delivery window.</p>
+                  <p className="mt-1 text-[10px] text-[color:var(--gold)]">⚡ Express 30–45 min delivery window.</p>
                 </div>
               )}
 
