@@ -2,9 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 
 type Body = { orderId?: string; phone?: string };
 
-const SELECT =
-  "razorpay_order_id, amount, currency, status, items, delivery_notes, pickup_point_id, priority, created_at, updated_at";
-
 function normalizePhone(raw: string) {
   const digits = raw.replace(/\D/g, "");
   return digits.length > 10 ? digits.slice(-10) : digits;
