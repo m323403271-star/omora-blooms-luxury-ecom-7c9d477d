@@ -19,6 +19,8 @@ import { CartDrawer } from "@/components/site/CartDrawer";
 import { WhatsAppFab } from "@/components/site/WhatsAppFab";
 import { RefCapture } from "@/components/site/RefCapture";
 import { Analytics } from "@/components/site/Analytics";
+import { IntroSplash } from "@/components/site/IntroSplash";
+import { PwaRegister } from "@/components/site/PwaRegister";
 import { LOGO_SRC } from "@/lib/logo";
 import { SITE_URL } from "@/lib/seo";
 
@@ -102,6 +104,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "manifest", href: "/manifest.webmanifest" },
       { rel: "icon", type: "image/jpeg", href: LOGO_SRC },
       { rel: "apple-touch-icon", href: LOGO_SRC },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -146,6 +149,8 @@ function RootComponent() {
         <WhatsAppFab />
         <RefCapture />
         <Analytics />
+        <IntroSplash />
+        <PwaRegister />
         <Toaster theme="dark" position="bottom-left" toastOptions={{ style: { background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--border)" } }} />
       </CartProvider>
     </QueryClientProvider>
