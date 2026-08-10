@@ -20,7 +20,7 @@ import { WhatsAppFab } from "@/components/site/WhatsAppFab";
 import { RefCapture } from "@/components/site/RefCapture";
 import { Analytics } from "@/components/site/Analytics";
 import { IntroSplash } from "@/components/site/IntroSplash";
-import { PwaRegister } from "@/components/site/PwaRegister";
+
 import { LOGO_SRC } from "@/lib/logo";
 import { SITE_URL } from "@/lib/seo";
 
@@ -150,7 +150,7 @@ function RootComponent() {
         <RefCapture />
         <Analytics />
         <IntroSplash />
-        <PwaRegister />
+        
         <Toaster theme="dark" position="bottom-left" toastOptions={{ style: { background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--border)" } }} />
       </CartProvider>
     </QueryClientProvider>

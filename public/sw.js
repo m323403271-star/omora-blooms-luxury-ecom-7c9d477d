@@ -1,29 +1,26 @@
-// Minimal offline-shell service worker for OMORA BLOOMS.
-const CACHE = "omora-shell-v1";
-const SHELL = ["/", "/omora-logo.jpg", "/manifest.webmanifest"];
+// Kill-switch worker: removes the previous app-shell service worker and its caches.
+function isWorkboxCacheForThisRegistration(name) {
+  const hasWorkboxBucket = /(^|-)precache-v\d+-|(^|-)runtime-|(^|-)googleAnalytics-/.test(name);
+  return hasWorkboxBucket && name.endsWith(self.registration.scope);
+}
 
-self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
-});
+self.addEventListener("install", () => self.skipWaiting());
 
-self.addEventListener("activate", (event) => {
+self.addEventListener("activate", (event) =>
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
-});
-
-self.addEventListener("fetch", (event) => {
-  const req = event.request;
-  if (req.method !== "GET" || new URL(req.url).origin !== self.location.origin) return;
-  event.respondWith(
-    fetch(req)
-      .then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
-        return res;
-      })
-      .catch(() => caches.match(req).then((hit) => hit || caches.match("/")))
-  );
-});
+    (async () => {
+      try {
+        const cacheNames = await caches.keys();
+        const stale = cacheNames.filter(
+          (n) => n.startsWith("omora-") || isWorkboxCacheForThisRegistration(n),
+        );
+        await Promise.allSettled(stale.map((name) => caches.delete(name)));
+        await self.clients.claim();
+        const windowClients = await self.clients.matchAll({ type: "window" });
+        await Promise.allSettled(windowClients.map((client) => client.navigate(client.url)));
+      } finally {
+        await self.registration.unregister();
+      }
+    })(),
+  ),
+);
