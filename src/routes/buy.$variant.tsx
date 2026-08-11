@@ -410,6 +410,7 @@ function BuyPage() {
               <div className="space-y-4">
                 <Field label="Full Name" icon={User} value={name} onChange={setName} placeholder="Your full name" required />
                 <Field label="Phone Number" icon={Phone} value={phone} onChange={setPhone} type="tel" placeholder="10-digit mobile number" required />
+                <Field label="Email (for order updates)" icon={Mail} value={email} onChange={setEmail} type="email" placeholder="you@email.com" />
                 <Field label="Pincode" icon={MapPin} value={pincode} onChange={setPincode} placeholder="6-digit pincode" required />
 
                 {isSharedPin && (
@@ -520,6 +521,11 @@ function BuyPage() {
             <div className="glass-card rounded-2xl p-6 sticky top-28 space-y-6">
               <div>
                 <p className="eyebrow mb-4 text-[color:var(--gold)]">Your Order</p>
+                {soldOut && (
+                  <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs text-red-300">
+                    This shade is currently sold out. Message us on WhatsApp and we'll craft it to order.
+                  </div>
+                )}
                 <div className="flex gap-4 p-4 hairline border rounded-xl">
                   <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-black/40">
                     {displayImage ? (
@@ -542,6 +548,43 @@ function BuyPage() {
                     <p className="mt-2 text-[color:var(--gold)] font-medium text-lg">{formatPrice(variant.price)}</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Coupon */}
+              <div className="border-t hairline pt-5">
+                <p className="eyebrow mb-3 text-[color:var(--gold)]">Coupon Code</p>
+                {coupon ? (
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/5 px-4 py-3">
+                    <span className="inline-flex items-center gap-2 text-sm">
+                      <Tag className="h-4 w-4 text-[color:var(--gold)]" />
+                      {coupon.code} · {coupon.label}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => { setCoupon(null); setCouponInput(""); }}
+                      className="text-[11px] uppercase tracking-widest text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)]"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                      placeholder="Enter code"
+                      className="flex-1 bg-[color:var(--noir)] hairline border rounded-xl px-4 py-2.5 text-sm uppercase tracking-widest placeholder:normal-case placeholder:tracking-normal focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyCoupon}
+                      disabled={couponBusy || !couponInput.trim()}
+                      className="btn-outline-gold px-5 rounded-xl text-xs disabled:opacity-50"
+                    >
+                      {couponBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Apply"}
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Payment options */}
@@ -596,6 +639,12 @@ function BuyPage() {
                     <span className="text-[color:var(--gold)]">− {formatPrice(discount)}</span>
                   </div>
                 )}
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-[color:var(--muted-foreground)]">Coupon {coupon?.code}</span>
+                    <span className="text-[color:var(--gold)]">− {formatPrice(couponDiscount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-[color:var(--muted-foreground)]">Shipping</span>
                   <span className="text-[color:var(--gold)]">Calculated at dispatch</span>
@@ -627,11 +676,13 @@ function BuyPage() {
               <div className="space-y-3">
                 <button
                   onClick={handleRazorpay}
-                  disabled={paying}
+                  disabled={paying || soldOut}
                   className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <CreditCard className="h-4 w-4" />
-                  {paying
+                  {soldOut
+                    ? "Sold Out"
+                    : paying
                     ? "Opening payment…"
                     : payMode === "advance"
                       ? `Pay ${formatPrice(payNow)} Advance`
