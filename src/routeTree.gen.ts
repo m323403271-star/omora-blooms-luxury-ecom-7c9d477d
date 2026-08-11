@@ -32,6 +32,7 @@ import { Route as OrderOrderIdRouteImport } from './routes/order.$orderId'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as BuyVariantRouteImport } from './routes/buy.$variant'
 import { Route as ApiTrackRouteImport } from './routes/api/track'
+import { Route as ApiAbandonedCartRouteImport } from './routes/api/abandoned-cart'
 import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
 import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/agent'
 import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
@@ -160,6 +161,11 @@ const ApiTrackRoute = ApiTrackRouteImport.update({
   path: '/api/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAbandonedCartRoute = ApiAbandonedCartRouteImport.update({
+  id: '/api/abandoned-cart',
+  path: '/api/abandoned-cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedPartnerRoute = AuthenticatedPartnerRouteImport.update({
   id: '/partner',
   path: '/partner',
@@ -250,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/track': typeof TrackRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
+  '/api/abandoned-cart': typeof ApiAbandonedCartRoute
   '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
@@ -287,6 +294,7 @@ export interface FileRoutesByTo {
   '/track': typeof TrackRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
+  '/api/abandoned-cart': typeof ApiAbandonedCartRoute
   '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
@@ -326,6 +334,7 @@ export interface FileRoutesById {
   '/track': typeof TrackRoute
   '/_authenticated/agent': typeof AuthenticatedAgentRoute
   '/_authenticated/partner': typeof AuthenticatedPartnerRoute
+  '/api/abandoned-cart': typeof ApiAbandonedCartRoute
   '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
@@ -365,6 +374,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/agent'
     | '/partner'
+    | '/api/abandoned-cart'
     | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
@@ -402,6 +412,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/agent'
     | '/partner'
+    | '/api/abandoned-cart'
     | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
@@ -440,6 +451,7 @@ export interface FileRouteTypes {
     | '/track'
     | '/_authenticated/agent'
     | '/_authenticated/partner'
+    | '/api/abandoned-cart'
     | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
@@ -477,6 +489,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   TrackRoute: typeof TrackRoute
+  ApiAbandonedCartRoute: typeof ApiAbandonedCartRoute
   ApiTrackRoute: typeof ApiTrackRoute
   BuyVariantRoute: typeof BuyVariantRoute
   CollectionsSlugRoute: typeof CollectionsSlugRoute
@@ -656,6 +669,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/abandoned-cart': {
+      id: '/api/abandoned-cart'
+      path: '/api/abandoned-cart'
+      fullPath: '/api/abandoned-cart'
+      preLoaderRoute: typeof ApiAbandonedCartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/partner': {
       id: '/_authenticated/partner'
       path: '/partner'
@@ -788,6 +808,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   TrackRoute: TrackRoute,
+  ApiAbandonedCartRoute: ApiAbandonedCartRoute,
   ApiTrackRoute: ApiTrackRoute,
   BuyVariantRoute: BuyVariantRoute,
   CollectionsSlugRoute: CollectionsSlugRoute,
