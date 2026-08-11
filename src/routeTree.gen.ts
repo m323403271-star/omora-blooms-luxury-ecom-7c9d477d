@@ -35,6 +35,7 @@ import { Route as ApiTrackRouteImport } from './routes/api/track'
 import { Route as ApiAbandonedCartRouteImport } from './routes/api/abandoned-cart'
 import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
 import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/agent'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
 import { Route as ApiRazorpayStatusRouteImport } from './routes/api/razorpay/status'
 import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay/mark-status'
@@ -176,6 +177,11 @@ const AuthenticatedAgentRoute = AuthenticatedAgentRouteImport.update({
   path: '/agent',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiRazorpayVerifyRoute = ApiRazorpayVerifyRouteImport.update({
   id: '/api/razorpay/verify',
   path: '/api/razorpay/verify',
@@ -254,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/track': typeof TrackRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
   '/api/abandoned-cart': typeof ApiAbandonedCartRoute
@@ -292,6 +299,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/track': typeof TrackRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
   '/api/abandoned-cart': typeof ApiAbandonedCartRoute
@@ -332,6 +340,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/track': typeof TrackRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/agent': typeof AuthenticatedAgentRoute
   '/_authenticated/partner': typeof AuthenticatedPartnerRoute
   '/api/abandoned-cart': typeof ApiAbandonedCartRoute
@@ -372,6 +381,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/track'
+    | '/account'
     | '/agent'
     | '/partner'
     | '/api/abandoned-cart'
@@ -410,6 +420,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/track'
+    | '/account'
     | '/agent'
     | '/partner'
     | '/api/abandoned-cart'
@@ -449,6 +460,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/track'
+    | '/_authenticated/account'
     | '/_authenticated/agent'
     | '/_authenticated/partner'
     | '/api/abandoned-cart'
@@ -690,6 +702,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAgentRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/razorpay/verify': {
       id: '/api/razorpay/verify'
       path: '/api/razorpay/verify'
@@ -771,6 +790,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedAgentRoute: typeof AuthenticatedAgentRoute
   AuthenticatedPartnerRoute: typeof AuthenticatedPartnerRoute
   AuthenticatedAdminManageImagesRoute: typeof AuthenticatedAdminManageImagesRoute
@@ -780,6 +800,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedAgentRoute: AuthenticatedAgentRoute,
   AuthenticatedPartnerRoute: AuthenticatedPartnerRoute,
   AuthenticatedAdminManageImagesRoute: AuthenticatedAdminManageImagesRoute,
