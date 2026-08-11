@@ -24,6 +24,8 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           selectedImage?: string | null;
           colorName?: string | null;
           colorHex?: string | null;
+          couponCode?: string | null;
+          customerEmail?: string | null;
         };
         try {
           body = await request.json();
@@ -46,6 +48,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
         let variantColorName: string | null = null;
         let variantColorHex: string | null = null;
         let variantImages: string[] = [];
+        let soldOut = false;
         try {
           const { createClient } = await import("@supabase/supabase-js");
           const key = process.env["SUPABASE_PUBLISHABLE_KEY"]!;
@@ -62,7 +65,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           });
           const { data } = await supabasePublic
             .from("product_variants")
-            .select("name, price, color_name, color_hex, images")
+            .select("name, price, color_name, color_hex, images, stock, track_stock")
             .eq("slug", variantSlug)
             .eq("active", true)
             .maybeSingle();
@@ -73,9 +76,15 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
             variantColorHex = (data as { color_hex: string }).color_hex || null;
             variantImages = Array.isArray((data as { images: string[] }).images) ? (data as { images: string[] }).images : [];
             variantImage = variantImages[0] ?? null;
+            const row = data as { stock?: number; track_stock?: boolean };
+            soldOut = Boolean(row.track_stock) && Number(row.stock ?? 0) <= 0;
           }
         } catch (e) {
           console.error("Variant price lookup failed", e);
+        }
+
+        if (soldOut) {
+          return Response.json({ error: "This shade is sold out" }, { status: 409 });
         }
 
         if (amount === null) {
@@ -119,7 +128,17 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
         const round2 = (n: number) => Math.round(n * 100) / 100;
         const listTotal = round2(amount);
         const discountAmount = paymentMode === "full" ? round2(listTotal * 0.05) : 0;
-        const orderTotal = round2(listTotal - discountAmount);
+        let couponCode: string | null = null;
+        let couponDiscount = 0;
+        if (typeof body.couponCode === "string" && body.couponCode.trim()) {
+          const { validateCoupon } = await import("@/lib/coupon.server");
+          const result = await validateCoupon(body.couponCode, round2(listTotal - discountAmount));
+          if (result.valid) {
+            couponCode = result.code;
+            couponDiscount = result.discount;
+          }
+        }
+        const orderTotal = round2(listTotal - discountAmount - couponDiscount);
         const payNow = paymentMode === "advance" ? round2(orderTotal * 0.3) : orderTotal;
         const balanceDue = round2(orderTotal - payNow);
 
@@ -167,7 +186,12 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
             currency: order.currency,
             status: "created",
             payment_mode: paymentMode,
-            discount_amount: discountAmount,
+            discount_amount: round2(discountAmount + couponDiscount),
+            coupon_code: couponCode,
+            customer_email:
+              typeof body.customerEmail === "string" && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(body.customerEmail)
+                ? body.customerEmail.slice(0, 255).toLowerCase()
+                : null,
             order_total: orderTotal,
             balance_due: balanceDue,
             items: [{ id: variantSlug, name: variantName, price: listTotal, quantity: 1, image: resolvedImage, color_name: resolvedColorName, color_hex: resolvedColorHex }] as never,
@@ -187,6 +211,10 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           amount: order.amount,
           currency: order.currency,
           keyId,
+          couponCode,
+          couponDiscount,
+          orderTotal,
+          balanceDue,
         });
       },
     },
