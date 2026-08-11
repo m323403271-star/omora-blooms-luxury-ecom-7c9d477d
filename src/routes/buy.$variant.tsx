@@ -1,12 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChevronRight, CreditCard, MessageCircle, ShieldCheck,
-  Truck, Sparkles, MapPin, User, Phone, Home, CheckCircle, Loader2, StickyNote,
+  Truck, Sparkles, MapPin, User, Phone, Home, CheckCircle, Loader2, StickyNote, Mail, Tag,
 } from "lucide-react";
 import { productsQuery, formatPrice } from "@/lib/products";
-import { variantBySlugQuery } from "@/lib/product-variants";
+import { variantBySlugQuery, isSoldOut } from "@/lib/product-variants";
 import { VariantGallery } from "@/components/site/VariantGallery";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -104,6 +104,7 @@ function BuyPage() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [pincode, setPincode] = useState("");
@@ -115,7 +116,35 @@ function BuyPage() {
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>("");
+  const [couponInput, setCouponInput] = useState("");
+  const [coupon, setCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
+  const [couponBusy, setCouponBusy] = useState(false);
+  const savedRef = useRef("");
 
+
+  // Save an in-progress checkout so the concierge can nudge on WhatsApp later.
+  useEffect(() => {
+    if (success) return;
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length < 10 || !variant) return;
+    const payload = JSON.stringify({
+      customerPhone: digits,
+      customerName: name.trim() || null,
+      items: [{ id: variant.slug, name: variant.name, price: variant.price, image: variant.images?.[0] ?? null }],
+      total: variant.price,
+    });
+    if (savedRef.current === payload) return;
+    const t = setTimeout(() => {
+      savedRef.current = payload;
+      fetch("/api/abandoned-cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+        keepalive: true,
+      }).catch(() => {});
+    }, 2500);
+    return () => clearTimeout(t);
+  }, [phone, name, variant, success]);
 
   if (isLoading) {
     return (
@@ -126,6 +155,7 @@ function BuyPage() {
   }
   if (!variant) throw notFound();
 
+  const soldOut = isSoldOut(variant);
   const parent = products.find((p) => p.id === variant.product_id);
   const media = [...(variant.images ?? []), ...(variant.video_url ? [variant.video_url] : [])].filter(Boolean);
   const displayImage = selectedImage || variant.images?.[0] || parent?.image_url || "";
@@ -149,6 +179,7 @@ function BuyPage() {
       : `Address: ${address || "—"}, ${city || "—"} — ${pincode || "—"}`;
 
   const isFormValid = Boolean(
+    !soldOut &&
     name.trim() &&
     phone.trim().length >= 10 &&
     pin.length === 6 &&
@@ -160,7 +191,8 @@ function BuyPage() {
   const round2 = (n: number) => Math.round(n * 100) / 100;
   const listTotal = round2(variant.price);
   const discount = payMode === "full" ? round2(listTotal * 0.05) : 0;
-  const orderTotal = round2(listTotal - discount);
+  const couponDiscount = coupon ? Math.min(coupon.discount, round2(listTotal - discount)) : 0;
+  const orderTotal = round2(listTotal - discount - couponDiscount);
   const payNow = payMode === "advance" ? round2(orderTotal * 0.3) : orderTotal;
   const balanceDue = round2(orderTotal - payNow);
 
@@ -175,6 +207,33 @@ function BuyPage() {
     (deliveryNotes.trim() ? `\nDelivery Notes: ${deliveryNotes.trim()}` : "") +
     `\n\nPlease confirm availability & delivery time.`;
 
+
+  async function applyCoupon() {
+    const code = couponInput.trim();
+    if (!code) return;
+    setCouponBusy(true);
+    try {
+      const res = await fetch("/api/coupon/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, amount: round2(listTotal - discount) }),
+      });
+      const data = (await res.json()) as
+        | { valid: true; code: string; discount: number; label: string }
+        | { valid: false; reason: string };
+      if (data.valid) {
+        setCoupon({ code: data.code, discount: data.discount, label: data.label });
+        toast.success(`Coupon ${data.code} applied — ${data.label}`);
+      } else {
+        setCoupon(null);
+        toast.error(data.reason);
+      }
+    } catch {
+      toast.error("Could not check that coupon");
+    } finally {
+      setCouponBusy(false);
+    }
+  }
 
   async function handleRazorpay() {
     if (!variant) return;
@@ -203,6 +262,9 @@ function BuyPage() {
           address: airportOnly ? deliveryLine : `${address}, ${city} — ${pincode}`,
           pickupPointId: airportOnly ? pickup : null,
           deliveryNotes: deliveryNotes.trim() || null,
+
+          customerEmail: email.trim() || null,
+          couponCode: coupon?.code ?? null,
 
           selectedImage: displayImage,
           colorName: variant.color_name,
