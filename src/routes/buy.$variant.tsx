@@ -1,12 +1,12 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ChevronRight, CreditCard, MessageCircle, ShieldCheck,
-  Truck, Sparkles, MapPin, User, Phone, Home, CheckCircle, Loader2, StickyNote,
+  Truck, Sparkles, MapPin, User, Phone, Home, CheckCircle, Loader2, StickyNote, Mail, Tag,
 } from "lucide-react";
 import { productsQuery, formatPrice } from "@/lib/products";
-import { variantBySlugQuery } from "@/lib/product-variants";
+import { variantBySlugQuery, isSoldOut } from "@/lib/product-variants";
 import { VariantGallery } from "@/components/site/VariantGallery";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -104,6 +104,7 @@ function BuyPage() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [pincode, setPincode] = useState("");
@@ -114,8 +115,37 @@ function BuyPage() {
   const [payMode, setPayMode] = useState<"full" | "advance">("full");
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [orderId, setOrderId] = useState("");
   const [selectedImage, setSelectedImage] = useState<string>("");
+  const [couponInput, setCouponInput] = useState("");
+  const [coupon, setCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
+  const [couponBusy, setCouponBusy] = useState(false);
+  const savedRef = useRef("");
 
+
+  // Save an in-progress checkout so the concierge can nudge on WhatsApp later.
+  useEffect(() => {
+    if (success) return;
+    const digits = phone.replace(/\D/g, "");
+    if (digits.length < 10 || !variant) return;
+    const payload = JSON.stringify({
+      customerPhone: digits,
+      customerName: name.trim() || null,
+      items: [{ id: variant.slug, name: variant.name, price: variant.price, image: variant.images?.[0] ?? null }],
+      total: variant.price,
+    });
+    if (savedRef.current === payload) return;
+    const t = setTimeout(() => {
+      savedRef.current = payload;
+      fetch("/api/abandoned-cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+        keepalive: true,
+      }).catch(() => {});
+    }, 2500);
+    return () => clearTimeout(t);
+  }, [phone, name, variant, success]);
 
   if (isLoading) {
     return (
@@ -126,6 +156,7 @@ function BuyPage() {
   }
   if (!variant) throw notFound();
 
+  const soldOut = isSoldOut(variant);
   const parent = products.find((p) => p.id === variant.product_id);
   const media = [...(variant.images ?? []), ...(variant.video_url ? [variant.video_url] : [])].filter(Boolean);
   const displayImage = selectedImage || variant.images?.[0] || parent?.image_url || "";
@@ -149,6 +180,7 @@ function BuyPage() {
       : `Address: ${address || "—"}, ${city || "—"} — ${pincode || "—"}`;
 
   const isFormValid = Boolean(
+    !soldOut &&
     name.trim() &&
     phone.trim().length >= 10 &&
     pin.length === 6 &&
@@ -160,7 +192,8 @@ function BuyPage() {
   const round2 = (n: number) => Math.round(n * 100) / 100;
   const listTotal = round2(variant.price);
   const discount = payMode === "full" ? round2(listTotal * 0.05) : 0;
-  const orderTotal = round2(listTotal - discount);
+  const couponDiscount = coupon ? Math.min(coupon.discount, round2(listTotal - discount)) : 0;
+  const orderTotal = round2(listTotal - discount - couponDiscount);
   const payNow = payMode === "advance" ? round2(orderTotal * 0.3) : orderTotal;
   const balanceDue = round2(orderTotal - payNow);
 
@@ -175,6 +208,33 @@ function BuyPage() {
     (deliveryNotes.trim() ? `\nDelivery Notes: ${deliveryNotes.trim()}` : "") +
     `\n\nPlease confirm availability & delivery time.`;
 
+
+  async function applyCoupon() {
+    const code = couponInput.trim();
+    if (!code) return;
+    setCouponBusy(true);
+    try {
+      const res = await fetch("/api/coupon/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, amount: round2(listTotal - discount) }),
+      });
+      const data = (await res.json()) as
+        | { valid: true; code: string; discount: number; label: string }
+        | { valid: false; reason: string };
+      if (data.valid) {
+        setCoupon({ code: data.code, discount: data.discount, label: data.label });
+        toast.success(`Coupon ${data.code} applied — ${data.label}`);
+      } else {
+        setCoupon(null);
+        toast.error(data.reason);
+      }
+    } catch {
+      toast.error("Could not check that coupon");
+    } finally {
+      setCouponBusy(false);
+    }
+  }
 
   async function handleRazorpay() {
     if (!variant) return;
@@ -203,6 +263,9 @@ function BuyPage() {
           address: airportOnly ? deliveryLine : `${address}, ${city} — ${pincode}`,
           pickupPointId: airportOnly ? pickup : null,
           deliveryNotes: deliveryNotes.trim() || null,
+
+          customerEmail: email.trim() || null,
+          couponCode: coupon?.code ?? null,
 
           selectedImage: displayImage,
           colorName: variant.color_name,
@@ -243,7 +306,19 @@ function BuyPage() {
             const data = (await verifyRes.json()) as { ok?: boolean };
             if (data.ok) {
               toast.success("Payment successful! Our concierge will confirm shortly.");
+              setOrderId(r.razorpay_order_id);
               setSuccess(true);
+              // Auto-notify our concierge on WhatsApp with the confirmed order.
+              if (typeof window !== "undefined") {
+                window.open(
+                  whatsappLink(
+                    `Payment successful ✅\n\nOrder ID: ${r.razorpay_order_id}\nItem: ${variant.name}\nName: ${name}\nPhone: ${phone}\n${deliveryLine}` +
+                      (deliveryNotes.trim() ? `\nNotes: ${deliveryNotes.trim()}` : ""),
+                  ),
+                  "_blank",
+                  "noopener,noreferrer",
+                );
+              }
             } else {
               toast.error("Payment verification failed. Please contact us on WhatsApp.");
             }
@@ -272,9 +347,17 @@ function BuyPage() {
           Thank you, {name}. Our concierge will call you shortly to confirm delivery details for your{" "}
           <strong className="text-white">{variant.name}</strong>.
         </p>
-        <Link to="/" className="btn-gold mt-8 inline-block px-8 py-3 rounded-full text-sm">
-          Back to Home
-        </Link>
+        {orderId ? (
+          <p className="mt-4 text-xs tracking-[0.2em] uppercase text-[color:var(--gold)]">Order ID: {orderId}</p>
+        ) : null}
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link to="/track" className="btn-gold inline-block px-8 py-3 rounded-full text-sm">
+            Track My Order
+          </Link>
+          <Link to="/" className="btn-outline-gold inline-block px-8 py-3 rounded-full text-sm">
+            Back to Home
+          </Link>
+        </div>
       </div>
     );
   }
@@ -348,6 +431,7 @@ function BuyPage() {
               <div className="space-y-4">
                 <Field label="Full Name" icon={User} value={name} onChange={setName} placeholder="Your full name" required />
                 <Field label="Phone Number" icon={Phone} value={phone} onChange={setPhone} type="tel" placeholder="10-digit mobile number" required />
+                <Field label="Email (for order updates)" icon={Mail} value={email} onChange={setEmail} type="email" placeholder="you@email.com" />
                 <Field label="Pincode" icon={MapPin} value={pincode} onChange={setPincode} placeholder="6-digit pincode" required />
 
                 {isSharedPin && (
@@ -458,6 +542,11 @@ function BuyPage() {
             <div className="glass-card rounded-2xl p-6 sticky top-28 space-y-6">
               <div>
                 <p className="eyebrow mb-4 text-[color:var(--gold)]">Your Order</p>
+                {soldOut && (
+                  <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs text-red-300">
+                    This shade is currently sold out. Message us on WhatsApp and we'll craft it to order.
+                  </div>
+                )}
                 <div className="flex gap-4 p-4 hairline border rounded-xl">
                   <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-black/40">
                     {displayImage ? (
@@ -480,6 +569,43 @@ function BuyPage() {
                     <p className="mt-2 text-[color:var(--gold)] font-medium text-lg">{formatPrice(variant.price)}</p>
                   </div>
                 </div>
+              </div>
+
+              {/* Coupon */}
+              <div className="border-t hairline pt-5">
+                <p className="eyebrow mb-3 text-[color:var(--gold)]">Coupon Code</p>
+                {coupon ? (
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/5 px-4 py-3">
+                    <span className="inline-flex items-center gap-2 text-sm">
+                      <Tag className="h-4 w-4 text-[color:var(--gold)]" />
+                      {coupon.code} · {coupon.label}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => { setCoupon(null); setCouponInput(""); }}
+                      className="text-[11px] uppercase tracking-widest text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)]"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                      placeholder="Enter code"
+                      className="flex-1 bg-[color:var(--noir)] hairline border rounded-xl px-4 py-2.5 text-sm uppercase tracking-widest placeholder:normal-case placeholder:tracking-normal focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                    />
+                    <button
+                      type="button"
+                      onClick={applyCoupon}
+                      disabled={couponBusy || !couponInput.trim()}
+                      className="btn-outline-gold px-5 rounded-xl text-xs disabled:opacity-50"
+                    >
+                      {couponBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Apply"}
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Payment options */}
@@ -534,6 +660,12 @@ function BuyPage() {
                     <span className="text-[color:var(--gold)]">− {formatPrice(discount)}</span>
                   </div>
                 )}
+                {couponDiscount > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-[color:var(--muted-foreground)]">Coupon {coupon?.code}</span>
+                    <span className="text-[color:var(--gold)]">− {formatPrice(couponDiscount)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between">
                   <span className="text-[color:var(--muted-foreground)]">Shipping</span>
                   <span className="text-[color:var(--gold)]">Calculated at dispatch</span>
@@ -565,11 +697,13 @@ function BuyPage() {
               <div className="space-y-3">
                 <button
                   onClick={handleRazorpay}
-                  disabled={paying}
+                  disabled={paying || soldOut}
                   className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <CreditCard className="h-4 w-4" />
-                  {paying
+                  {soldOut
+                    ? "Sold Out"
+                    : paying
                     ? "Opening payment…"
                     : payMode === "advance"
                       ? `Pay ${formatPrice(payNow)} Advance`

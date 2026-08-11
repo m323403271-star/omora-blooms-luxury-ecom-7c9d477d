@@ -15,7 +15,13 @@ export type ProductVariantRow = {
   video_url: string | null;
   active: boolean;
   sort_order: number;
+  stock: number;
+  track_stock: boolean;
 };
+
+/** A shade is sold out only when stock tracking is switched on and it hit zero. */
+export const isSoldOut = (v: Pick<ProductVariantRow, "stock" | "track_stock">) =>
+  Boolean(v.track_stock) && Number(v.stock) <= 0;
 
 export const isVideoRef = (v: string) => /\.(mp4|webm|ogg|ogv|mov|m4v)(\?|#|$)/i.test(v);
 
@@ -35,7 +41,7 @@ async function signRows(rows: ProductVariantRow[]): Promise<ProductVariantRow[]>
 }
 
 const SELECT =
-  "id, product_id, slug, name, color_name, color_hex, price, description, images, video_url, active, sort_order";
+  "id, product_id, slug, name, color_name, color_hex, price, description, images, video_url, active, sort_order, stock, track_stock";
 
 /** Active variants for one product (Pick Your Shade page). */
 export function activeVariantsQuery(productId: string | undefined) {

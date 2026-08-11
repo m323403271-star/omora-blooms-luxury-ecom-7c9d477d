@@ -32,18 +32,23 @@ import { Route as OrderOrderIdRouteImport } from './routes/order.$orderId'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as BuyVariantRouteImport } from './routes/buy.$variant'
 import { Route as ApiTrackRouteImport } from './routes/api/track'
+import { Route as ApiAbandonedCartRouteImport } from './routes/api/abandoned-cart'
 import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
 import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/agent'
+import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
 import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
 import { Route as ApiRazorpayStatusRouteImport } from './routes/api/razorpay/status'
 import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay/mark-status'
 import { Route as ApiRazorpayCreateOrderVariantRouteImport } from './routes/api/razorpay/create-order-variant'
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
+import { Route as ApiCouponValidateRouteImport } from './routes/api/coupon/validate'
 import { Route as AuthenticatedAdminWarehouseRouteImport } from './routes/_authenticated/admin.warehouse'
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
 import { Route as AuthenticatedAdminManageImagesRouteImport } from './routes/_authenticated/admin.manage-images'
+import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated/admin.coupons'
+import { Route as AuthenticatedAdminCartsRouteImport } from './routes/_authenticated/admin.carts'
 
 const TrackRoute = TrackRouteImport.update({
   id: '/track',
@@ -159,6 +164,11 @@ const ApiTrackRoute = ApiTrackRouteImport.update({
   path: '/api/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAbandonedCartRoute = ApiAbandonedCartRouteImport.update({
+  id: '/api/abandoned-cart',
+  path: '/api/abandoned-cart',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedPartnerRoute = AuthenticatedPartnerRouteImport.update({
   id: '/partner',
   path: '/partner',
@@ -167,6 +177,11 @@ const AuthenticatedPartnerRoute = AuthenticatedPartnerRouteImport.update({
 const AuthenticatedAgentRoute = AuthenticatedAgentRouteImport.update({
   id: '/agent',
   path: '/agent',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const ApiRazorpayVerifyRoute = ApiRazorpayVerifyRouteImport.update({
@@ -201,6 +216,11 @@ const ApiPublicRazorpayWebhookRoute =
     path: '/api/public/razorpay-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiCouponValidateRoute = ApiCouponValidateRouteImport.update({
+  id: '/api/coupon/validate',
+  path: '/api/coupon/validate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminWarehouseRoute =
   AuthenticatedAdminWarehouseRouteImport.update({
     id: '/admin/warehouse',
@@ -225,6 +245,17 @@ const AuthenticatedAdminManageImagesRoute =
     path: '/admin/manage-images',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminCouponsRoute =
+  AuthenticatedAdminCouponsRouteImport.update({
+    id: '/admin/coupons',
+    path: '/admin/coupons',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminCartsRoute = AuthenticatedAdminCartsRouteImport.update({
+  id: '/admin/carts',
+  path: '/admin/carts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -242,8 +273,10 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/track': typeof TrackRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
+  '/api/abandoned-cart': typeof ApiAbandonedCartRoute
   '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
@@ -251,10 +284,13 @@ export interface FileRoutesByFullPath {
   '/products/$slug': typeof ProductsSlugRoute
   '/varieties/$slug': typeof VarietiesSlugRoute
   '/collections/': typeof CollectionsIndexRoute
+  '/admin/carts': typeof AuthenticatedAdminCartsRoute
+  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
+  '/api/coupon/validate': typeof ApiCouponValidateRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
@@ -278,8 +314,10 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/track': typeof TrackRoute
+  '/account': typeof AuthenticatedAccountRoute
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
+  '/api/abandoned-cart': typeof ApiAbandonedCartRoute
   '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
@@ -287,10 +325,13 @@ export interface FileRoutesByTo {
   '/products/$slug': typeof ProductsSlugRoute
   '/varieties/$slug': typeof VarietiesSlugRoute
   '/collections': typeof CollectionsIndexRoute
+  '/admin/carts': typeof AuthenticatedAdminCartsRoute
+  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
+  '/api/coupon/validate': typeof ApiCouponValidateRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
@@ -316,8 +357,10 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/track': typeof TrackRoute
+  '/_authenticated/account': typeof AuthenticatedAccountRoute
   '/_authenticated/agent': typeof AuthenticatedAgentRoute
   '/_authenticated/partner': typeof AuthenticatedPartnerRoute
+  '/api/abandoned-cart': typeof ApiAbandonedCartRoute
   '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
@@ -325,10 +368,13 @@ export interface FileRoutesById {
   '/products/$slug': typeof ProductsSlugRoute
   '/varieties/$slug': typeof VarietiesSlugRoute
   '/collections/': typeof CollectionsIndexRoute
+  '/_authenticated/admin/carts': typeof AuthenticatedAdminCartsRoute
+  '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/_authenticated/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/_authenticated/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
+  '/api/coupon/validate': typeof ApiCouponValidateRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
@@ -354,8 +400,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/track'
+    | '/account'
     | '/agent'
     | '/partner'
+    | '/api/abandoned-cart'
     | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
@@ -363,10 +411,13 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/varieties/$slug'
     | '/collections/'
+    | '/admin/carts'
+    | '/admin/coupons'
     | '/admin/manage-images'
     | '/admin/products'
     | '/admin/referrals'
     | '/admin/warehouse'
+    | '/api/coupon/validate'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/create-order-variant'
@@ -390,8 +441,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/track'
+    | '/account'
     | '/agent'
     | '/partner'
+    | '/api/abandoned-cart'
     | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
@@ -399,10 +452,13 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/varieties/$slug'
     | '/collections'
+    | '/admin/carts'
+    | '/admin/coupons'
     | '/admin/manage-images'
     | '/admin/products'
     | '/admin/referrals'
     | '/admin/warehouse'
+    | '/api/coupon/validate'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/create-order-variant'
@@ -427,8 +483,10 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/terms'
     | '/track'
+    | '/_authenticated/account'
     | '/_authenticated/agent'
     | '/_authenticated/partner'
+    | '/api/abandoned-cart'
     | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
@@ -436,10 +494,13 @@ export interface FileRouteTypes {
     | '/products/$slug'
     | '/varieties/$slug'
     | '/collections/'
+    | '/_authenticated/admin/carts'
+    | '/_authenticated/admin/coupons'
     | '/_authenticated/admin/manage-images'
     | '/_authenticated/admin/products'
     | '/_authenticated/admin/referrals'
     | '/_authenticated/admin/warehouse'
+    | '/api/coupon/validate'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/create-order-variant'
@@ -465,6 +526,7 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   TrackRoute: typeof TrackRoute
+  ApiAbandonedCartRoute: typeof ApiAbandonedCartRoute
   ApiTrackRoute: typeof ApiTrackRoute
   BuyVariantRoute: typeof BuyVariantRoute
   CollectionsSlugRoute: typeof CollectionsSlugRoute
@@ -472,6 +534,7 @@ export interface RootRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
   VarietiesSlugRoute: typeof VarietiesSlugRoute
   CollectionsIndexRoute: typeof CollectionsIndexRoute
+  ApiCouponValidateRoute: typeof ApiCouponValidateRoute
   ApiPublicRazorpayWebhookRoute: typeof ApiPublicRazorpayWebhookRoute
   ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
   ApiRazorpayCreateOrderVariantRoute: typeof ApiRazorpayCreateOrderVariantRoute
@@ -643,6 +706,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/abandoned-cart': {
+      id: '/api/abandoned-cart'
+      path: '/api/abandoned-cart'
+      fullPath: '/api/abandoned-cart'
+      preLoaderRoute: typeof ApiAbandonedCartRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/partner': {
       id: '/_authenticated/partner'
       path: '/partner'
@@ -655,6 +725,13 @@ declare module '@tanstack/react-router' {
       path: '/agent'
       fullPath: '/agent'
       preLoaderRoute: typeof AuthenticatedAgentRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/razorpay/verify': {
@@ -699,6 +776,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRazorpayWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/coupon/validate': {
+      id: '/api/coupon/validate'
+      path: '/api/coupon/validate'
+      fullPath: '/api/coupon/validate'
+      preLoaderRoute: typeof ApiCouponValidateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/warehouse': {
       id: '/_authenticated/admin/warehouse'
       path: '/admin/warehouse'
@@ -727,12 +811,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminManageImagesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/coupons': {
+      id: '/_authenticated/admin/coupons'
+      path: '/admin/coupons'
+      fullPath: '/admin/coupons'
+      preLoaderRoute: typeof AuthenticatedAdminCouponsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/carts': {
+      id: '/_authenticated/admin/carts'
+      path: '/admin/carts'
+      fullPath: '/admin/carts'
+      preLoaderRoute: typeof AuthenticatedAdminCartsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAccountRoute: typeof AuthenticatedAccountRoute
   AuthenticatedAgentRoute: typeof AuthenticatedAgentRoute
   AuthenticatedPartnerRoute: typeof AuthenticatedPartnerRoute
+  AuthenticatedAdminCartsRoute: typeof AuthenticatedAdminCartsRoute
+  AuthenticatedAdminCouponsRoute: typeof AuthenticatedAdminCouponsRoute
   AuthenticatedAdminManageImagesRoute: typeof AuthenticatedAdminManageImagesRoute
   AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
   AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
@@ -740,8 +841,11 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAccountRoute: AuthenticatedAccountRoute,
   AuthenticatedAgentRoute: AuthenticatedAgentRoute,
   AuthenticatedPartnerRoute: AuthenticatedPartnerRoute,
+  AuthenticatedAdminCartsRoute: AuthenticatedAdminCartsRoute,
+  AuthenticatedAdminCouponsRoute: AuthenticatedAdminCouponsRoute,
   AuthenticatedAdminManageImagesRoute: AuthenticatedAdminManageImagesRoute,
   AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
   AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,
@@ -768,6 +872,7 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   TrackRoute: TrackRoute,
+  ApiAbandonedCartRoute: ApiAbandonedCartRoute,
   ApiTrackRoute: ApiTrackRoute,
   BuyVariantRoute: BuyVariantRoute,
   CollectionsSlugRoute: CollectionsSlugRoute,
@@ -775,6 +880,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsSlugRoute: ProductsSlugRoute,
   VarietiesSlugRoute: VarietiesSlugRoute,
   CollectionsIndexRoute: CollectionsIndexRoute,
+  ApiCouponValidateRoute: ApiCouponValidateRoute,
   ApiPublicRazorpayWebhookRoute: ApiPublicRazorpayWebhookRoute,
   ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
   ApiRazorpayCreateOrderVariantRoute: ApiRazorpayCreateOrderVariantRoute,

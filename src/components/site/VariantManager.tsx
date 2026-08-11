@@ -23,10 +23,12 @@ type VariantRow = {
   video_url: string | null;
   active: boolean;
   sort_order: number;
+  stock: number;
+  track_stock: boolean;
 };
 
 const SELECT =
-  "id, product_id, slug, name, color_name, color_hex, price, description, images, video_url, active, sort_order";
+  "id, product_id, slug, name, color_name, color_hex, price, description, images, video_url, active, sort_order, stock, track_stock";
 
 function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -132,6 +134,8 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
   const [colorHex, setColorHex] = useState(variant.color_hex);
   const [price, setPrice] = useState(String(variant.price ?? 0));
   const [description, setDescription] = useState(variant.description ?? "");
+  const [stock, setStock] = useState(String(variant.stock ?? 0));
+  const [trackStock, setTrackStock] = useState(Boolean(variant.track_stock));
   const [signed, setSigned] = useState<Record<string, string>>({});
 
   const images = variant.images ?? [];
@@ -152,7 +156,9 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
     colorName !== variant.color_name ||
     colorHex !== variant.color_hex ||
     price !== String(variant.price ?? 0) ||
-    description !== (variant.description ?? "");
+    description !== (variant.description ?? "") ||
+    stock !== String(variant.stock ?? 0) ||
+    trackStock !== Boolean(variant.track_stock);
 
   async function saveDetails() {
     const priceNum = Number(price);
@@ -168,6 +174,8 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
           color_hex: colorHex.trim() || "#C8A24A",
           price: priceNum,
           description: description.trim() || null,
+          stock: Math.max(0, Math.floor(Number(stock) || 0)),
+          track_stock: trackStock,
         })
         .eq("id", variant.id);
       if (error) { toast.error(error.message); return; }
@@ -305,7 +313,15 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
           <span className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">Price (₹)</span>
           <input type="number" min={0} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value)} className="mt-1 w-full hairline border rounded-xl bg-transparent px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[color:var(--gold)]" />
         </label>
-        <label className="block md:col-span-3">
+        <label className="block">
+          <span className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">Stock left</span>
+          <input type="number" min={0} inputMode="numeric" value={stock} onChange={(e) => setStock(e.target.value)} className="mt-1 w-full hairline border rounded-xl bg-transparent px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[color:var(--gold)]" />
+        </label>
+        <label className="flex items-center gap-2 md:col-span-1 mt-5">
+          <input type="checkbox" checked={trackStock} onChange={(e) => setTrackStock(e.target.checked)} className="h-4 w-4 accent-[color:var(--gold)]" />
+          <span className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">Track stock / auto sold-out</span>
+        </label>
+        <label className="block md:col-span-2">
           <span className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)]">Description</span>
           <textarea rows={2} maxLength={2000} value={description} onChange={(e) => setDescription(e.target.value)} className="mt-1 w-full hairline border rounded-xl bg-transparent px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-[color:var(--gold)] resize-y" />
         </label>

@@ -59,11 +59,34 @@ export const Route = createFileRoute("/api/razorpay/verify")({
         }
 
         try {
-          await supabaseAdmin.from("payments").update({
-            razorpay_payment_id,
-            status: "paid",
-            error_message: null,
-          }).eq("razorpay_order_id", razorpay_order_id);
+          const { data: paid } = await supabaseAdmin
+            .from("payments")
+            .update({ razorpay_payment_id, status: "paid", error_message: null })
+            .eq("razorpay_order_id", razorpay_order_id)
+            .select("coupon_code, items")
+            .maybeSingle();
+
+          // Redeem the coupon and draw down shade stock once payment is confirmed.
+          if (paid) {
+            const { markCouponRedeemed } = await import("@/lib/coupon.server");
+            await markCouponRedeemed((paid as { coupon_code: string | null }).coupon_code);
+
+            const lines = Array.isArray((paid as { items?: unknown }).items)
+              ? ((paid as { items: Array<{ id?: string; quantity?: number }> }).items)
+              : [];
+            for (const line of lines) {
+              if (!line?.id) continue;
+              const { data: v } = await supabaseAdmin
+                .from("product_variants")
+                .select("id, stock, track_stock")
+                .eq("slug", String(line.id))
+                .maybeSingle();
+              if (v && (v as { track_stock: boolean }).track_stock) {
+                const left = Math.max(0, Number((v as { stock: number }).stock) - (Number(line.quantity) || 1));
+                await supabaseAdmin.from("product_variants").update({ stock: left }).eq("id", (v as { id: string }).id);
+              }
+            }
+          }
         } catch (e) { console.error("Payment status update failed", e); }
 
         return Response.json({ ok: true, paymentId: razorpay_payment_id });

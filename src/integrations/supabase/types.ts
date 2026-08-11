@@ -14,6 +14,81 @@ export type Database = {
   }
   public: {
     Tables: {
+      abandoned_carts: {
+        Row: {
+          created_at: string
+          customer_name: string | null
+          customer_phone: string
+          id: string
+          items: Json
+          recovered: boolean
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_name?: string | null
+          customer_phone: string
+          id?: string
+          items?: Json
+          recovered?: boolean
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string
+          id?: string
+          items?: Json
+          recovered?: boolean
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          discount_type: string
+          discount_value: number
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          min_order_value: number
+          updated_at: string
+          used_count: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          min_order_value?: number
+          updated_at?: string
+          used_count?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          min_order_value?: number
+          updated_at?: string
+          used_count?: number
+        }
+        Relationships: []
+      }
       inquiries: {
         Row: {
           created_at: string
@@ -90,8 +165,10 @@ export type Database = {
         Row: {
           amount: number
           balance_due: number
+          coupon_code: string | null
           created_at: string
           currency: string
+          customer_email: string | null
           customer_name: string | null
           customer_phone: string | null
           customer_tier: string
@@ -113,12 +190,15 @@ export type Database = {
           ref_code: string | null
           status: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           amount: number
           balance_due?: number
+          coupon_code?: string | null
           created_at?: string
           currency?: string
+          customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           customer_tier?: string
@@ -140,12 +220,15 @@ export type Database = {
           ref_code?: string | null
           status?: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
           balance_due?: number
+          coupon_code?: string | null
           created_at?: string
           currency?: string
+          customer_email?: string | null
           customer_name?: string | null
           customer_phone?: string | null
           customer_tier?: string
@@ -167,6 +250,7 @@ export type Database = {
           ref_code?: string | null
           status?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -184,6 +268,8 @@ export type Database = {
           product_id: string
           slug: string
           sort_order: number
+          stock: number
+          track_stock: boolean
           updated_at: string
           video_url: string | null
         }
@@ -200,6 +286,8 @@ export type Database = {
           product_id: string
           slug: string
           sort_order?: number
+          stock?: number
+          track_stock?: boolean
           updated_at?: string
           video_url?: string | null
         }
@@ -216,6 +304,8 @@ export type Database = {
           product_id?: string
           slug?: string
           sort_order?: number
+          stock?: number
+          track_stock?: boolean
           updated_at?: string
           video_url?: string | null
         }

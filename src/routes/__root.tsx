@@ -20,6 +20,7 @@ import { WhatsAppFab } from "@/components/site/WhatsAppFab";
 import { RefCapture } from "@/components/site/RefCapture";
 import { Analytics } from "@/components/site/Analytics";
 import { IntroSplash } from "@/components/site/IntroSplash";
+import { setupOfflineSupport } from "@/lib/pwa";
 
 import { LOGO_SRC } from "@/lib/logo";
 import { SITE_URL } from "@/lib/seo";
@@ -134,6 +135,12 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    void setupOfflineSupport();
+  }, []);
+
+
 
   return (
     <QueryClientProvider client={queryClient}>

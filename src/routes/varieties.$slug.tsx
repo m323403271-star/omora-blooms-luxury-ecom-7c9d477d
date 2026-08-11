@@ -3,7 +3,7 @@ import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
 import { ArrowRight, ChevronRight, Loader2 } from "lucide-react";
 import { productsQuery, formatPrice, LOCAL_PRODUCTS, resolveProductImage } from "@/lib/products";
 import { collectionBySlug } from "@/lib/collections";
-import { activeVariantsQuery, type ProductVariantRow } from "@/lib/product-variants";
+import { activeVariantsQuery, isSoldOut, type ProductVariantRow } from "@/lib/product-variants";
 import { handleImageError } from "@/lib/image-fallback";
 
 export const Route = createFileRoute("/varieties/$slug")({
@@ -32,6 +32,7 @@ export const Route = createFileRoute("/varieties/$slug")({
 
 function VariantCard({ variant, fallbackImage }: { variant: ProductVariantRow; fallbackImage: string }) {
   const img = variant.images?.[0] || fallbackImage;
+  const soldOut = isSoldOut(variant);
   return (
     <Link
       to="/buy/$variant"
@@ -48,6 +49,11 @@ function VariantCard({ variant, fallbackImage }: { variant: ProductVariantRow; f
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.07]"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
+        {soldOut ? (
+          <span className="absolute left-3 top-3 z-10 rounded-full border border-red-500/40 bg-black/70 px-3 py-1 text-[10px] uppercase tracking-widest text-red-300">
+            Sold Out
+          </span>
+        ) : null}
         {variant.color_name ? (
           <div className="absolute top-3 right-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm rounded-full px-2.5 py-1 border border-white/10">
             <span
