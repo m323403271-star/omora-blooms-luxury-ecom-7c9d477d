@@ -4,7 +4,7 @@ import { toast } from "sonner";
 import { Loader2, Plus, Trash2, Tag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/_authenticated/admin.coupons")({
+export const Route = createFileRoute("/_authenticated/admin/coupons")({
   head: () => ({
     meta: [
       { title: "Coupon Manager — OMORA BLOOMS Admin" },
