@@ -5,7 +5,7 @@ import { MessageCircle, CheckCircle2, ShoppingBag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { formatPrice } from "@/lib/products";
 
-export const Route = createFileRoute("/_authenticated/admin.carts")({
+export const Route = createFileRoute("/_authenticated/admin/carts")({
   head: () => ({
     meta: [
       { title: "Abandoned Carts — OMORA BLOOMS Admin" },
