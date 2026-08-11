@@ -115,6 +115,7 @@ function BuyPage() {
   const [payMode, setPayMode] = useState<"full" | "advance">("full");
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [orderId, setOrderId] = useState("");
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
@@ -305,7 +306,19 @@ function BuyPage() {
             const data = (await verifyRes.json()) as { ok?: boolean };
             if (data.ok) {
               toast.success("Payment successful! Our concierge will confirm shortly.");
+              setOrderId(r.razorpay_order_id);
               setSuccess(true);
+              // Auto-notify our concierge on WhatsApp with the confirmed order.
+              if (typeof window !== "undefined") {
+                window.open(
+                  whatsappLink(
+                    `Payment successful ✅\n\nOrder ID: ${r.razorpay_order_id}\nItem: ${variant.name}\nName: ${name}\nPhone: ${phone}\n${deliveryLine}` +
+                      (deliveryNotes.trim() ? `\nNotes: ${deliveryNotes.trim()}` : ""),
+                  ),
+                  "_blank",
+                  "noopener,noreferrer",
+                );
+              }
             } else {
               toast.error("Payment verification failed. Please contact us on WhatsApp.");
             }
@@ -334,9 +347,17 @@ function BuyPage() {
           Thank you, {name}. Our concierge will call you shortly to confirm delivery details for your{" "}
           <strong className="text-white">{variant.name}</strong>.
         </p>
-        <Link to="/" className="btn-gold mt-8 inline-block px-8 py-3 rounded-full text-sm">
-          Back to Home
-        </Link>
+        {orderId ? (
+          <p className="mt-4 text-xs tracking-[0.2em] uppercase text-[color:var(--gold)]">Order ID: {orderId}</p>
+        ) : null}
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link to="/track" className="btn-gold inline-block px-8 py-3 rounded-full text-sm">
+            Track My Order
+          </Link>
+          <Link to="/" className="btn-outline-gold inline-block px-8 py-3 rounded-full text-sm">
+            Back to Home
+          </Link>
+        </div>
       </div>
     );
   }
