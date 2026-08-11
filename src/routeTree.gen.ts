@@ -40,6 +40,7 @@ import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay
 import { Route as ApiRazorpayCreateOrderVariantRouteImport } from './routes/api/razorpay/create-order-variant'
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
+import { Route as ApiCouponValidateRouteImport } from './routes/api/coupon/validate'
 import { Route as AuthenticatedAdminWarehouseRouteImport } from './routes/_authenticated/admin.warehouse'
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
@@ -201,6 +202,11 @@ const ApiPublicRazorpayWebhookRoute =
     path: '/api/public/razorpay-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiCouponValidateRoute = ApiCouponValidateRouteImport.update({
+  id: '/api/coupon/validate',
+  path: '/api/coupon/validate',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminWarehouseRoute =
   AuthenticatedAdminWarehouseRouteImport.update({
     id: '/admin/warehouse',
@@ -255,6 +261,7 @@ export interface FileRoutesByFullPath {
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
+  '/api/coupon/validate': typeof ApiCouponValidateRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
@@ -291,6 +298,7 @@ export interface FileRoutesByTo {
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
+  '/api/coupon/validate': typeof ApiCouponValidateRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
@@ -329,6 +337,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
   '/_authenticated/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
+  '/api/coupon/validate': typeof ApiCouponValidateRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/referrals'
     | '/admin/warehouse'
+    | '/api/coupon/validate'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/create-order-variant'
@@ -403,6 +413,7 @@ export interface FileRouteTypes {
     | '/admin/products'
     | '/admin/referrals'
     | '/admin/warehouse'
+    | '/api/coupon/validate'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/create-order-variant'
@@ -440,6 +451,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/products'
     | '/_authenticated/admin/referrals'
     | '/_authenticated/admin/warehouse'
+    | '/api/coupon/validate'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/create-order-variant'
@@ -472,6 +484,7 @@ export interface RootRouteChildren {
   ProductsSlugRoute: typeof ProductsSlugRoute
   VarietiesSlugRoute: typeof VarietiesSlugRoute
   CollectionsIndexRoute: typeof CollectionsIndexRoute
+  ApiCouponValidateRoute: typeof ApiCouponValidateRoute
   ApiPublicRazorpayWebhookRoute: typeof ApiPublicRazorpayWebhookRoute
   ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
   ApiRazorpayCreateOrderVariantRoute: typeof ApiRazorpayCreateOrderVariantRoute
@@ -699,6 +712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRazorpayWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/coupon/validate': {
+      id: '/api/coupon/validate'
+      path: '/api/coupon/validate'
+      fullPath: '/api/coupon/validate'
+      preLoaderRoute: typeof ApiCouponValidateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/warehouse': {
       id: '/_authenticated/admin/warehouse'
       path: '/admin/warehouse'
@@ -775,6 +795,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProductsSlugRoute: ProductsSlugRoute,
   VarietiesSlugRoute: VarietiesSlugRoute,
   CollectionsIndexRoute: CollectionsIndexRoute,
+  ApiCouponValidateRoute: ApiCouponValidateRoute,
   ApiPublicRazorpayWebhookRoute: ApiPublicRazorpayWebhookRoute,
   ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
   ApiRazorpayCreateOrderVariantRoute: ApiRazorpayCreateOrderVariantRoute,
@@ -785,13 +806,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
