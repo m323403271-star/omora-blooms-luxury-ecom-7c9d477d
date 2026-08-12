@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { Package, Loader2, ArrowRight } from "lucide-react";
 import { getMyOrders } from "@/lib/account.functions";
+import { RewardsPanel } from "@/components/site/RewardsPanel";
 import { formatPrice } from "@/lib/products";
 
 export const Route = createFileRoute("/_authenticated/account")({
