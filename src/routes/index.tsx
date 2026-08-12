@@ -21,9 +21,26 @@ export const Route = createFileRoute("/")({
       description:
         "Shop OMORA BLOOMS luxury handmade crochet bouquets, pipe cleaner flowers, mother recovery kits, baby essentials and premium gift boxes.",
     }),
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "OMORA BLOOMS",
+          url: SITE_URL,
+          potentialAction: {
+            "@type": "SearchAction",
+            target: `${SITE_URL}/shop?q={search_term_string}`,
+            "query-input": "required name=search_term_string",
+          },
+        }),
+      },
+    ],
   }),
   component: HomePage,
 });
+
 
 function HomePage() {
   return (
