@@ -43,6 +43,9 @@ function AccountPage() {
         Every order placed with the email address on your account appears here.
       </p>
 
+      <RewardsPanel />
+
+
       {isLoading && (
         <div className="flex items-center gap-3 text-sm text-[color:var(--muted-foreground)]">
           <Loader2 className="h-4 w-4 animate-spin" /> Loading your orders…
