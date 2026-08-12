@@ -119,6 +119,41 @@ export type Database = {
         }
         Relationships: []
       }
+      loyalty_ledger: {
+        Row: {
+          created_at: string
+          delta: number
+          id: string
+          payment_id: string | null
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delta: number
+          id?: string
+          payment_id?: string | null
+          reason: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delta?: number
+          id?: string
+          payment_id?: string | null
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_ledger_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       partners: {
         Row: {
           active: boolean
@@ -473,6 +508,50 @@ export type Database = {
           },
         ]
       }
+      reward_codes: {
+        Row: {
+          code: string
+          created_at: string
+          discount_inr: number
+          expires_at: string
+          id: string
+          payment_id: string | null
+          points_cost: number
+          status: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          discount_inr: number
+          expires_at?: string
+          id?: string
+          payment_id?: string | null
+          points_cost: number
+          status?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          discount_inr?: number
+          expires_at?: string
+          id?: string
+          payment_id?: string | null
+          points_cost?: number
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_codes_payment_id_fkey"
+            columns: ["payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_images: {
         Row: {
           category_name: string | null
@@ -569,6 +648,7 @@ export type Database = {
           id: string
         }[]
       }
+      loyalty_balance: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "admin" | "partner"
