@@ -1,4 +1,4 @@
-import { pageSeo } from "@/lib/seo";
+import { pageSeo, SITE_URL } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { productsQuery } from "@/lib/products";
 import {
