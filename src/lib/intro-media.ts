@@ -1,9 +1,10 @@
+import introVideo from "@/assets/omora-intro.mp4.asset.json";
+
 /**
  * Intro media — the animated OM / OMORA BLOOMS logo reveal.
- *
- * Drop the animated logo in as a Lovable asset and point INTRO_VIDEO_SRC at it
- * (e.g. `import intro from "@/assets/omora-intro.mp4.asset.json"` → `intro.url`).
- * While it is null the intro falls back to the static gold-ring logo reveal.
+ * Portrait (9:16) source; the splash scales it responsively.
  */
-export const INTRO_VIDEO_SRC: string | null = null;
+export const INTRO_VIDEO_SRC: string | null = introVideo.url;
 export const INTRO_POSTER_SRC: string | null = null;
+/** Intrinsic aspect ratio of the intro video (width / height). */
+export const INTRO_VIDEO_ASPECT = 720 / 1280;
