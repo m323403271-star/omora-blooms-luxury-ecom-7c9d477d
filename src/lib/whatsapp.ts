@@ -1,6 +1,8 @@
 export const WHATSAPP_NUMBER = "919845487271";
 export const WHATSAPP_DISPLAY = "+91 98454 87271";
 export const CONTACT_EMAIL = "hello@omorablooms.com";
+/** Delivery partner / dispatch desk inbox — used by agent + warehouse consoles. */
+export const DELIVERY_PARTNER_EMAIL = "delivery@omorablooms.in";
 export const INSTAGRAM_URL = "https://instagram.com/omorablooms";
 export const FACEBOOK_URL = "https://facebook.com/omorablooms";
 
