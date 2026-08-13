@@ -72,7 +72,7 @@ export function IntroSplash() {
         fading ? "opacity-0" : "opacity-100"
       }`}
     >
-      <div className="flex flex-col items-center gap-5 animate-[omora-intro-in_900ms_ease-out_both]">
+      <div className="flex w-full flex-col items-center gap-4 px-5 sm:gap-5 animate-[omora-intro-in_900ms_ease-out_both]">
         {INTRO_VIDEO_SRC ? (
           <video
             ref={videoRef}
@@ -88,18 +88,20 @@ export function IntroSplash() {
             controls={false}
             disablePictureInPicture
             onEnded={() => setFading(true)}
-            className="block h-auto w-[min(78vw,420px)] rounded-2xl object-contain"
+            style={{ aspectRatio: String(INTRO_VIDEO_ASPECT) }}
+            className="block h-auto max-h-[62svh] w-auto max-w-[86vw] rounded-2xl object-contain sm:max-h-[68svh] sm:max-w-[70vw] md:max-w-[46vw] lg:max-w-[34vw] xl:max-w-[26vw]"
           />
         ) : (
           <img
             src={LOGO_SRC}
             alt=""
-            className="h-24 w-24 rounded-full object-cover border border-[color:var(--gold)]/60 shadow-[0_0_40px_-8px_var(--gold)]"
+            className="h-20 w-20 rounded-full object-cover border border-[color:var(--gold)]/60 shadow-[0_0_40px_-8px_var(--gold)] sm:h-24 sm:w-24"
           />
         )}
-        <p className="eyebrow text-[color:var(--gold)]">Crafted to last forever</p>
-        <span className="block h-px w-24 bg-gradient-to-r from-transparent via-[color:var(--gold)] to-transparent" />
+        <p className="eyebrow text-center text-[color:var(--gold)]">Crafted to last forever</p>
+        <span className="block h-px w-20 bg-gradient-to-r from-transparent via-[color:var(--gold)] to-transparent sm:w-24" />
       </div>
+
     </div>
   );
 }
