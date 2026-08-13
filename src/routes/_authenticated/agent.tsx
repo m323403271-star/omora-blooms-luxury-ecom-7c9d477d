@@ -108,7 +108,14 @@ function AgentApp() {
           <div>
             <p className="eyebrow">Runsheet</p>
             <h1 className="font-serif text-xl">Delivery Agent</h1>
+            <a
+              href={`mailto:${DELIVERY_PARTNER_EMAIL}`}
+              className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)]"
+            >
+              {DELIVERY_PARTNER_EMAIL}
+            </a>
           </div>
+
           <div className="flex items-center gap-2">
             <Link to="/admin/referrals" className="text-[11px] tracking-widest uppercase text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)]">Admin</Link>
             <button onClick={load} aria-label="Refresh" className="p-2 rounded-full border hairline text-[color:var(--gold)]">
