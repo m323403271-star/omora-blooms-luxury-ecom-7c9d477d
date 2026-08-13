@@ -98,6 +98,8 @@ export function IntroSplash() {
             controls={false}
             disablePictureInPicture
             onEnded={() => setFading(true)}
+            onError={() => setVideoFailed(true)}
+
             style={{ aspectRatio: String(INTRO_VIDEO_ASPECT) }}
             className="block h-auto max-h-[62svh] w-auto max-w-[86vw] rounded-2xl object-contain sm:max-h-[68svh] sm:max-w-[70vw] md:max-w-[46vw] lg:max-w-[34vw] xl:max-w-[26vw]"
           />
