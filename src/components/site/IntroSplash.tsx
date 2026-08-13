@@ -65,6 +65,13 @@ export function IntroSplash() {
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, [visible]);
 
+  // If the video can't play (codec/autoplay blocked), show the logo and move on.
+  useEffect(() => {
+    if (!videoFailed) return;
+    const t = window.setTimeout(() => setFading(true), 1400);
+    return () => window.clearTimeout(t);
+  }, [videoFailed]);
+
   if (!visible) return null;
 
   return (
@@ -75,7 +82,8 @@ export function IntroSplash() {
       }`}
     >
       <div className="flex w-full flex-col items-center gap-4 px-5 sm:gap-5 animate-[omora-intro-in_900ms_ease-out_both]">
-        {INTRO_VIDEO_SRC ? (
+        {INTRO_VIDEO_SRC && !videoFailed ? (
+
           <video
             ref={videoRef}
             src={INTRO_VIDEO_SRC}
