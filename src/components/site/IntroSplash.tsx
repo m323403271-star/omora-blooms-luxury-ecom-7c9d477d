@@ -53,8 +53,9 @@ export function IntroSplash() {
     video.defaultMuted = true;
     const play = () => {
       const attempt = video.play();
-      if (attempt) attempt.catch(() => setFading(true));
+      if (attempt) attempt.catch(() => setVideoFailed(true));
     };
+
     play();
     const onVisible = () => {
       if (document.visibilityState === "visible") play();
