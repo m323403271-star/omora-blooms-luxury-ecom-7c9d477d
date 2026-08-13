@@ -11,6 +11,7 @@ const SESSION_KEY = "omora-intro-shown";
 export function IntroSplash() {
   const [visible, setVisible] = useState(false);
   const [fading, setFading] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
