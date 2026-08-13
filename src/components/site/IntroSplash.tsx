@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { LOGO_SRC } from "@/lib/logo";
-import { INTRO_VIDEO_SRC, INTRO_POSTER_SRC } from "@/lib/intro-media";
+import { INTRO_VIDEO_SRC, INTRO_POSTER_SRC, INTRO_VIDEO_ASPECT } from "@/lib/intro-media";
 
 const SESSION_KEY = "omora-intro-shown";
 
@@ -31,7 +31,7 @@ export function IntroSplash() {
     setVisible(true);
     document.body.style.overflow = "hidden";
 
-    const holdMs = INTRO_VIDEO_SRC ? 3600 : 1600;
+    const holdMs = INTRO_VIDEO_SRC ? 6500 : 1600;
     const fadeAt = window.setTimeout(() => setFading(true), holdMs);
     const hideAt = window.setTimeout(() => {
       setVisible(false);
