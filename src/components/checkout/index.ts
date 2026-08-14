@@ -5,6 +5,8 @@ export { OrderSummary } from "./OrderSummary";
 export { PaymentOptions } from "./PaymentOptions";
 export { PickupPointSelector } from "./PickupPointSelector";
 export { PincodeLocator } from "./PincodeLocator";
+export { MobileActionBar } from "./mobile-action-bar";
+export { PaymentOptionsSheet } from "./payment-options-sheet";
 export { formatCurrency } from "./formatCurrency";
 export {
   sampleOrderLines,
