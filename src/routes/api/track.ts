@@ -21,42 +21,40 @@ export const Route = createFileRoute("/api/track")({
         const orderId = body.orderId?.trim() ?? "";
         const phoneRaw = body.phone?.trim() ?? "";
 
+        // Ownership proof: the order ID AND the phone used at checkout must match.
+        if (!orderId || !phoneRaw) {
+          return Response.json(
+            { error: "Provide both your Order ID and the phone number used at checkout" },
+            { status: 400 },
+          );
+        }
+        if (orderId.length > 80) return Response.json({ error: "Invalid order ID" }, { status: 400 });
+
+        const phone = normalizePhone(phoneRaw);
+        if (phone.length !== 10) {
+          return Response.json({ error: "Enter a valid 10-digit phone number" }, { status: 400 });
+        }
+
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-        if (orderId) {
-          if (orderId.length > 80) return Response.json({ error: "Invalid order ID" }, { status: 400 });
-          const { data, error } = await supabaseAdmin
-            .from("payments")
-            .select("razorpay_order_id, amount, currency, status, items, delivery_notes, pickup_point_id, priority, created_at, updated_at")
-            .eq("razorpay_order_id", orderId)
-            .maybeSingle();
-          if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
-          if (!data) return Response.json({ orders: [] });
-          return Response.json({ orders: [data] });
+        const { data, error } = await supabaseAdmin
+          .from("payments")
+          .select(
+            "razorpay_order_id, amount, currency, status, items, delivery_notes, pickup_point_id, priority, created_at, updated_at, customer_phone",
+          )
+          .eq("razorpay_order_id", orderId)
+          .maybeSingle();
+
+        if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
+        if (!data) return Response.json({ orders: [] });
+
+        if (normalizePhone(String(data.customer_phone ?? "")) !== phone) {
+          return Response.json({ orders: [] });
         }
 
-        if (phoneRaw) {
-          const phone = normalizePhone(phoneRaw);
-          if (phone.length !== 10) return Response.json({ error: "Enter a valid 10-digit phone number" }, { status: 400 });
-          const { data, error } = await supabaseAdmin
-            .from("payments")
-            .select(
-              "razorpay_order_id, amount, currency, status, items, delivery_notes, pickup_point_id, priority, created_at, updated_at, customer_phone",
-            )
-            .order("created_at", { ascending: false })
-            .limit(200);
-          if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
-          const orders = (data ?? [])
-            .filter((r) => normalizePhone(String(r.customer_phone ?? "")) === phone)
-            .slice(0, 10)
-            .map((r) => {
-              const { customer_phone: _p, ...rest } = r;
-              return rest;
-            });
-          return Response.json({ orders });
-        }
+        const { customer_phone: _p, ...rest } = data;
+        return Response.json({ orders: [rest] });
 
-        return Response.json({ error: "Provide an order ID or phone number" }, { status: 400 });
       },
     },
   },
