@@ -22,7 +22,7 @@ export function Header() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   // Final checkout & order pages must stay strictly clean — no promotional
   // slider/carousel banner, just navigation and the essential flow.
-  const isCheckout = pathname === "/cart" || pathname.startsWith("/order");
+  const isCheckout = pathname === "/cart" || pathname.startsWith("/order") || pathname.startsWith("/buy");
 
   return (
     <>
