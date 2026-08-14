@@ -41,15 +41,18 @@ const STATUS: Record<string, { label: string; tone: string; icon: typeof Clock; 
 };
 
 function TrackPage() {
-  const [mode, setMode] = useState<"order" | "phone">("order");
-  const [value, setValue] = useState("");
+  const [orderId, setOrderId] = useState("");
+  const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [orders, setOrders] = useState<Order[] | null>(null);
 
   async function search(e: React.FormEvent) {
     e.preventDefault();
-    if (!value.trim()) return;
+    if (!orderId.trim() || !phone.trim()) {
+      setErr("Enter both your Order ID and the phone number used at checkout.");
+      return;
+    }
     setLoading(true);
     setErr(null);
     setOrders(null);
@@ -57,7 +60,7 @@ function TrackPage() {
       const r = await fetch("/api/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(mode === "order" ? { orderId: value.trim() } : { phone: value.trim() }),
+        body: JSON.stringify({ orderId: orderId.trim(), phone: phone.trim() }),
       });
       const j = await r.json();
       if (!r.ok) setErr(j.error ?? "Could not look up your order.");
@@ -74,40 +77,39 @@ function TrackPage() {
       <p className="eyebrow mb-3">Order Tracking</p>
       <h1 className="font-serif text-3xl md:text-5xl mb-3">Track your order</h1>
       <p className="text-sm text-[color:var(--muted-foreground)] max-w-xl mb-8">
-        Enter your Order ID or the phone number you used at checkout to see the live status of your OMORA BLOOMS order.
+        Enter your Order ID together with the phone number you used at checkout to see the live status of your OMORA BLOOMS order.
       </p>
 
       <form onSubmit={search} className="glass-card rounded-2xl p-5 md:p-6 max-w-2xl">
-        <div className="flex gap-2 mb-4">
-          {(["order", "phone"] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => { setMode(m); setValue(""); setOrders(null); setErr(null); }}
-              className={`px-4 py-2 rounded-full text-xs uppercase tracking-widest border hairline ${
-                mode === m ? "btn-gold" : "text-[color:var(--muted-foreground)]"
-              }`}
-            >
-              {m === "order" ? "Order ID" : "Phone number"}
-            </button>
-          ))}
-        </div>
         <div className="flex flex-col sm:flex-row gap-3">
           <input
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            inputMode={mode === "phone" ? "tel" : "text"}
-            maxLength={mode === "phone" ? 15 : 80}
-            placeholder={mode === "order" ? "order_XXXXXXXXXXXX" : "10-digit mobile number"}
+            value={orderId}
+            onChange={(e) => setOrderId(e.target.value)}
+            maxLength={80}
+            placeholder="order_XXXXXXXXXXXX"
             className="flex-1 bg-transparent border hairline rounded-full px-5 py-3 text-sm outline-none focus:border-[color:var(--gold)]"
-            aria-label={mode === "order" ? "Order ID" : "Phone number"}
+            aria-label="Order ID"
           />
-          <button type="submit" disabled={loading} className="btn-gold inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full text-sm disabled:opacity-60">
-            <Search className="h-4 w-4" /> {loading ? "Checking…" : "Track"}
-          </button>
+          <input
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            inputMode="tel"
+            maxLength={15}
+            placeholder="10-digit mobile number"
+            className="flex-1 bg-transparent border hairline rounded-full px-5 py-3 text-sm outline-none focus:border-[color:var(--gold)]"
+            aria-label="Phone number used at checkout"
+          />
         </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-gold inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full text-sm disabled:opacity-60 mt-3 w-full sm:w-auto"
+        >
+          <Search className="h-4 w-4" /> {loading ? "Checking…" : "Track"}
+        </button>
         {err && <p className="mt-3 text-xs text-red-400">{err}</p>}
       </form>
+
 
       {orders && orders.length === 0 && (
         <div className="glass-card rounded-2xl p-8 mt-8 max-w-2xl text-center">
