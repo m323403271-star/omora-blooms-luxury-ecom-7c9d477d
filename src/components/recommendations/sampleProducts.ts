@@ -1,0 +1,106 @@
+import type { RecommendedProduct } from "./types";
+
+/**
+ * Demo data only — swap for real product data when merging into another project.
+ */
+export const youMightAlsoLikeSample: RecommendedProduct[] = [
+  {
+    id: "yml-1",
+    brand: "Alder & Oak",
+    name: "Merino Crew Knit Sweater",
+    price: 128,
+    compareAtPrice: 160,
+    rating: 4.6,
+    reviewCount: 214,
+    imageTint: "linear-gradient(135deg,#d9e2ec,#f0f4f8)",
+    badge: "New",
+  },
+  {
+    id: "yml-2",
+    brand: "Alder & Oak",
+    name: "Relaxed Cotton Oxford Shirt",
+    price: 89,
+    rating: 4.4,
+    reviewCount: 132,
+    imageTint: "linear-gradient(135deg,#e8e3da,#f7f4ef)",
+  },
+  {
+    id: "yml-3",
+    brand: "Northbound",
+    name: "Waxed Canvas Field Jacket",
+    price: 245,
+    compareAtPrice: 280,
+    rating: 4.8,
+    reviewCount: 76,
+    imageTint: "linear-gradient(135deg,#dfe5da,#f2f5ef)",
+  },
+  {
+    id: "yml-4",
+    brand: "Northbound",
+    name: "Selvedge Denim Straight Jean",
+    price: 165,
+    rating: 4.5,
+    reviewCount: 298,
+    imageTint: "linear-gradient(135deg,#dbe1ea,#eef1f6)",
+  },
+];
+
+export const peopleAlsoViewedSample: RecommendedProduct[] = [
+  {
+    id: "pav-1",
+    brand: "Studio Mono",
+    name: "Ribbed Wool Beanie",
+    price: 42,
+    rating: 4.3,
+    reviewCount: 88,
+    imageTint: "linear-gradient(135deg,#eadfd7,#f8f3ee)",
+  },
+  {
+    id: "pav-2",
+    brand: "Studio Mono",
+    name: "Leather Card Holder",
+    price: 58,
+    compareAtPrice: 72,
+    rating: 4.7,
+    reviewCount: 411,
+    imageTint: "linear-gradient(135deg,#e3ded6,#f5f2ec)",
+    badge: "Bestseller",
+  },
+  {
+    id: "pav-3",
+    brand: "Alder & Oak",
+    name: "Brushed Flannel Overshirt",
+    price: 118,
+    rating: 4.2,
+    reviewCount: 64,
+    imageTint: "linear-gradient(135deg,#e6dede,#f6f1f1)",
+  },
+  {
+    id: "pav-4",
+    brand: "Northbound",
+    name: "Suede Chukka Boot",
+    price: 198,
+    rating: 4.6,
+    reviewCount: 152,
+    imageTint: "linear-gradient(135deg,#e2dbd1,#f4efe8)",
+  },
+  {
+    id: "pav-5",
+    brand: "Studio Mono",
+    name: "Cashmere Blend Scarf",
+    price: 96,
+    rating: 4.9,
+    reviewCount: 39,
+    imageTint: "linear-gradient(135deg,#dde4e2,#f0f4f3)",
+  },
+  {
+    id: "pav-6",
+    brand: "Alder & Oak",
+    name: "Pleated Wool Trouser",
+    price: 145,
+    compareAtPrice: 175,
+    rating: 4.1,
+    reviewCount: 57,
+    imageTint: "linear-gradient(135deg,#dcdfe6,#eff1f5)",
+  },
+];
