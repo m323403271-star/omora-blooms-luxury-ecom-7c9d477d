@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowRight } from "lucide-react";
 import { productsQuery, resolveProductImage, formatPrice, LOCAL_PRODUCTS } from "@/lib/products";
 import { handleImageError } from "@/lib/image-fallback";
@@ -16,7 +16,7 @@ export function HomeDealsGrid({
   eyebrow?: string;
   limit?: number;
 }) {
-  const { data } = useQuery(productsQuery);
+  const { data } = useSuspenseQuery(productsQuery);
   const products = (data && data.length > 0 ? data : LOCAL_PRODUCTS).slice(0, limit);
 
   return (
