@@ -11,6 +11,10 @@ import {
   StoryBand,
 } from "@/components/site/HomeSections";
 import { HomeCategoryGrid } from "@/components/site/HomeCategoryGrid";
+import { HomeSearchBar } from "@/components/site/HomeSearchBar";
+import { HomeCategoryStrip } from "@/components/site/HomeCategoryStrip";
+import { HomeDealsGrid } from "@/components/site/HomeDealsGrid";
+
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery),
