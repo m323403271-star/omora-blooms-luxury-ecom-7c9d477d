@@ -10,6 +10,8 @@ import { LOCAL_PRODUCTS, productsQuery, resolveProductImage } from "@/lib/produc
 import { whatsappLink } from "@/lib/whatsapp";
 import { ProductCard } from "@/components/site/ProductCard";
 
+import { Star } from "lucide-react";
+
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
@@ -59,6 +61,36 @@ export function Hero() {
 
       </div>
     </section>
+  );
+}
+
+export function TrustBanner() {
+  const stars = Array.from({ length: 5 });
+  const items = Array.from({ length: 6 });
+  return (
+    <div className="border-b hairline overflow-hidden bg-[color:var(--noir)]/40">
+      <div className="flex animate-[trustMarquee_28s_linear_infinite] whitespace-nowrap py-3 md:py-3.5">
+        {items.map((_, i) => (
+          <span
+            key={i}
+            className="inline-flex items-center gap-2 px-8 md:px-12 text-[11px] md:text-xs tracking-[0.18em] uppercase text-[color:var(--muted-foreground)]"
+          >
+            <span className="inline-flex items-center gap-0.5">
+              {stars.map((_, s) => (
+                <Star
+                  key={s}
+                  className="h-3 w-3 md:h-3.5 md:w-3.5 fill-[color:var(--gold)] text-[color:var(--gold)]"
+                />
+              ))}
+            </span>
+            <span className="text-[color:var(--foreground)] font-medium">
+              Trusted by 1000+ happy customers
+            </span>
+          </span>
+        ))}
+      </div>
+      <style>{`@keyframes trustMarquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
+    </div>
   );
 }
 
