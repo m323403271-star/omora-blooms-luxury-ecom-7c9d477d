@@ -49,9 +49,13 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <div>
+      <HomeSearchBar />
+      <HomeCategoryStrip />
       <Hero />
       <Marquee />
+      <HomeDealsGrid />
       <HomeCategoryGrid />
+      <HomeDealsGrid title="Luxury Gifting Picks" eyebrow="Prominent value" limit={4} />
       <StoryBand />
       <FeatureGrid />
       <PackagingBand />
@@ -60,3 +64,4 @@ function HomePage() {
     </div>
   );
 }
+
