@@ -11,6 +11,10 @@ import {
   StoryBand,
 } from "@/components/site/HomeSections";
 import { HomeCategoryGrid } from "@/components/site/HomeCategoryGrid";
+import { HomeSearchBar } from "@/components/site/HomeSearchBar";
+import { HomeCategoryStrip } from "@/components/site/HomeCategoryStrip";
+import { HomeDealsGrid } from "@/components/site/HomeDealsGrid";
+
 
 export const Route = createFileRoute("/")({
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery),
@@ -45,9 +49,13 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   return (
     <div>
+      <HomeSearchBar />
+      <HomeCategoryStrip />
       <Hero />
       <Marquee />
+      <HomeDealsGrid />
       <HomeCategoryGrid />
+      <HomeDealsGrid title="Luxury Gifting Picks" eyebrow="Prominent value" limit={4} />
       <StoryBand />
       <FeatureGrid />
       <PackagingBand />
@@ -56,3 +64,4 @@ function HomePage() {
     </div>
   );
 }
+
