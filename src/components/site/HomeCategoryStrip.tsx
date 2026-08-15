@@ -11,7 +11,7 @@ import { handleImageError } from "@/lib/image-fallback";
 export function HomeCategoryStrip() {
   const { data: siteImages } = useQuery(siteImagesQuery);
 
-  return (
+    return (
     <section className="container-luxe pt-2 pb-4 md:pt-4 md:pb-8" aria-label="Shop by category">
       <div
         className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:px-0 md:gap-6"
@@ -24,9 +24,9 @@ export function HomeCategoryStrip() {
               key={c.slug}
               to="/collections/$slug"
               params={{ slug: c.slug }}
-              className="group flex w-[68px] shrink-0 flex-col items-center gap-1.5 md:w-[92px]"
+              className="group flex w-[76px] shrink-0 flex-col items-center gap-2 md:w-[104px]"
             >
-              <span className="relative block h-[62px] w-[62px] overflow-hidden rounded-full ring-1 ring-[color:var(--gold)]/60 shadow-[0_8px_24px_-12px_rgba(200,162,74,0.7)] transition group-hover:ring-[color:var(--gold)] md:h-[84px] md:w-[84px]">
+              <span className="relative block h-[72px] w-[72px] overflow-hidden rounded-full ring-2 ring-[color:var(--gold)] shadow-[0_10px_28px_-14px_rgba(200,162,74,0.8)] transition group-hover:shadow-[0_14px_32px_-12px_rgba(200,162,74,0.95)] group-hover:ring-[color:var(--gold)] md:h-[92px] md:w-[92px]">
                 <img
                   src={src}
                   alt={c.name}
@@ -36,7 +36,7 @@ export function HomeCategoryStrip() {
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </span>
-              <span className="line-clamp-2 text-center text-[10px] leading-tight text-[color:var(--muted-foreground)] md:text-[11px]">
+              <span className="line-clamp-2 text-center text-[11px] leading-tight text-[color:var(--muted-foreground)] group-hover:text-[color:var(--gold)] md:text-xs">
                 {c.name}
               </span>
             </Link>
@@ -46,3 +46,4 @@ export function HomeCategoryStrip() {
     </section>
   );
 }
+
