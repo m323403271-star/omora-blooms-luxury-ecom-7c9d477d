@@ -55,7 +55,10 @@ function HomePage() {
       <Marquee />
       <HomeDealsGrid />
       <HomeCategoryGrid />
-      <HomeDealsGrid title="Luxury Gifting Picks" eyebrow="Prominent value" limit={4} />
+      {HOME_SHOWCASE.map((s) => (
+        <HomeShowcaseSection key={s.id} section={s} />
+      ))}
+      <HomeGiftingStories />
       <StoryBand />
       <FeatureGrid />
       <PackagingBand />
