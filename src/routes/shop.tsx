@@ -7,6 +7,8 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/shop")({
+  validateSearch: (search: Record<string, unknown>): { q?: string } =>
+    typeof search["q"] === "string" && search["q"] ? { q: search["q"] } : {},
   head: () => ({
     ...pageSeo({
       path: "/shop",
@@ -20,9 +22,11 @@ export const Route = createFileRoute("/shop")({
 
 function ShopPage() {
   const { data } = useSuspenseQuery(productsQuery);
+  const { q: initialQ } = Route.useSearch();
   const [cat, setCat] = useState<string>("all");
-  const [q, setQ] = useState("");
+  const [q, setQ] = useState(initialQ ?? "");
   const [sort, setSort] = useState<"featured" | "price-asc" | "price-desc">("featured");
+
 
   const filtered = useMemo(() => {
     let list = data;
