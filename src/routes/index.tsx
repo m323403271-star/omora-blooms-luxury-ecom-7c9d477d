@@ -14,6 +14,9 @@ import { HomeCategoryGrid } from "@/components/site/HomeCategoryGrid";
 import { HomeSearchBar } from "@/components/site/HomeSearchBar";
 import { HomeCategoryStrip } from "@/components/site/HomeCategoryStrip";
 import { HomeDealsGrid } from "@/components/site/HomeDealsGrid";
+import { HomeShowcaseSection } from "@/components/site/HomeShowcaseSection";
+import { HomeGiftingStories } from "@/components/site/HomeGiftingStories";
+import { HOME_SHOWCASE } from "@/lib/home-showcase";
 
 
 export const Route = createFileRoute("/")({
