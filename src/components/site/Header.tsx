@@ -17,141 +17,120 @@ const NAV = [
 ] as const;
 
 export function Header() {
-  const { count, open } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  // Final checkout & order pages must stay strictly clean — no promotional
-  // slider/carousel banner, just navigation and the essential flow.
-  const isCheckout = pathname === "/cart" || pathname.startsWith("/order") || pathname.startsWith("/buy");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [etaOpen, setEtaOpen] = useState(false);
+  const routerState = useRouterState();
+  const currentPath = routerState.location.pathname;
+  const { totalItems } = useCart();
 
   return (
-    <>
-      {!isCheckout && <DeliveryBanner />}
+    <header className="sticky top-0 z-40 bg-[#0d231a]/95 backdrop-blur-md border-b border-[#c5a869]/20 transition-all">
+      <DeliveryBanner />
 
-
-      <header className="sticky top-0 z-40 backdrop-blur-xl bg-[color:var(--noir)]/80 border-b hairline">
-        <div className="container-luxe flex items-center justify-between h-20 md:h-24 gap-3">
-          <button
-            className="md:hidden text-[color:var(--gold)] p-2 -ml-2"
-            onClick={() => setMobileOpen(true)}
-            aria-label="Open menu"
-          >
-            <Menu className="h-5 w-5" />
-          </button>
-
-          <Logo size="md" className="md:order-1" />
-
-          <nav className="hidden md:flex items-center gap-8 md:order-2 mx-auto absolute left-1/2 -translate-x-1/2">
-            {NAV.map((n) => (
-              <Link
-                key={n.to}
-                to={n.to}
-                className="text-[13px] tracking-[0.22em] uppercase text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)] transition-colors"
-                activeProps={{ className: "text-[color:var(--gold)]" }}
-                activeOptions={{ exact: n.to === "/" }}
-              >
-                {n.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-1 md:gap-2 md:order-3">
-            <div className="hidden md:block">
-              <DeliveryEtaChecker variant="header" />
-            </div>
-            <Link
-              to="/airport-pickup"
-              className="hidden xl:inline-flex items-center gap-1.5 rounded-full border hairline px-3 py-1.5 text-[11px] tracking-[0.14em] uppercase text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10"
-            >
-              ✈ Airport Pickup Points
-            </Link>
-            <Link
-              to="/shop"
-              aria-label="Search"
-              className="hidden md:inline-flex p-2 text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)]"
-            >
-              <Search className="h-4 w-4" />
-            </Link>
-
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20 md:h-24">
+          {/* Mobile menu trigger */}
+          <div className="flex items-center lg:hidden">
             <button
-              onClick={open}
-              aria-label="Open cart"
-              className="relative p-2 text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)]"
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="text-[#c5a869] hover:text-[#e5cf92] p-2"
+              aria-label="Toggle navigation"
             >
-              <ShoppingBag className="h-5 w-5" />
-              {count > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-gold-gradient text-[color:var(--noir)] text-[10px] font-bold rounded-full h-4 min-w-4 px-1 grid place-items-center">
-                  {count}
-                </span>
-              )}
+              {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
           </div>
-        </div>
-      </header>
 
-      {/* Mobile drawer */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 md:hidden animate-fade-in">
-          <div className="absolute inset-0 bg-black/70" onClick={() => setMobileOpen(false)} />
-          <div className="absolute left-0 top-0 bottom-0 w-[85%] max-w-sm bg-[color:var(--noir)] border-r hairline flex flex-col animate-slide-in-right">
-            <div className="flex items-center justify-between px-5 py-5 border-b hairline">
-              <Logo size="sm" />
-              <button onClick={() => setMobileOpen(false)} className="text-[color:var(--gold)] p-2" aria-label="Close menu">
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <nav className="flex flex-col p-6 gap-1">
-              {NAV.map((n) => (
-                <Link
-                  key={n.to}
-                  to={n.to}
-                  onClick={() => setMobileOpen(false)}
-                  className="py-3 text-2xl font-serif tracking-wide text-[color:var(--foreground)] border-b hairline/50"
-                >
-                  {n.label}
-                </Link>
-              ))}
-            </nav>
-            <div className="px-6 pt-2 pb-6">
-              <p className="eyebrow mb-3">Collections</p>
-              <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
-                {COLLECTIONS.slice(0, 8).map((c) => (
-                  <Link
-                    key={c.slug}
-                    to="/collections/$slug"
-                    params={{ slug: c.slug }}
-                    onClick={() => setMobileOpen(false)}
-                    className="text-sm text-[color:var(--muted-foreground)] hover:text-[color:var(--gold)]"
-                  >
-                    {c.name}
-                  </Link>
-                ))}
+          {/* Enlarged Centered Logo */}
+          <div className="flex items-center">
+            <Link to="/" className="inline-flex items-center py-1">
+              <div className="h-14 sm:h-16 md:h-20 w-auto flex items-center justify-center">
+                <Logo />
               </div>
-            </div>
-            <div className="px-6 pb-4">
-              <DeliveryEtaChecker title="Check Delivery ETA" />
-            </div>
-            <div className="mt-auto p-6 border-t hairline space-y-3">
-              <Link
-                to="/airport-pickup"
-                onClick={() => setMobileOpen(false)}
-                className="btn-outline-gold w-full inline-flex items-center justify-center py-3 px-4 rounded-full text-sm"
-              >
-                ✈ Airport Pickup Points
-              </Link>
-              <a
-                href={whatsappLink("Hi OMORA BLOOMS, I'd like to order.")}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-gold w-full inline-flex items-center justify-center py-3 px-4 rounded-full text-sm"
-              >
-                Order on WhatsApp
-              </a>
-            </div>
+            </Link>
+          </div>
 
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center space-x-8">
+            {NAV.map((item) => {
+              const active = currentPath === item.to;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`text-sm font-medium tracking-wide transition-colors ${
+                    active
+                      ? "text-[#c5a869] border-b-2 border-[#c5a869] pb-1"
+                      : "text-[#f4efe6]/80 hover:text-[#c5a869]"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Right Action Icons */}
+          <div className="flex items-center space-x-3 sm:space-x-5">
+            <button
+              onClick={() => setEtaOpen(true)}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#c5a869]/30 text-[#c5a869] text-xs hover:bg-[#c5a869]/10 transition-colors"
+            >
+              <span>Check Delivery</span>
+            </button>
+
+            <button
+              onClick={() => setSearchOpen(!searchOpen)}
+              className="text-[#c5a869] hover:text-[#e5cf92] p-2 transition-colors"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+
+            <Link
+              to="/cart"
+              className="relative text-[#c5a869] hover:text-[#e5cf92] p-2 transition-colors inline-flex items-center"
+              aria-label="Cart"
+            >
+              <ShoppingBag className="h-5 w-5" />
+              {totalItems > 0 && (
+                <span className="absolute top-0 right-0 bg-[#c5a869] text-[#0d231a] font-bold text-[10px] h-4 w-4 rounded-full flex items-center justify-center">
+                  {totalItems}
+                </span>
+              )}
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Drawer Menu */}
+      {mobileOpen && (
+        <div className="lg:hidden bg-[#0a1b14] border-b border-[#c5a869]/30 px-4 pt-3 pb-6 space-y-3">
+          {NAV.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              onClick={() => setMobileOpen(false)}
+              className="block px-3 py-2 rounded-md text-base font-medium text-[#f4efe6] hover:bg-[#133024] hover:text-[#c5a869]"
+            >
+              {item.label}
+            </Link>
+          ))}
+          <div className="pt-2 border-t border-[#c5a869]/20">
+            <a
+              href={whatsappLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-xs text-[#c5a869] px-3 py-1"
+            >
+              WhatsApp Support: {WHATSAPP_DISPLAY}
+            </a>
           </div>
         </div>
       )}
-    </>
+
+      {/* Delivery ETA Checker Popup */}
+      {etaOpen && <DeliveryEtaChecker onClose={() => setEtaOpen(false)} />}
+    </header>
   );
 }
