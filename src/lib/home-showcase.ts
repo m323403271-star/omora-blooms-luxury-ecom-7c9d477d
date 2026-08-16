@@ -18,6 +18,8 @@ export type ShowcaseSection = {
   eyebrow: string;
   tabs: ShowcaseTab[];
   ctaLabel?: string;
+  /** "icons" = circular category icons only (no product grid). */
+  variant?: "icons" | "slider";
 };
 
 const img = (q: string) => `https://images.unsplash.com/${q}?auto=format&fit=crop&q=80&w=300`;
@@ -25,6 +27,7 @@ const img = (q: string) => `https://images.unsplash.com/${q}?auto=format&fit=cro
 export const HOME_SHOWCASE: ShowcaseSection[] = [
   {
     id: "occasion",
+    variant: "icons",
     title: "Gift for Every Occasion",
     eyebrow: "Occasions",
     tabs: [
@@ -60,6 +63,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
   },
   {
     id: "festivals",
+    variant: "icons",
     title: "Celebrate Near Festivals / Special Days",
     eyebrow: "Festive calendar",
     tabs: [
@@ -104,6 +108,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
         label: "Top Rated",
         image: img("photo-1561181286-d3fee7d55364"),
         keywords: ["bouquet", "crochet", "luxury"],
+        collection: "crochet-bouquets",
       },
       {
         id: "crochet",
@@ -130,6 +135,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
   },
   {
     id: "everyone",
+    variant: "icons",
     title: "Gift for Everyone",
     eyebrow: "By recipient",
     tabs: [
@@ -138,6 +144,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
         label: "For Her",
         image: img("photo-1519689680058-324335c77eba"),
         keywords: ["rose", "blush", "her", "romance", "crochet"],
+        collection: "crochet-bouquets",
       },
       {
         id: "for-mom",
@@ -157,6 +164,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
   },
   {
     id: "feeling",
+    variant: "icons",
     title: "Gift for Every Feeling",
     eyebrow: "Say it with blooms",
     tabs: [
@@ -165,12 +173,14 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
         label: "Love & Romance",
         image: img("photo-1518895949257-7621c3c786d7"),
         keywords: ["love", "romance", "rose", "heart"],
+        collection: "wedding-gifts",
       },
       {
         id: "apology",
         label: "Apology",
         image: img("photo-1528722828814-77b9b83aafb2"),
         keywords: ["lavender", "sorry", "apology", "white", "lily"],
+        collection: "frames-vases",
       },
       {
         id: "thinking",
@@ -183,6 +193,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
   },
   {
     id: "offers",
+    variant: "icons",
     title: "Get Exclusive Offers From",
     eyebrow: "Limited time",
     tabs: [
@@ -192,6 +203,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
         image: img("photo-1606041008023-472dfb5e530f"),
         keywords: [],
         mode: "under-1499",
+        collection: "crochet-bouquets",
       },
       {
         id: "best-value",
@@ -199,6 +211,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
         image: img("photo-1513151233558-d860c5398176"),
         keywords: [],
         mode: "best-value",
+        collection: "luxury-gift-boxes",
       },
       {
         id: "premium",
@@ -206,6 +219,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
         image: img("photo-1605885064365-e40ed3243f67"),
         keywords: [],
         mode: "premium",
+        collection: "divine-heritage",
       },
       {
         id: "express",
@@ -213,6 +227,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
         image: img("photo-1582794543139-8ac9cb0f7b11"),
         keywords: [],
         mode: "express",
+        collection: "airport-collection",
       },
     ],
   },
@@ -226,6 +241,7 @@ export const HOME_SHOWCASE: ShowcaseSection[] = [
         label: "All New",
         image: img("photo-1508610048659-a06b669e3321"),
         keywords: [],
+        collection: "crochet-bouquets",
       },
       {
         id: "new-frames",
