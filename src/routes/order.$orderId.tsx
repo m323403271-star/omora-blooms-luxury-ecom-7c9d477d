@@ -141,7 +141,7 @@ function OrderStatusPage() {
                   <p className="font-serif text-3xl mt-1">{meta.label}</p>
                   <p className="text-sm opacity-80 mt-2">{meta.blurb}</p>
                 </div>
-                <button onClick={load} className="p-2 rounded-full hover:bg-white/5" aria-label="Refresh">
+                <button onClick={() => { void load(); }} className="p-2 rounded-full hover:bg-white/5" aria-label="Refresh">
                   <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
                 </button>
               </div>
