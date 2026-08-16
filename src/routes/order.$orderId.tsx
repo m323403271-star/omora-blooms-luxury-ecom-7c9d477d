@@ -82,7 +82,7 @@ function OrderStatusPage() {
   useEffect(() => {
     if (!data) return;
     if (data.status === "created" || data.status === "pending") {
-      const t = setInterval(load, 5000);
+      const t = setInterval(() => { void load(); }, 5000);
       return () => clearInterval(t);
     }
   }, [data?.status]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -99,12 +99,34 @@ function OrderStatusPage() {
       <h1 className="font-serif text-4xl md:text-5xl mb-2">Your order</h1>
       <p className="text-[color:var(--muted-foreground)] text-sm mb-10">Order ID: <span className="font-mono">{orderId}</span></p>
 
-      {loading && !data ? (
+      {needsPhone && !data ? (
+        <div className="glass-card rounded-2xl p-8 max-w-md">
+          <p className="eyebrow mb-2">Verify it's you</p>
+          <p className="text-sm text-[color:var(--muted-foreground)] mb-4">
+            For your privacy, enter the phone number used at checkout to view this order.
+          </p>
+          <form
+            onSubmit={(e) => { e.preventDefault(); void load(phone); }}
+            className="flex flex-col sm:flex-row gap-3"
+          >
+            <input
+              type="tel"
+              inputMode="numeric"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="10-digit mobile number"
+              className="flex-1 rounded-full bg-transparent border border-[color:var(--gold)]/30 px-5 py-2.5 text-sm outline-none focus:border-[color:var(--gold)]"
+            />
+            <button type="submit" className="btn-outline-gold px-6 py-2.5 rounded-full text-sm">View order</button>
+          </form>
+          {err ? <p className="text-xs text-red-400 mt-3">{err}</p> : null}
+        </div>
+      ) : loading && !data ? (
         <div className="glass-card rounded-2xl p-10 text-center text-[color:var(--muted-foreground)]">Loading status…</div>
       ) : err ? (
         <div className="glass-card rounded-2xl p-10 text-center">
           <p className="font-serif text-2xl mb-2">{err}</p>
-          <button onClick={load} className="btn-outline-gold mt-4 inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm">
+          <button onClick={() => { void load(); }} className="btn-outline-gold mt-4 inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm">
             <RefreshCw className="h-4 w-4" /> Retry
           </button>
         </div>
