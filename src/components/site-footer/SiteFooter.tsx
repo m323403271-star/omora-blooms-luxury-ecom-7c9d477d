@@ -1,95 +1,158 @@
-import { Link } from "@tanstack/react-router";
-import { Instagram, Facebook, Mail, Phone, MessageCircle } from "lucide-react";
-import { Logo } from "./Logo";
-import {
-  CONTACT_EMAIL,
-  WHATSAPP_DISPLAY,
-  whatsappLink,
-  INSTAGRAM_URL,
-  FACEBOOK_URL,
-} from "@/lib/whatsapp";
+import type { FooterContactItem, FooterLinkColumn, FooterSocialLink, SiteFooterProps } from "./types";
 
-export function Footer() {
+function Wordmark({ monogram, name, tagline }: { monogram: string; name: string; tagline: string }) {
   return (
-    <footer className="mt-24 border-t hairline bg-[color:var(--noir)]">
-      <div className="container-luxe py-14 md:py-16 grid gap-10 md:gap-8 lg:gap-10 md:grid-cols-12">
-        {/* Brand block */}
-        <div className="md:col-span-12 lg:col-span-3">
-          <div className="flex items-center gap-4 lg:block">
-            <Logo size="lg" />
-            <p className="text-sm text-[color:var(--muted-foreground)] leading-relaxed max-w-xs lg:mt-5">
-              Luxury handmade bouquets and gifts, crafted to last forever. Delivered with love from India, worldwide.
+    <div className="flex items-center gap-3">
+      <span
+        aria-hidden="true"
+        className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-neutral-300 bg-neutral-50 text-sm font-semibold tracking-tight text-neutral-800"
+      >
+        {monogram}
+      </span>
+      <span className="flex flex-col leading-tight">
+        <span className="text-lg font-semibold tracking-tight text-neutral-900">{name}</span>
+        <span className="text-xs font-medium uppercase tracking-[0.18em] text-neutral-500">
+          {tagline}
+        </span>
+      </span>
+    </div>
+  );
+}
+
+function LinkColumn({ column }: { column: FooterLinkColumn }) {
+  return (
+    <nav aria-label={column.title} className="flex flex-col gap-3">
+      <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">
+        {column.title}
+      </h3>
+      <ul className="flex flex-col gap-2.5">
+        {column.links.map((link) => (
+          <li key={link.label}>
+            <a
+              href={link.href}
+              className="text-sm text-neutral-600 transition-colors hover:text-neutral-900"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function ContactList({ items }: { items: FooterContactItem[] }) {
+  return (
+    <dl className="flex flex-col gap-2.5">
+      {items.map((item) => (
+        <div key={item.id} className="flex flex-col gap-0.5">
+          <dt className="text-xs font-medium uppercase tracking-[0.16em] text-neutral-400">
+            {item.label}
+          </dt>
+          <dd className="text-sm text-neutral-600">
+            {item.href ? (
+              <a href={item.href} className="transition-colors hover:text-neutral-900">
+                {item.value}
+              </a>
+            ) : (
+              item.value
+            )}
+          </dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+function SocialRow({ links }: { links: FooterSocialLink[] }) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {links.map((link) => (
+        <a
+          key={link.id}
+          href={link.href}
+          aria-label={link.label}
+          className="grid h-9 w-9 place-items-center rounded-full border border-neutral-300 text-[11px] font-semibold tracking-tight text-neutral-600 transition-colors hover:border-neutral-900 hover:text-neutral-900"
+        >
+          {link.badge}
+        </a>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Self-contained, exportable site footer.
+ *
+ * Layout: the brand block (wordmark + description) and the contact block sit
+ * side-by-side as the two widest columns, while the link columns form a neat
+ * compact grid beside them. Everything collapses to a single stack on mobile.
+ */
+export function SiteFooter({
+  brandName,
+  brandTagline,
+  brandDescription,
+  brandMonogram,
+  linkColumns,
+  socialLinks,
+  contact,
+  legalText,
+  legalLinks,
+}: SiteFooterProps) {
+  return (
+    <footer className="border-t border-neutral-200 bg-neutral-50">
+      <div className="mx-auto w-full max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-12">
+          {/* Brand column */}
+          <div className="flex flex-col gap-5 lg:col-span-4">
+            <Wordmark monogram={brandMonogram} name={brandName} tagline={brandTagline} />
+            <p className="max-w-sm text-sm leading-relaxed text-neutral-600">
+              {brandDescription}
             </p>
+            {socialLinks && socialLinks.length > 0 ? <SocialRow links={socialLinks} /> : null}
           </div>
-          <div className="mt-6 flex items-center gap-3">
-            <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="p-2 rounded-full hairline border hover:text-[color:var(--gold)]"><Instagram className="h-4 w-4" /></a>
-            <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="p-2 rounded-full hairline border hover:text-[color:var(--gold)]"><Facebook className="h-4 w-4" /></a>
-            <a href={whatsappLink("Hi!")} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className="p-2 rounded-full hairline border hover:text-[color:var(--gold)]"><MessageCircle className="h-4 w-4" /></a>
+
+          {/* Link columns — compact grid */}
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-5">
+            {linkColumns.map((column) => (
+              <LinkColumn key={column.id} column={column} />
+            ))}
           </div>
+
+          {/* Contact column */}
+          {contact && contact.length > 0 ? (
+            <div className="lg:col-span-3">
+              <h3 className="text-xs font-semibold uppercase tracking-[0.16em] text-neutral-400">
+                Visit
+              </h3>
+              <div className="mt-3">
+                <ContactList items={contact} />
+              </div>
+            </div>
+          ) : null}
         </div>
 
-        {/* Link columns — 2-up on mobile, 4 neat columns on desktop */}
-        <div className="md:col-span-12 lg:col-span-9 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-9">
-          <div className="min-w-0">
-            <p className="eyebrow mb-4">Shop</p>
-            <ul className="space-y-2.5 text-sm text-[color:var(--muted-foreground)]">
-              <li><Link to="/shop" className="hover:text-[color:var(--gold)]">All Products</Link></li>
-              <li><Link to="/collections/$slug" params={{ slug: "crochet-bouquets" }} className="hover:text-[color:var(--gold)]">Crochet Bouquets</Link></li>
-              <li><Link to="/collections/$slug" params={{ slug: "airport-collection" }} className="hover:text-[color:var(--gold)]">Airport Welcome</Link></li>
-              <li><Link to="/collections/$slug" params={{ slug: "mother-recovery" }} className="hover:text-[color:var(--gold)]">Mother Recovery</Link></li>
-              <li><Link to="/collections/$slug" params={{ slug: "baby-collection" }} className="hover:text-[color:var(--gold)]">Baby Collection</Link></li>
-            </ul>
-          </div>
-
-          <div className="min-w-0">
-            <p className="eyebrow mb-4">Help</p>
-            <ul className="space-y-2.5 text-sm text-[color:var(--muted-foreground)]">
-              <li><Link to="/track" className="hover:text-[color:var(--gold)]">Track Order</Link></li>
-              <li><Link to="/account" className="hover:text-[color:var(--gold)]">My Orders</Link></li>
-              <li><Link to="/about" className="hover:text-[color:var(--gold)]">About Us</Link></li>
-              <li><Link to="/contact" className="hover:text-[color:var(--gold)]">Contact</Link></li>
-              <li><Link to="/faq" className="hover:text-[color:var(--gold)]">FAQ</Link></li>
-            </ul>
-          </div>
-
-          <div className="min-w-0">
-            <p className="eyebrow mb-4">Policies</p>
-            <ul className="space-y-2.5 text-sm text-[color:var(--muted-foreground)]">
-              <li><Link to="/shipping" className="hover:text-[color:var(--gold)]">Shipping</Link></li>
-              <li><Link to="/returns" className="hover:text-[color:var(--gold)]">Return Policy</Link></li>
-              <li><Link to="/privacy" className="hover:text-[color:var(--gold)]">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="hover:text-[color:var(--gold)]">Terms &amp; Conditions</Link></li>
-            </ul>
-          </div>
-
-          <div className="col-span-2 sm:col-span-1 min-w-0">
-            <p className="eyebrow mb-4">Get in touch</p>
-            <ul className="space-y-3 text-sm text-[color:var(--muted-foreground)]">
-              <li>
-                <a href={whatsappLink("Hello OMORA BLOOMS!")} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-[color:var(--gold)]">
-                  <MessageCircle className="h-4 w-4 shrink-0" /> <span className="min-w-0">WhatsApp {WHATSAPP_DISPLAY}</span>
+        {/* Lower legal bar */}
+        <div className="mt-10 flex flex-col gap-4 border-t border-neutral-200 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-neutral-500">{legalText}</p>
+          {legalLinks && legalLinks.length > 0 ? (
+            <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              {legalLinks.map((link, index) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-xs text-neutral-500 transition-colors hover:text-neutral-900"
+                >
+                  {link.label}
+                  {index < legalLinks.length - 1 ? (
+                    <span aria-hidden="true" className="ml-4 text-neutral-300">
+                      ·
+                    </span>
+                  ) : null}
                 </a>
-              </li>
-              <li>
-                <a href={`mailto:${CONTACT_EMAIL}`} className="inline-flex items-center gap-2 hover:text-[color:var(--gold)]">
-                  <Mail className="h-4 w-4 shrink-0" /> <span className="min-w-0 break-all">{CONTACT_EMAIL}</span>
-                </a>
-              </li>
-              <li>
-                <a href={`tel:+${WHATSAPP_DISPLAY.replace(/\s+/g, "")}`} className="inline-flex items-center gap-2 hover:text-[color:var(--gold)]">
-                  <Phone className="h-4 w-4 shrink-0" /> {WHATSAPP_DISPLAY}
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-
-      <div className="border-t hairline">
-        <div className="container-luxe py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-[color:var(--muted-foreground)]">
-          <p>© {new Date().getFullYear()} OMORA BLOOMS · Handmade with Love, Crafted to Last Forever.</p>
-          <p className="tracking-widest uppercase">Bengaluru · India · Ships Worldwide</p>
+              ))}
+            </nav>
+          ) : null}
         </div>
       </div>
     </footer>
