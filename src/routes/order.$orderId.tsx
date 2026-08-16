@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer, StickyNote } from "lucide-react";
 import { formatPrice } from "@/lib/products";
 import { getPickupForOrder } from "@/lib/pickup";
+import { getOrderPhone, saveOrderPhone, normalizeOrderPhone } from "@/lib/order-owner";
 
 
 export const Route = createFileRoute("/order/$orderId")({
@@ -38,21 +39,31 @@ function OrderStatusPage() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const pickup = getPickupForOrder(orderId);
+  const [phone, setPhone] = useState("");
+  const [needsPhone, setNeedsPhone] = useState(false);
 
-
-  async function load() {
+  async function load(phoneOverride?: string) {
+    const proof = normalizeOrderPhone(phoneOverride ?? phone ?? "");
+    if (proof.length !== 10) {
+      setNeedsPhone(true);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setErr(null);
     try {
       const r = await fetch("/api/razorpay/status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId }),
+        body: JSON.stringify({ orderId, phone: proof }),
       });
       if (!r.ok) {
-        setErr(r.status === 404 ? "We couldn't find this order." : "Could not load status.");
+        setNeedsPhone(true);
+        setErr(r.status === 404 ? "We couldn't find an order matching that ID and phone number." : "Could not load status.");
         setData(null);
       } else {
+        setNeedsPhone(false);
+        saveOrderPhone(orderId, proof);
         setData((await r.json()) as PaymentRow);
       }
     } catch {
@@ -62,7 +73,12 @@ function OrderStatusPage() {
     }
   }
 
-  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [orderId]);
+  useEffect(() => {
+    const stored = getOrderPhone(orderId);
+    if (stored) { setPhone(stored); void load(stored); }
+    else { setNeedsPhone(true); setLoading(false); }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [orderId]);
   useEffect(() => {
     if (!data) return;
     if (data.status === "created" || data.status === "pending") {
