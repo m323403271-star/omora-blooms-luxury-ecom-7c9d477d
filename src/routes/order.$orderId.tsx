@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer, StickyNote } from "lucide-react";
 import { formatPrice } from "@/lib/products";
 import { getPickupForOrder } from "@/lib/pickup";
+import { getOrderPhone, saveOrderPhone, normalizeOrderPhone } from "@/lib/order-owner";
 
 
 export const Route = createFileRoute("/order/$orderId")({
@@ -38,21 +39,31 @@ function OrderStatusPage() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const pickup = getPickupForOrder(orderId);
+  const [phone, setPhone] = useState("");
+  const [needsPhone, setNeedsPhone] = useState(false);
 
-
-  async function load() {
+  async function load(phoneOverride?: string) {
+    const proof = normalizeOrderPhone(phoneOverride ?? phone ?? "");
+    if (proof.length !== 10) {
+      setNeedsPhone(true);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setErr(null);
     try {
       const r = await fetch("/api/razorpay/status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId }),
+        body: JSON.stringify({ orderId, phone: proof }),
       });
       if (!r.ok) {
-        setErr(r.status === 404 ? "We couldn't find this order." : "Could not load status.");
+        setNeedsPhone(true);
+        setErr(r.status === 404 ? "We couldn't find an order matching that ID and phone number." : "Could not load status.");
         setData(null);
       } else {
+        setNeedsPhone(false);
+        saveOrderPhone(orderId, proof);
         setData((await r.json()) as PaymentRow);
       }
     } catch {
@@ -62,11 +73,16 @@ function OrderStatusPage() {
     }
   }
 
-  useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [orderId]);
+  useEffect(() => {
+    const stored = getOrderPhone(orderId);
+    if (stored) { setPhone(stored); void load(stored); }
+    else { setNeedsPhone(true); setLoading(false); }
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, [orderId]);
   useEffect(() => {
     if (!data) return;
     if (data.status === "created" || data.status === "pending") {
-      const t = setInterval(load, 5000);
+      const t = setInterval(() => { void load(); }, 5000);
       return () => clearInterval(t);
     }
   }, [data?.status]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -83,12 +99,34 @@ function OrderStatusPage() {
       <h1 className="font-serif text-4xl md:text-5xl mb-2">Your order</h1>
       <p className="text-[color:var(--muted-foreground)] text-sm mb-10">Order ID: <span className="font-mono">{orderId}</span></p>
 
-      {loading && !data ? (
+      {needsPhone && !data ? (
+        <div className="glass-card rounded-2xl p-8 max-w-md">
+          <p className="eyebrow mb-2">Verify it's you</p>
+          <p className="text-sm text-[color:var(--muted-foreground)] mb-4">
+            For your privacy, enter the phone number used at checkout to view this order.
+          </p>
+          <form
+            onSubmit={(e) => { e.preventDefault(); void load(phone); }}
+            className="flex flex-col sm:flex-row gap-3"
+          >
+            <input
+              type="tel"
+              inputMode="numeric"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="10-digit mobile number"
+              className="flex-1 rounded-full bg-transparent border border-[color:var(--gold)]/30 px-5 py-2.5 text-sm outline-none focus:border-[color:var(--gold)]"
+            />
+            <button type="submit" className="btn-outline-gold px-6 py-2.5 rounded-full text-sm">View order</button>
+          </form>
+          {err ? <p className="text-xs text-red-400 mt-3">{err}</p> : null}
+        </div>
+      ) : loading && !data ? (
         <div className="glass-card rounded-2xl p-10 text-center text-[color:var(--muted-foreground)]">Loading status…</div>
       ) : err ? (
         <div className="glass-card rounded-2xl p-10 text-center">
           <p className="font-serif text-2xl mb-2">{err}</p>
-          <button onClick={load} className="btn-outline-gold mt-4 inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm">
+          <button onClick={() => { void load(); }} className="btn-outline-gold mt-4 inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm">
             <RefreshCw className="h-4 w-4" /> Retry
           </button>
         </div>
@@ -103,7 +141,7 @@ function OrderStatusPage() {
                   <p className="font-serif text-3xl mt-1">{meta.label}</p>
                   <p className="text-sm opacity-80 mt-2">{meta.blurb}</p>
                 </div>
-                <button onClick={load} className="p-2 rounded-full hover:bg-white/5" aria-label="Refresh">
+                <button onClick={() => { void load(); }} className="p-2 rounded-full hover:bg-white/5" aria-label="Refresh">
                   <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
                 </button>
               </div>
