@@ -9,6 +9,7 @@ import {
   Marquee,
   PackagingBand,
   StoryBand,
+  TrustBanner,
 } from "@/components/site/HomeSections";
 import { HomeCategoryGrid } from "@/components/site/HomeCategoryGrid";
 import { HomeSearchBar } from "@/components/site/HomeSearchBar";
@@ -55,6 +56,7 @@ function HomePage() {
       <HomeSearchBar />
       <HomeCategoryStrip />
       <Hero />
+      <TrustBanner />
       <Marquee />
       <HomeDealsGrid />
       <HomeCategoryGrid />

@@ -34,7 +34,10 @@ export function HomeDealsGrid({
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:gap-5 lg:grid-cols-4">
+      <div
+        className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 snap-x snap-mandatory md:mx-0 md:px-0 md:gap-5"
+        style={{ scrollbarWidth: "none" }}
+      >
         {products.map((p) => {
           const img = resolveProductImage(p.image_url);
           const off =
@@ -46,8 +49,9 @@ export function HomeDealsGrid({
               key={p.id}
               to="/products/$slug"
               params={{ slug: p.slug }}
-              className="group flex flex-col overflow-hidden rounded-2xl border hairline bg-[color:var(--card)] transition hover:ring-1 hover:ring-[color:var(--gold)]/60"
+              className="group flex w-[46%] max-w-[220px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border hairline bg-[color:var(--card)] transition hover:ring-1 hover:ring-[color:var(--gold)]/60 sm:w-[38%] md:w-[26%] lg:w-[23%]"
             >
+
               <div className="relative aspect-square overflow-hidden">
                 <img
                   src={img}

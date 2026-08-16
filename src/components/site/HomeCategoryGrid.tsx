@@ -31,8 +31,7 @@ function Card({ card }: { card: CategoryCard }) {
     <Link
       to="/collections/$slug"
       params={{ slug: card.slug }}
-     
-      className="group relative block overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
+      className="group relative block w-[62%] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition sm:w-[44%] md:w-[32%] lg:w-[23%]"
       aria-label={`Explore ${card.title}`}
     >
       <div className="aspect-[4/5] overflow-hidden">
@@ -48,11 +47,11 @@ function Card({ card }: { card: CategoryCard }) {
       </div>
 
       <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-        <h3 className="font-serif text-xl md:text-2xl text-white leading-snug tracking-tight">
+        <h3 className="font-serif text-lg md:text-xl text-white leading-snug tracking-tight line-clamp-2">
           {card.title}
         </h3>
-        <p className="mt-1 text-xs md:text-sm text-white/60 line-clamp-1">{card.subtitle}</p>
-        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[11px] tracking-[0.18em] uppercase font-semibold px-3.5 py-1.5 shadow-lg transition-transform group-hover:translate-x-1">
+        <p className="mt-1 text-xs text-white/60 line-clamp-1">{card.subtitle}</p>
+        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-[0.18em] uppercase font-semibold px-3 py-1.5 shadow-lg transition-transform group-hover:translate-x-1">
           Explore <ArrowRight className="h-3.5 w-3.5" />
         </span>
       </div>
@@ -60,34 +59,31 @@ function Card({ card }: { card: CategoryCard }) {
   );
 }
 
-function Row({ cards }: { cards: [CategoryCard, CategoryCard] }) {
+function Rail({ cards }: { cards: CategoryCard[] }) {
   return (
-    <div className="grid grid-cols-2 gap-3 md:gap-5">
+    <div
+      className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 snap-x snap-mandatory md:mx-0 md:px-0 md:gap-5"
+      style={{ scrollbarWidth: "none" }}
+    >
       {cards.map((c) => (
-        <Card key={c.title} card={c} />
+        <Card key={c.slug} card={c} />
       ))}
     </div>
   );
 }
 
 export function HomeCategoryGrid() {
-  const row1: [CategoryCard, CategoryCard] = [
+  const topRow: CategoryCard[] = [
     { title: "Crochet Bouquets", subtitle: "Handcrafted, everlasting", image: crochetImg, slug: "crochet-bouquets" },
     { title: "Pipe Cleaner Bouquets", subtitle: "Whimsical florals", image: pipecleanerImg, slug: "pipe-cleaner-bouquets" },
-  ];
-  const row2: [CategoryCard, CategoryCard] = [
     { title: "Luxury Airport Welcome Bouquets", subtitle: "Grand homecomings", image: airportImg, slug: "airport-collection" },
     { title: "Everlasting Floral Frames & Vases", subtitle: "Décor that lasts", image: framesVasesImg, slug: "frames-vases" },
-  ];
-  const row4: [CategoryCard, CategoryCard] = [
-    { title: "Divine Heritage Luxury Gift Box", subtitle: "Traditional & timeless", image: divineHeritageImg, slug: "divine-heritage" },
     { title: "Mini Indoor Plants", subtitle: "Fresh greenery", image: indoorPlantsImg, slug: "indoor-plants" },
   ];
-  const row5: [CategoryCard, CategoryCard] = [
+  const bottomRow: CategoryCard[] = [
+    { title: "Divine Heritage Luxury Gift Box", subtitle: "Traditional & timeless", image: divineHeritageImg, slug: "divine-heritage" },
     { title: "OMora VIP Luxury Gift Boxes", subtitle: "The signature suite", image: giftboxImg, slug: "luxury-gift-boxes" },
     { title: "Baby Essentials Luxury Kit", subtitle: "Welcome the little one", image: babyImg, slug: "baby-collection" },
-  ];
-  const row6: [CategoryCard, CategoryCard] = [
     { title: "Mother Recovery Kit", subtitle: "Postpartum care, elevated", image: motherImg, slug: "mother-recovery" },
     { title: "Omora Signature Boxes", subtitle: "A forever keepsake", image: weddingImg, slug: "wedding-gifts" },
   ];
@@ -103,8 +99,7 @@ export function HomeCategoryGrid() {
 
 
       <div className="space-y-3 md:space-y-5">
-        <Row cards={row1} />
-        <Row cards={row2} />
+        <Rail cards={topRow} />
 
         {/* Row 3 — Full-width Eternal Bond banner */}
         <Link
@@ -143,9 +138,7 @@ export function HomeCategoryGrid() {
           </div>
         </Link>
 
-        <Row cards={row4} />
-        <Row cards={row5} />
-        <Row cards={row6} />
+        <Rail cards={bottomRow} />
       </div>
     </section>
   );

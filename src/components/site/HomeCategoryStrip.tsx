@@ -11,7 +11,7 @@ import { handleImageError } from "@/lib/image-fallback";
 export function HomeCategoryStrip() {
   const { data: siteImages } = useQuery(siteImagesQuery);
 
-    return (
+  return (
     <section className="container-luxe pt-2 pb-4 md:pt-4 md:pb-8" aria-label="Shop by category">
       <div
         className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-2 md:mx-0 md:px-0 md:gap-6"
@@ -46,4 +46,3 @@ export function HomeCategoryStrip() {
     </section>
   );
 }
-
