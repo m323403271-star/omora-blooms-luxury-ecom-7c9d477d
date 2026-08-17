@@ -13,6 +13,7 @@ import { GiftAndBouquetCustomizer } from "@/components/site/GiftAndBouquetCustom
 import { formatGiftForWhatsApp, type CustomBouquet, type GiftOptions } from "@/lib/gifting";
 import { ReviewSection } from "@/components/site/ReviewSection";
 import { PdpAdminUpload } from "@/components/site/PdpAdminUpload";
+import { CraftNote } from "@/components/site/CraftNote";
 import { pageSeo, SITE_URL } from "@/lib/seo";
 
 
