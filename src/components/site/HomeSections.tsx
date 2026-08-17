@@ -37,6 +37,7 @@ import { whatsappLink } from "@/lib/whatsapp";
 import { handleImageError } from "@/lib/image-fallback";
 import { HOME_SHOWCASE, filterProducts, type ShowcaseSection } from "@/lib/home-showcase";
 import { ProductCard } from "@/components/site/ProductCard";
+import { CraftNote } from "@/components/site/CraftNote";
 
 const RAIL =
   "-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 snap-x snap-mandatory md:mx-0 md:px-0 md:gap-5";
@@ -53,7 +54,8 @@ export function Hero() {
           <p className="mt-3 md:mt-6 text-sm md:text-lg text-[color:var(--muted-foreground)] leading-relaxed max-w-lg line-clamp-3 md:line-clamp-none">
             Beautiful crochet flowers, pipe cleaner bouquets, mother recovery kits and baby essentials — thoughtfully handcrafted for every special occasion.
           </p>
-          <div className="mt-5 md:mt-8 flex flex-wrap gap-2.5 md:gap-3">
+          <CraftNote className="mt-4" />
+          <div className="mt-4 md:mt-6 flex flex-wrap gap-2.5 md:gap-3">
             <Link
               to="/shop"
               className="btn-gold px-6 md:px-8 py-3 md:py-3.5 rounded-full text-sm inline-flex items-center gap-2"
@@ -918,6 +920,7 @@ export function FinalCta() {
             <MessageCircle className="h-4 w-4" /> Order on WhatsApp
           </a>
         </div>
+        <CraftNote className="mt-4" align="center" />
       </div>
     </section>
   );
