@@ -12,6 +12,7 @@ import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import {  getStoredPincode , isAirportPincode as isAirportPincodeFn } from "@/lib/delivery";
 import { formatGiftForWhatsApp } from "@/lib/gifting";
 import { toast } from "sonner";
+import { CraftNote } from "@/components/site/CraftNote";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({ meta: [{ title: "Your Bag — OMORA BLOOMS" }] }),
@@ -229,6 +230,7 @@ function CartPage() {
             <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-outline-gold mt-3 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
               <MessageCircle className="h-4 w-4" /> Order via WhatsApp
             </a>
+            <CraftNote className="mt-3" align="center" />
             <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)] text-center">UPI, cards & net banking. Or confirm with our concierge on WhatsApp.</p>
           </aside>
 

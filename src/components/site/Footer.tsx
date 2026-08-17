@@ -27,7 +27,7 @@ export function Footer() {
         </div>
 
         {/* Link columns — compact 2-up on mobile, spread across on desktop */}
-        <div className="md:col-span-8 lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
+        <div className="md:col-span-8 lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-9">
           <div>
             <p className="eyebrow mb-4">Shop</p>
             <ul className="space-y-2.5 text-sm text-[color:var(--muted-foreground)]">
@@ -48,6 +48,12 @@ export function Footer() {
               <li><Link to="/about" className="hover:text-[color:var(--gold)]">About Us</Link></li>
               <li><Link to="/contact" className="hover:text-[color:var(--gold)]">Contact</Link></li>
               <li><Link to="/faq" className="hover:text-[color:var(--gold)]">FAQ</Link></li>
+            </ul>
+          </div>
+
+          <div className="min-w-0">
+            <p className="eyebrow mb-4">Policies</p>
+            <ul className="space-y-2.5 text-sm text-[color:var(--muted-foreground)]">
               <li><Link to="/shipping" className="hover:text-[color:var(--gold)]">Shipping</Link></li>
               <li><Link to="/returns" className="hover:text-[color:var(--gold)]">Return Policy</Link></li>
               <li><Link to="/privacy" className="hover:text-[color:var(--gold)]">Privacy Policy</Link></li>
