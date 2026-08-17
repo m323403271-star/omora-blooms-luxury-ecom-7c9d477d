@@ -12,6 +12,7 @@ import {
   TrustBanner,
 } from "@/components/site/HomeSections";
 import { HomeCategoryGrid } from "@/components/site/HomeCategoryGrid";
+import { GiftFinder } from "@/components/site/GiftFinder";
 import { HomeSearchBar } from "@/components/site/HomeSearchBar";
 import { HomeCategoryStrip } from "@/components/site/HomeCategoryStrip";
 import { HomeDealsGrid } from "@/components/site/HomeDealsGrid";
@@ -58,6 +59,7 @@ function HomePage() {
       <Hero />
       <TrustBanner />
       <Marquee />
+      <GiftFinder />
       <HomeDealsGrid />
       <HomeCategoryGrid />
       {HOME_SHOWCASE.map((s) => (

@@ -55,8 +55,8 @@ export function ProductHighlights({
 
         {highlight.specs.length > 0 ? (
           <dl className="mt-5 divide-y divide-neutral-200 border-t border-neutral-200">
-            {highlight.specs.map((spec) => (
-              <div key={spec.label} className="flex items-start justify-between gap-6 py-2.5">
+            {highlight.specs.map((spec, index) => (
+              <div key={`${spec.label}-${index}`} className="flex items-start justify-between gap-6 py-2.5">
                 <dt className="text-sm text-neutral-500">{spec.label}</dt>
                 <dd className="text-right text-sm font-medium text-neutral-900">{spec.value}</dd>
               </div>

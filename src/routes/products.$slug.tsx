@@ -13,6 +13,7 @@ import { GiftAndBouquetCustomizer } from "@/components/site/GiftAndBouquetCustom
 import { formatGiftForWhatsApp, type CustomBouquet, type GiftOptions } from "@/lib/gifting";
 import { ReviewSection } from "@/components/site/ReviewSection";
 import { PdpAdminUpload } from "@/components/site/PdpAdminUpload";
+import { CraftNote } from "@/components/site/CraftNote";
 import { pageSeo, SITE_URL } from "@/lib/seo";
 
 
@@ -175,6 +176,9 @@ function ProductPage() {
           >
             <MessageCircle className="h-4 w-4" /> Order on WhatsApp
           </a>
+
+          <CraftNote className="mt-3" />
+
 
 
           <div className="mt-10 grid grid-cols-2 gap-3 text-xs">
