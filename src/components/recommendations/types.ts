@@ -5,6 +5,8 @@ export interface RecommendedProduct {
   price: number;
   compareAtPrice?: number;
   currency?: string;
+  /** Intl locale used for price formatting, e.g. "en-IN". */
+  locale?: string;
   rating?: number;
   reviewCount?: number;
   imageUrl?: string;
@@ -15,3 +17,6 @@ export interface RecommendedProduct {
 }
 
 export type RecommendationLayout = "grid" | "carousel";
+
+/** Visual tone so the block sits on light or dark product pages. */
+export type RecommendationTone = "light" | "dark";

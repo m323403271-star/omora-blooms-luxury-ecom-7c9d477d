@@ -54,6 +54,7 @@ export type CheckoutMeta = {
   customerName?: string | null;
   customerPhone?: string | null;
   deliveryNotes?: string | null;
+  couponCode?: string | null;
 };
 
 export async function startRazorpayCheckout(
@@ -76,11 +77,19 @@ export async function startRazorpayCheckout(
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        items: items.map((i) => ({ id: i.id, quantity: i.quantity, image: i.image })),
+        items: items.map((i) => ({
+          id: i.productId ?? i.id,
+          quantity: i.quantity,
+          image: i.image,
+          variantSlug: i.variantSlug ?? null,
+          colorName: i.colorName ?? null,
+          colorHex: i.colorHex ?? null,
+        })),
         ref,
         meta,
       }),
     });
+
 
   } catch {
     toast.error("Network error starting payment");
@@ -123,7 +132,15 @@ export async function startRazorpayCheckout(
           body: JSON.stringify({
             ...response,
             ref,
-            items: items.map((i) => ({ id: i.id, quantity: i.quantity, image: i.image })),
+            items: items.map((i) => ({
+              id: i.productId ?? i.id,
+              quantity: i.quantity,
+              image: i.image,
+              variantSlug: i.variantSlug ?? null,
+              colorName: i.colorName ?? null,
+              colorHex: i.colorHex ?? null,
+            })),
+
           }),
         });
         const data = (await verifyRes.json()) as { ok?: boolean };
