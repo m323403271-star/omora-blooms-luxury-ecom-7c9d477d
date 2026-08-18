@@ -102,6 +102,28 @@ function ProductPage() {
   // and related products so every PDP has multi-angle thumbnails today.
   const gallery = useMemo(() => resolveGallery(product, collection?.image, related), [product, collection?.image, related]);
 
+  const galleryMedia = useMemo(
+    () => buildProductGalleryMedia({ photos: gallery, productName: product.name }),
+    [gallery, product.name],
+  );
+
+  /** Exact image the customer is looking at — sent through checkout to the warehouse. */
+  const selectedImage = useMemo(() => {
+    const active = galleryMedia.find((m) => m.id === activeMediaId);
+    if (active && active.kind !== "video") return active.src;
+    if (active?.kind === "video") return active.thumbnail || img;
+    return img;
+  }, [galleryMedia, activeMediaId, img]);
+
+  const alsoLike = useMemo(
+    () => pickYouMightAlsoLike(data, product).map(toRecommendedProduct),
+    [data, product],
+  );
+  const alsoViewed = useMemo(
+    () => pickPeopleAlsoViewed(data, product).map(toRecommendedProduct),
+    [data, product],
+  );
+
   return (
     <div>
       <div className="container-luxe pt-10 text-xs text-[color:var(--muted-foreground)] tracking-widest uppercase">
@@ -116,10 +138,8 @@ function ProductPage() {
 
       <section className="container-luxe grid lg:grid-cols-2 gap-10 md:gap-16 py-10 md:py-16">
         <div>
-          <Media3DViewer
-            images={gallery}
-            alt={`${product.name}${collection ? ` — ${collection.name}` : ""} handmade luxury bouquet by OMORA BLOOMS`}
-          />
+          <ProductGallery items={galleryMedia} onActiveChange={setActiveMediaId} />
+
           <PdpAdminUpload
             productId={product.id}
             productName={product.name}
