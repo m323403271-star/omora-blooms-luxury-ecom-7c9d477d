@@ -189,7 +189,7 @@ function ProductPage() {
               <button className="p-3" onClick={() => setQty((q) => q + 1)} aria-label="Increase"><Plus className="h-4 w-4" /></button>
             </div>
             <button
-              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: unitPrice, image: img, gift, bouquet }, qty)}
+              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: unitPrice, image: selectedImage, gift, bouquet }, qty)}
               className="btn-gold flex-1 py-3.5 px-6 rounded-full text-sm inline-flex items-center justify-center gap-2"
             >
               <ShoppingBag className="h-4 w-4" /> Add to bag
