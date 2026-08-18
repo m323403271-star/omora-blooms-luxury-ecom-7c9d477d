@@ -26,6 +26,7 @@ type OrderItem = {
   name: string;
   quantity: number;
   image?: string | null;
+  variant_slug?: string | null;
   color_name?: string | null;
   color_hex?: string | null;
 };
