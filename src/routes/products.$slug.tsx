@@ -218,6 +218,11 @@ function ProductPage() {
         </div>
       </section>
 
+      <div className="container-luxe border-t hairline pt-16 pb-4 space-y-14">
+        <YouMightAlsoLike products={alsoLike} tone="dark" viewAllHref="/shop" />
+        <PeopleAlsoViewed products={alsoViewed} tone="dark" viewAllHref="/shop" />
+      </div>
+
       <ReviewSection productId={product.id} productName={product.name} />
 
       {related.length > 0 && (
