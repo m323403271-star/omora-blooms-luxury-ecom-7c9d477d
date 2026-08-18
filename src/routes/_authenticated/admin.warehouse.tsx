@@ -317,7 +317,7 @@ function OrderRowCard({ order, now, position }: { order: OrderRow; now: number; 
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-[color:var(--foreground)]">{it.name}</p>
-                <div className="mt-1 flex items-center gap-2">
+                <div className="mt-1 flex flex-wrap items-center gap-2">
                   <span className="text-[11px] rounded-full border hairline px-2 py-0.5 text-[color:var(--muted-foreground)]">
                     Qty {it.quantity}
                   </span>
@@ -332,8 +332,14 @@ function OrderRowCard({ order, now, position }: { order: OrderRow; now: number; 
                       {it.color_name}
                     </span>
                   )}
+                  {it.variant_slug && (
+                    <span className="text-[10px] tracking-widest uppercase rounded-full border hairline px-2 py-0.5 text-[color:var(--gold)]">
+                      {it.variant_slug}
+                    </span>
+                  )}
                 </div>
               </div>
+
             </div>
           ))}
         </div>
