@@ -88,6 +88,7 @@ function ProductPage() {
   const [gift, setGift] = useState<GiftOptions | null>(null);
   const [bouquet, setBouquet] = useState<CustomBouquet | null>(null);
   const [addOnTotal, setAddOnTotal] = useState(0);
+  const [activeMediaId, setActiveMediaId] = useState<string | null>(null);
 
   const unitPrice = product.price + addOnTotal;
   const related = data.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
