@@ -8,7 +8,14 @@ import { useCart } from "@/lib/cart";
 import { whatsappLink } from "@/lib/whatsapp";
 import { ProductCard } from "@/components/site/ProductCard";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
-import { Media3DViewer } from "@/components/site/Media3DViewer";
+import { ProductGallery } from "@/components/product-gallery";
+import { PeopleAlsoViewed, YouMightAlsoLike } from "@/components/recommendations";
+import { buildProductGalleryMedia } from "@/lib/product-gallery-media";
+import {
+  pickPeopleAlsoViewed,
+  pickYouMightAlsoLike,
+  toRecommendedProduct,
+} from "@/lib/product-recommendations";
 import { GiftAndBouquetCustomizer } from "@/components/site/GiftAndBouquetCustomizer";
 import { formatGiftForWhatsApp, type CustomBouquet, type GiftOptions } from "@/lib/gifting";
 import { ReviewSection } from "@/components/site/ReviewSection";
@@ -81,6 +88,7 @@ function ProductPage() {
   const [gift, setGift] = useState<GiftOptions | null>(null);
   const [bouquet, setBouquet] = useState<CustomBouquet | null>(null);
   const [addOnTotal, setAddOnTotal] = useState(0);
+  const [activeMediaId, setActiveMediaId] = useState<string | null>(null);
 
   const unitPrice = product.price + addOnTotal;
   const related = data.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
@@ -94,6 +102,28 @@ function ProductPage() {
   // otherwise synthesize a 3–4 photo gallery from the main image, collection cover,
   // and related products so every PDP has multi-angle thumbnails today.
   const gallery = useMemo(() => resolveGallery(product, collection?.image, related), [product, collection?.image, related]);
+
+  const galleryMedia = useMemo(
+    () => buildProductGalleryMedia({ photos: gallery, productName: product.name }),
+    [gallery, product.name],
+  );
+
+  /** Exact image the customer is looking at — sent through checkout to the warehouse. */
+  const selectedImage = useMemo(() => {
+    const active = galleryMedia.find((m) => m.id === activeMediaId);
+    if (active && active.kind !== "video") return active.src;
+    if (active?.kind === "video") return active.thumbnail || img;
+    return img;
+  }, [galleryMedia, activeMediaId, img]);
+
+  const alsoLike = useMemo(
+    () => pickYouMightAlsoLike(data, product).map(toRecommendedProduct),
+    [data, product],
+  );
+  const alsoViewed = useMemo(
+    () => pickPeopleAlsoViewed(data, product).map(toRecommendedProduct),
+    [data, product],
+  );
 
   return (
     <div>
@@ -109,10 +139,8 @@ function ProductPage() {
 
       <section className="container-luxe grid lg:grid-cols-2 gap-10 md:gap-16 py-10 md:py-16">
         <div>
-          <Media3DViewer
-            images={gallery}
-            alt={`${product.name}${collection ? ` — ${collection.name}` : ""} handmade luxury bouquet by OMORA BLOOMS`}
-          />
+          <ProductGallery items={galleryMedia} onActiveChange={setActiveMediaId} />
+
           <PdpAdminUpload
             productId={product.id}
             productName={product.name}
@@ -161,7 +189,7 @@ function ProductPage() {
               <button className="p-3" onClick={() => setQty((q) => q + 1)} aria-label="Increase"><Plus className="h-4 w-4" /></button>
             </div>
             <button
-              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: unitPrice, image: img, gift, bouquet }, qty)}
+              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: unitPrice, image: selectedImage, gift, bouquet }, qty)}
               className="btn-gold flex-1 py-3.5 px-6 rounded-full text-sm inline-flex items-center justify-center gap-2"
             >
               <ShoppingBag className="h-4 w-4" /> Add to bag
@@ -189,6 +217,11 @@ function ProductPage() {
           </div>
         </div>
       </section>
+
+      <div className="container-luxe border-t hairline pt-16 pb-4 space-y-14">
+        <YouMightAlsoLike products={alsoLike} tone="dark" viewAllHref="/shop" />
+        <PeopleAlsoViewed products={alsoViewed} tone="dark" viewAllHref="/shop" />
+      </div>
 
       <ReviewSection productId={product.id} productName={product.name} />
 

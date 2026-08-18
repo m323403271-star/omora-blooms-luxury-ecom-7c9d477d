@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Star, BadgeCheck, Camera, Loader2, Upload, X, Play } from "lucide-react";
+import { Star, BadgeCheck, Camera, Loader2, Upload, X, Play, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -62,6 +62,10 @@ export function ReviewSection({ productId, productName }: { productId: string; p
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) =>
+      setUserId(session?.user?.id ?? null),
+    );
+    return () => sub.subscription.unsubscribe();
   }, []);
 
   async function load() {
@@ -172,7 +176,13 @@ export function ReviewSection({ productId, productName }: { productId: string; p
           ) : (
             <ul className="space-y-4">
               {filtered.map((r) => (
-                <ReviewCard key={r.id} review={r} onOpenMedia={setLightbox} />
+                <ReviewCard
+                  key={r.id}
+                  review={r}
+                  onOpenMedia={setLightbox}
+                  canManage={!!userId && r.user_id === userId}
+                  onDeleted={load}
+                />
               ))}
             </ul>
           )}
@@ -200,7 +210,28 @@ export function ReviewSection({ productId, productName }: { productId: string; p
   );
 }
 
-function ReviewCard({ review, onOpenMedia }: { review: Review; onOpenMedia: (m: MediaItem) => void }) {
+function ReviewCard({
+  review,
+  onOpenMedia,
+  canManage = false,
+  onDeleted,
+}: {
+  review: Review;
+  onOpenMedia: (m: MediaItem) => void;
+  canManage?: boolean;
+  onDeleted?: () => void;
+}) {
+  const [removing, setRemoving] = useState(false);
+
+  async function remove() {
+    setRemoving(true);
+    const { error } = await supabase.from("reviews").delete().eq("id", review.id);
+    setRemoving(false);
+    if (error) return toast.error(error.message);
+    toast.success("Review removed");
+    onDeleted?.();
+  }
+
   return (
     <li className="glass-card rounded-2xl p-5">
       <div className="flex items-start justify-between gap-3 flex-wrap">
@@ -220,6 +251,16 @@ function ReviewCard({ review, onOpenMedia }: { review: Review; onOpenMedia: (m: 
             </span>
           </div>
         </div>
+        {canManage && (
+          <button
+            type="button"
+            onClick={remove}
+            disabled={removing}
+            className="text-[10px] tracking-widest uppercase text-[color:var(--muted-foreground)] hover:text-red-300 inline-flex items-center gap-1.5 disabled:opacity-50"
+          >
+            {removing ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />} Delete
+          </button>
+        )}
       </div>
       {review.title && <p className="mt-3 font-serif text-lg">{review.title}</p>}
       <p className="mt-2 text-sm text-[color:var(--muted-foreground)] leading-relaxed whitespace-pre-wrap">{review.body}</p>
