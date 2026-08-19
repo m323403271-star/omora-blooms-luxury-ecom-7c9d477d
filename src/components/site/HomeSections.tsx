@@ -35,7 +35,7 @@ import {
 } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { handleImageError } from "@/lib/image-fallback";
-import { HOME_SHOWCASE, filterProducts, type ShowcaseSection } from "@/lib/home-showcase";
+import { HOME_SHOWCASE } from "@/lib/home-showcase";
 import { ProductCard } from "@/components/site/ProductCard";
 import { CraftNote } from "@/components/site/CraftNote";
 
@@ -216,128 +216,6 @@ function IconOnlySection({ section }: { section: ShowcaseSection }) {
           </Link>
         ))}
       </div>
-    </section>
-  );
-}
-
-function TabbedProductSlider({ section }: { section: ShowcaseSection }) {
-  const { data } = useSuspenseQuery(productsQuery);
-  const products = data && data.length > 0 ? data : LOCAL_PRODUCTS;
-
-  const [activeId, setActiveId] = useState(section.tabs[0]!.id);
-  const active = section.tabs.find((t) => t.id === activeId) ?? section.tabs[0]!;
-
-  const filtered = filterProducts(products, active);
-  const items = (filtered.length > 0 ? filtered : products).slice(0, 12);
-
-  return (
-    <section className="container-luxe py-6 md:py-12" aria-label={section.title}>
-      <SectionHeader section={section} href={active.collection} />
-
-      <div
-        className="-mx-4 mb-4 flex gap-4 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 md:gap-6"
-        style={{ scrollbarWidth: "none" }}
-        role="tablist"
-      >
-        {section.tabs.map((t) => {
-          const isActive = t.id === active.id;
-          return (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={isActive}
-              onClick={() => setActiveId(t.id)}
-              className="group flex w-[80px] shrink-0 flex-col items-center gap-2 md:w-[104px]"
-            >
-              <span
-                className={`relative block h-[72px] w-[72px] overflow-hidden rounded-full transition md:h-[88px] md:w-[88px] ${
-                  isActive
-                    ? "ring-2 ring-[color:var(--gold)] shadow-[0_12px_30px_-12px_rgba(200,162,74,0.95)]"
-                    : "ring-2 ring-[color:var(--gold)]/50 opacity-90 hover:opacity-100 hover:ring-[color:var(--gold)]"
-                }`}
-              >
-                <img
-                  src={t.image}
-                  alt={t.label}
-                  loading="lazy"
-                  decoding="async"
-                  onError={handleImageError}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-              </span>
-              <span
-                className={`line-clamp-2 text-center text-[11px] leading-tight md:text-xs ${
-                  isActive
-                    ? "font-medium text-[color:var(--gold)]"
-                    : "text-[color:var(--muted-foreground)]"
-                }`}
-              >
-                {t.label}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className={RAIL} style={{ scrollbarWidth: "none" }}>
-        {items.map((p) => {
-          const off =
-            p.compare_at_price && p.compare_at_price > p.price
-              ? Math.round(((p.compare_at_price - p.price) / p.compare_at_price) * 100)
-              : null;
-          return (
-            <Link
-              key={`${active.id}-${p.id}`}
-              to="/products/$slug"
-              params={{ slug: p.slug }}
-              className="group flex w-[46%] max-w-[220px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border hairline bg-[color:var(--card)] transition hover:ring-1 hover:ring-[color:var(--gold)]/60 sm:w-[38%] md:w-[26%] lg:w-[23%]"
-            >
-              <div className="relative aspect-square overflow-hidden">
-                <img
-                  src={resolveProductImage(p.image_url)}
-                  alt={`${p.name} — OMORA BLOOMS`}
-                  loading="lazy"
-                  decoding="async"
-                  onError={handleImageError}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                {off ? (
-                  <span className="absolute left-2 top-2 rounded-full bg-gold-gradient px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--noir)] shadow">
-                    {off}% Off
-                  </span>
-                ) : null}
-              </div>
-              <div className="flex flex-1 flex-col gap-1 p-2.5 md:p-3.5">
-                <h3 className="line-clamp-2 font-serif text-[13px] leading-snug md:text-base">
-                  {p.name}
-                </h3>
-                <div className="mt-auto flex items-baseline gap-1.5 pt-1">
-                  <span className="text-base font-semibold text-[color:var(--gold)] md:text-lg">
-                    {formatPrice(p.price)}
-                  </span>
-                  {p.compare_at_price ? (
-                    <span className="text-[11px] text-[color:var(--muted-foreground)] line-through">
-                      {formatPrice(p.compare_at_price)}
-                    </span>
-                  ) : null}
-                </div>
-              </div>
-            </Link>
-          );
-        })}
-      </div>
-
-      {section.ctaLabel ? (
-        <div className="mt-5 flex justify-center md:mt-8">
-          <Link
-            to="/shop"
-            className="inline-flex items-center gap-2 rounded-full bg-gold-gradient px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--noir)] shadow-[0_14px_30px_-16px_rgba(200,162,74,0.9)] transition hover:opacity-90 md:text-sm"
-          >
-            {section.ctaLabel} <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      ) : null}
     </section>
   );
 }
