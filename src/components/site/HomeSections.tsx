@@ -419,23 +419,39 @@ function ProductSlider({
   );
 }
 
-export function TrendingSlider() {
+/** Live catalog rows, with the bundled fallback only when the DB is empty. */
+function useCatalog() {
   const { data } = useSuspenseQuery(productsQuery);
-  const products = (data && data.length > 0 ? data : LOCAL_PRODUCTS).slice(0, 8);
-  return <ProductSlider title="Trending Now" eyebrow="Handpicked for you" products={products} />;
+  return data && data.length > 0 ? data : LOCAL_PRODUCTS;
+}
+
+export function TrendingSlider() {
+  const products = useCatalog();
+  const flagged = products.filter((p) => p.is_trending);
+  const items = (flagged.length > 0 ? flagged : products).slice(0, 8);
+  if (items.length === 0) return null;
+  return <ProductSlider title="Trending Now" eyebrow="Handpicked for you" products={items} />;
 }
 
 export function BestsellersSlider() {
-  const section = HOME_SHOWCASE.find((s) => s.id === "bestsellers");
-  if (!section) return null;
-  return <TabbedProductSlider section={section} />;
+  const products = useCatalog();
+  const flagged = products.filter((p) => p.is_bestseller);
+  const items = (flagged.length > 0 ? flagged : products.filter((p) => p.featured)).slice(0, 8);
+  if (items.length === 0) return null;
+  return (
+    <ProductSlider title="Shop by Bestsellers" eyebrow="Loved by our customers" products={items} />
+  );
 }
 
 export function NewlyLaunchedSlider() {
-  const section = HOME_SHOWCASE.find((s) => s.id === "new");
-  if (!section) return null;
-  return <TabbedProductSlider section={section} />;
+  const products = useCatalog();
+  const items = [...products]
+    .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""))
+    .slice(0, 8);
+  if (items.length === 0) return null;
+  return <ProductSlider title="Newly Launched" eyebrow="Fresh from the atelier" products={items} />;
 }
+
 
 export function IconCategories() {
   const iconSections = HOME_SHOWCASE.filter((s) => s.variant === "icons");
