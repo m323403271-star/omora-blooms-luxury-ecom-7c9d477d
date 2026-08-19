@@ -35,7 +35,7 @@ import {
 } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { handleImageError } from "@/lib/image-fallback";
-import { HOME_SHOWCASE } from "@/lib/home-showcase";
+import { HOME_SHOWCASE, type ShowcaseSection } from "@/lib/home-showcase";
 import { ProductCard } from "@/components/site/ProductCard";
 import { CraftNote } from "@/components/site/CraftNote";
 
