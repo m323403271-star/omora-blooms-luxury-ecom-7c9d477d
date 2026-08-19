@@ -59,6 +59,18 @@ export function CheckoutPage({
   const set = (key: keyof DeliveryDetails) => (value: string) =>
     setDetails((prev) => ({ ...prev, [key]: value }));
 
+  // Payment can only start once every mandatory field is filled in.
+  const missing: string[] = [];
+  if (details.fullName.trim().length < 2) missing.push("Full name");
+  if (details.phone.replace(/\D/g, "").length < 10) missing.push("Mobile number");
+  if (!/^[1-9]\d{5}$/.test(details.pincode.trim())) missing.push("PIN code");
+  if (mode === "pickup") {
+    if (!pickupPointId) missing.push("Pickup location");
+  } else if (details.addressLine1.trim().length < 6) {
+    missing.push("Full address");
+  }
+  const isValid = missing.length === 0;
+
   return (
     <main className="min-h-screen bg-neutral-50 text-neutral-900">
       <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
@@ -141,6 +153,8 @@ export function CheckoutPage({
               <PincodeLocator
                 value={details.pincode}
                 onChange={set("pincode")}
+                pickupPointId={pickupPointId}
+                onPickupPointChange={setPickupPointId}
                 onResolved={(result) => {
                   if (result.serviceable) {
                     setDetails((prev) => ({
@@ -189,6 +203,11 @@ export function CheckoutPage({
             </CheckoutCard>
 
             <CheckoutCard step={4} title="Payment">
+              {!isValid ? (
+                <p className="mb-4 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  Complete these before paying: {missing.join(", ")}.
+                </p>
+              ) : null}
               <PaymentOptions
                 options={paymentOptions}
                 selectedId={paymentId}
@@ -200,8 +219,12 @@ export function CheckoutPage({
           <OrderSummary
             lines={lines}
             totals={totals}
-            disabled={mode === "pickup" && !pickupPointId}
-            onPlaceOrder={() => onPlaceOrder?.({ details, mode, pickupPointId, paymentId })}
+            ctaLabel="Proceed to Pay"
+            disabled={!isValid}
+            onPlaceOrder={() => {
+              if (!isValid) return;
+              onPlaceOrder?.({ details, mode, pickupPointId, paymentId });
+            }}
           />
         </div>
       </div>

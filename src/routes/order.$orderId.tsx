@@ -202,12 +202,12 @@ function OrderStatusPage() {
 
           <aside className="glass-card rounded-2xl p-6 h-fit space-y-3 text-sm">
             <p className="eyebrow mb-2">Details</p>
-            <Row label="Amount" value={formatPrice(Number(data.amount))} gold />
-            <Row label="Currency" value={data.currency} />
-            <Row label="Order ID" value={data.razorpay_order_id} mono />
-            {data.razorpay_payment_id && <Row label="Payment ID" value={data.razorpay_payment_id} mono />}
-            <Row label="Created" value={new Date(data.created_at).toLocaleString()} />
-            <Row label="Updated" value={new Date(data.updated_at).toLocaleString()} />
+            <OrderDetailRow label="Amount" value={formatPrice(Number(data.amount))} gold />
+            <OrderDetailRow label="Currency" value={data.currency} />
+            <OrderDetailRow label="Order ID" value={data.razorpay_order_id} mono />
+            {data.razorpay_payment_id && <OrderDetailRow label="Payment ID" value={data.razorpay_payment_id} mono />}
+            <OrderDetailRow label="Created" value={new Date(data.created_at).toLocaleString()} />
+            <OrderDetailRow label="Updated" value={new Date(data.updated_at).toLocaleString()} />
           </aside>
         </div>
       ) : null}
@@ -215,7 +215,7 @@ function OrderStatusPage() {
   );
 }
 
-function Row({ label, value, mono, gold }: { label: string; value: string; mono?: boolean; gold?: boolean }) {
+function OrderDetailRow({ label, value, mono, gold }: { label: string; value: string; mono?: boolean; gold?: boolean }) {
   return (
     <div className="flex justify-between gap-3">
       <span className="text-[color:var(--muted-foreground)]">{label}</span>
