@@ -45,12 +45,12 @@ export function OrderSummary({
       </ul>
 
       <dl className="mt-4 flex flex-col gap-2 text-sm">
-        <Row label="Subtotal" value={formatCurrency(totals.subtotal, c)} />
-        <Row label="Shipping" value={formatCurrency(totals.shipping, c)} />
+        <SummaryRow label="Subtotal" value={formatCurrency(totals.subtotal, c)} />
+        <SummaryRow label="Shipping" value={formatCurrency(totals.shipping, c)} />
         {totals.discount > 0 ? (
-          <Row label="Discount" value={`− ${formatCurrency(totals.discount, c)}`} accent />
+          <SummaryRow label="Discount" value={`− ${formatCurrency(totals.discount, c)}`} accent />
         ) : null}
-        <Row label="Taxes" value={formatCurrency(totals.tax, c)} />
+        <SummaryRow label="Taxes" value={formatCurrency(totals.tax, c)} />
       </dl>
 
       <div className="mt-4 flex items-center justify-between border-t border-neutral-200 pt-4">
@@ -75,7 +75,7 @@ export function OrderSummary({
   );
 }
 
-function Row({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+function SummaryRow({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div className="flex items-center justify-between">
       <dt className="text-neutral-600">{label}</dt>

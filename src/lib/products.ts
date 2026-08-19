@@ -17,6 +17,9 @@ export type Product = {
   featured: boolean;
   available: boolean;
   sort_order: number;
+  is_trending?: boolean;
+  is_bestseller?: boolean;
+  created_at?: string;
 };
 
 
@@ -153,7 +156,7 @@ async function fetchProducts(): Promise<Product[]> {
     const { data, error } = await supabase
       .from("products")
       .select(
-        "id, slug, name, tagline, description, price, compare_at_price, category, image_url, images, tags, featured, available, sort_order",
+        "id, slug, name, tagline, description, price, compare_at_price, category, image_url, images, tags, featured, available, sort_order, is_trending, is_bestseller, created_at",
       )
       .eq("available", true)
       .order("sort_order", { ascending: true })
