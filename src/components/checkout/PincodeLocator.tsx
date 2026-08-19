@@ -1,22 +1,55 @@
 import { useState } from "react";
-import { lookupPincode } from "./sampleCheckout";
-import type { PincodeResult } from "./types";
+import { checkDelivery } from "@/lib/delivery";
+import { pickupPointsForPincode } from "@/lib/pickup";
+import { PickupPointSelector } from "./PickupPointSelector";
+import type { PickupPoint, PincodeResult } from "./types";
 
 interface PincodeLocatorProps {
   value: string;
   onChange: (pincode: string) => void;
   onResolved?: (result: PincodeResult) => void;
+  /** Selected pickup point id, lifted into checkout state. */
+  pickupPointId?: string | null;
+  onPickupPointChange?: (id: string | null) => void;
 }
 
-export function PincodeLocator({ value, onChange, onResolved }: PincodeLocatorProps) {
+/** Turn the delivery library's hubs into checkout pickup cards. */
+function toCheckoutPoints(pincode: string): PickupPoint[] {
+  return pickupPointsForPincode(pincode).map((p) => ({
+    id: p.id,
+    name: p.label,
+    addressLine: p.detail,
+    distanceLabel: "Meet our delivery agent here",
+    timingsLabel: "Open 6:00 AM – 11:00 PM",
+  }));
+}
+
+export function PincodeLocator({
+  value,
+  onChange,
+  onResolved,
+  pickupPointId = null,
+  onPickupPointChange,
+}: PincodeLocatorProps) {
   const [status, setStatus] = useState<"idle" | "loading" | "done">("idle");
   const [result, setResult] = useState<PincodeResult | null>(null);
+  const [points, setPoints] = useState<PickupPoint[]>([]);
   const [detecting, setDetecting] = useState(false);
 
-  async function check(pincode: string) {
+  function check(pincode: string) {
     if (!/^\d{6}$/.test(pincode)) return;
     setStatus("loading");
-    const res = await lookupPincode(pincode);
+    const zone = checkDelivery(pincode);
+    const res: PincodeResult = {
+      pincode,
+      city: zone.area ?? "Bengaluru",
+      state: "Karnataka",
+      etaLabel: zone.serviceable ? `Delivery in ${zone.eta}` : "Not serviceable",
+      serviceable: zone.serviceable,
+    };
+    const available = zone.serviceable ? toCheckoutPoints(pincode) : [];
+    setPoints(available);
+    if (!available.some((p) => p.id === pickupPointId)) onPickupPointChange?.(null);
     setResult(res);
     setStatus("done");
     onResolved?.(res);
@@ -28,8 +61,8 @@ export function PincodeLocator({ value, onChange, onResolved }: PincodeLocatorPr
     navigator.geolocation.getCurrentPosition(
       () => {
         setDetecting(false);
-        onChange("560038");
-        void check("560038");
+        onChange("562110");
+        check("562110");
       },
       () => setDetecting(false),
       { timeout: 8000 },
@@ -48,6 +81,8 @@ export function PincodeLocator({ value, onChange, onResolved }: PincodeLocatorPr
             onChange(next);
             setStatus("idle");
             setResult(null);
+            setPoints([]);
+            onPickupPointChange?.(null);
           }}
           placeholder="Enter 6-digit PIN code"
           aria-label="PIN code"
@@ -55,7 +90,7 @@ export function PincodeLocator({ value, onChange, onResolved }: PincodeLocatorPr
         />
         <button
           type="button"
-          onClick={() => void check(value)}
+          onClick={() => check(value)}
           disabled={value.length !== 6 || status === "loading"}
           className="rounded-lg bg-neutral-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:cursor-not-allowed disabled:opacity-40"
         >
@@ -82,6 +117,19 @@ export function PincodeLocator({ value, onChange, onResolved }: PincodeLocatorPr
             ? `Delivering to ${result.city}, ${result.state} · ${result.etaLabel}`
             : `We don't deliver to ${result.pincode} yet. Try a pickup point below.`}
         </p>
+      ) : null}
+
+      {points.length > 0 ? (
+        <div className="rounded-xl border border-neutral-200 p-3">
+          <p className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-neutral-500">
+            Choose a delivery / pickup point
+          </p>
+          <PickupPointSelector
+            points={points}
+            selectedId={pickupPointId}
+            onSelect={(id) => onPickupPointChange?.(id)}
+          />
+        </div>
       ) : null}
     </div>
   );
