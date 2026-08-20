@@ -89,7 +89,7 @@ export function HomeCategoryGrid() {
   ];
 
   return (
-    <section className="container-luxe py-7 md:py-16">
+    <section className="container-luxe py-3 md:py-16">
       <div className="text-center max-w-2xl mx-auto mb-5 md:mb-12">
         <p className="eyebrow mb-2 md:mb-3 text-[color:var(--gold)]">Shop by Collection</p>
         <h2 className="font-serif text-2xl md:text-5xl leading-tight tracking-tight">

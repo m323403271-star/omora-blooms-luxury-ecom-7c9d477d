@@ -56,7 +56,7 @@ function SectionHeader({
 
 function IconsOnlySection({ section }: { section: ShowcaseSection }) {
   return (
-    <section className="container-luxe py-5 md:py-10" aria-label={section.title}>
+    <section className="container-luxe py-3 md:py-10" aria-label={section.title}>
       <SectionHeader section={section} />
       <div
         className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 md:gap-8"

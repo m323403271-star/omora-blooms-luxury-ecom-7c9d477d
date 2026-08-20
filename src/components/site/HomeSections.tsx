@@ -186,7 +186,7 @@ function SectionHeader({
 
 function IconOnlySection({ section }: { section: ShowcaseSection }) {
   return (
-    <section className="container-luxe py-5 md:py-10" aria-label={section.title}>
+    <section className="container-luxe py-3 md:py-10" aria-label={section.title}>
       <SectionHeader section={section} />
       <div
         className="-mx-4 flex gap-4 overflow-x-auto px-4 pb-1 md:mx-0 md:px-0 md:gap-8"
@@ -231,7 +231,7 @@ function ProductSlider({
   href?: string;
 }) {
   return (
-    <section className="container-luxe py-7 md:py-14">
+    <section className="container-luxe py-3 md:py-14">
       <div className="mb-4 flex items-end justify-between gap-4 md:mb-7">
         <div className="min-w-0">
           <p className="eyebrow mb-1.5 text-[color:var(--gold)]">{eyebrow}</p>
@@ -462,7 +462,7 @@ export function ShopByCollection() {
   ];
 
   return (
-    <section className="container-luxe py-7 md:py-16">
+    <section className="container-luxe py-3 md:py-16">
       <div className="text-center max-w-2xl mx-auto mb-5 md:mb-12">
         <p className="eyebrow mb-2 md:mb-3 text-[color:var(--gold)]">Shop by Collection</p>
         <h2 className="font-serif text-2xl md:text-5xl leading-tight tracking-tight">
@@ -518,7 +518,7 @@ export function HomeThreeProductsSection() {
     ["crochet-bouquets", "frames-vases", "pipe-cleaner-bouquets"].includes(c.slug)
   );
   return (
-    <section className="container-luxe py-12 md:py-16">
+    <section className="container-luxe py-3 md:py-16">
       <div className="text-center max-w-2xl mx-auto mb-6 md:mb-10">
         <p className="eyebrow mb-3">Signature Collections</p>
         <h2 className="font-serif text-2xl md:text-4xl leading-tight">Handcrafted, Everlasting Luxury</h2>
@@ -638,7 +638,7 @@ export function FeaturedCarousel() {
   ];
 
   return (
-    <section className="container-luxe py-10 md:py-14">
+    <section className="container-luxe py-3 md:py-14">
       <div className="flex items-end justify-between mb-5 md:mb-7">
         <div>
           <p className="eyebrow mb-2 text-[color:var(--gold)]">Curated Picks</p>
@@ -683,7 +683,7 @@ export function BestSellers() {
   const { data } = useSuspenseQuery(productsQuery);
   const products = (data && data.length > 0 ? data : LOCAL_PRODUCTS).slice(0, 8);
   return (
-    <section className="container-luxe py-16 md:py-24">
+    <section className="container-luxe py-3 md:py-24">
       <div className="flex items-end justify-between mb-8 md:mb-12">
         <div>
           <p className="eyebrow mb-3">Bestsellers</p>
@@ -704,7 +704,7 @@ export function BestSellers() {
 
 export function StoryBand() {
   return (
-    <section className="container-luxe py-9 md:py-24">
+    <section className="container-luxe py-3 md:py-24">
       <div className="grid md:grid-cols-2 gap-5 md:gap-16 items-center">
         <div>
           <p className="eyebrow mb-2 md:mb-4">Our Story</p>
@@ -738,7 +738,7 @@ export function FeatureGrid() {
     { icon: Truck, title: "Fast Delivery", desc: "Same-day in Bengaluru, worldwide shipping" },
   ];
   return (
-    <section className="container-luxe py-7 md:py-16">
+    <section className="container-luxe py-3 md:py-16">
       <div className="grid gap-3 md:gap-6 grid-cols-2 lg:grid-cols-4">
         {items.map(({ icon: Icon, title, desc }) => (
           <div key={title} className="glass-card rounded-2xl p-3.5 md:p-6 text-center">
@@ -754,7 +754,7 @@ export function FeatureGrid() {
 
 export function PackagingBand() {
   return (
-    <section className="container-luxe py-9 md:py-24">
+    <section className="container-luxe py-3 md:py-24">
       <div className="grid md:grid-cols-2 gap-5 md:gap-16 items-center">
         <div className="glass-card rounded-3xl p-2 md:p-3 order-2 md:order-1">
           <img
@@ -779,7 +779,7 @@ export function PackagingBand() {
 
 export function DeliveryBand() {
   return (
-    <section className="container-luxe py-7 md:py-16">
+    <section className="container-luxe py-3 md:py-16">
       <div className="glass-card rounded-3xl p-4 md:p-10 text-center">
         <p className="eyebrow mb-2 md:mb-3 text-[color:var(--gold)]">⚡ Express Delivery</p>
         <h3 className="font-serif text-xl md:text-4xl leading-snug">30–45 Mins at Kempegowda International Airport</h3>
@@ -796,7 +796,7 @@ export function DeliveryBand() {
 
 export function FinalCta() {
   return (
-    <section className="container-luxe py-9 md:py-24">
+    <section className="container-luxe py-3 md:py-24">
       <div className="relative overflow-hidden rounded-3xl hairline border p-6 md:p-16 text-center bg-[color:var(--noir)]/60">
         <p className="eyebrow mb-2 md:mb-3">Ready to Gift Forever?</p>
         <h2 className="font-serif text-2xl md:text-5xl leading-tight">Create a Memory That Lasts</h2>
