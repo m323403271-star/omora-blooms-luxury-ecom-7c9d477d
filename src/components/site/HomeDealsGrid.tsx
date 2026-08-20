@@ -23,7 +23,7 @@ export function HomeDealsGrid({
   const products = (trending.length > 0 ? trending : catalog).slice(0, limit);
 
   return (
-    <section className="container-luxe py-7 md:py-14">
+    <section className="container-luxe py-3 md:py-14">
       <div className="mb-4 flex items-end justify-between gap-4 md:mb-7">
         <div className="min-w-0">
           <p className="eyebrow mb-1.5 text-[color:var(--gold)]">{eyebrow}</p>

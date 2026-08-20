@@ -8,7 +8,7 @@ export function GiftFinder() {
   const [selected, setSelected] = useState<Option | null>(null);
 
   return (
-    <section className="container-luxe py-10 md:py-14">
+    <section className="container-luxe py-3 md:py-14">
       <div className="text-center">
         <p className="eyebrow mb-3">Gift Finder</p>
         <h2 className="font-serif text-2xl md:text-4xl tracking-tight">Who are you gifting today?</h2>
