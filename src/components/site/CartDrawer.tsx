@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { X, Minus, Plus, MessageCircle, CreditCard, MapPin, ShieldAlert, Plane } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -6,19 +6,15 @@ import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { getStoredRef } from "@/lib/referral";
-import { supabase } from "@/integrations/supabase/client";
-import { startRazorpayCheckout } from "@/lib/razorpay";
-import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
+import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, findPickup } from "@/lib/pickup";
 import {  getStoredPincode , isAirportPincode as isAirportPincodeFn } from "@/lib/delivery";
 import { formatGiftForWhatsApp } from "@/lib/gifting";
 
 export function CartDrawer() {
-  const { items, isOpen, close, remove, setQuantity, total, count, clear } = useCart();
-  const [paying, setPaying] = useState(false);
+  const { items, isOpen, close, remove, setQuantity, total, count } = useCart();
   const [pickup, setPickup] = useState<string>(() => getSelectedPickup() ?? "");
   const [pincode, setPincode] = useState<string | null>(() => getStoredPincode());
   const [airportOverride, setAirportOverride] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handler = (e: Event) => {
@@ -161,32 +157,20 @@ export function CartDrawer() {
                 <p className="text-[11px] text-[color:var(--gold)]">Referral applied: {ref}</p>
               )}
               <p className="text-xs text-[color:var(--muted-foreground)]">Shipping & taxes calculated at checkout. Complimentary luxury packaging included.</p>
-              <button
-                disabled={paying}
-                onClick={async () => {
-                  if (pickupRequired && !pickup) { toast.error("Please select an airport pickup point to continue."); return; }
-                  setPaying(true);
-                  try {
-                    const { getCustomerTier } = await import("@/lib/delivery");
-                    await startRazorpayCheckout(items, (orderId) => {
-                      if (showPickup && pickup) savePickupForOrder(orderId, pickup);
-                      clear();
-                      close();
-                      navigate({ to: "/order/$orderId", params: { orderId } });
-                    }, {
-                      pincode: pincode,
-                      customerTier: getCustomerTier(),
-                      pickupPointId: showPickup ? pickup || null : null,
-                    });
-                  } finally {
-                    setPaying(false);
+              <Link
+                to="/cart"
+                onClick={(e) => {
+                  if (pickupRequired && !pickup) {
+                    e.preventDefault();
+                    toast.error("Please select an airport pickup point to continue.");
+                    return;
                   }
+                  close();
                 }}
-                className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm font-semibold disabled:opacity-60"
+                className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm font-semibold"
               >
-                <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Pay with Razorpay"}
-
-              </button>
+                <CreditCard className="h-4 w-4" /> Proceed to Checkout
+              </Link>
 
               <a
                 href={whatsappLink(message)}
@@ -197,9 +181,6 @@ export function CartDrawer() {
               >
                 <MessageCircle className="h-4 w-4" /> Order via WhatsApp
               </a>
-              <Link to="/cart" onClick={close} className="btn-outline-gold w-full inline-flex items-center justify-center py-3 rounded-full text-sm">
-                View bag
-              </Link>
             </div>
           </>
         )}

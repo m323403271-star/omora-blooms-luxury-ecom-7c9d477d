@@ -7,7 +7,15 @@ import { whatsappLink } from "@/lib/whatsapp";
 import { getStoredRef } from "@/lib/referral";
 import { supabase } from "@/integrations/supabase/client";
 import { startRazorpayCheckout } from "@/lib/razorpay";
-import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
+import {
+  PICKUP_POINTS,
+  getSelectedPickup,
+  setSelectedPickup,
+  savePickupForOrder,
+  findPickup,
+  isTalukPincode,
+  pickupPointsForPincode,
+} from "@/lib/pickup";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import {  getStoredPincode , isAirportPincode as isAirportPincodeFn } from "@/lib/delivery";
 import { formatGiftForWhatsApp } from "@/lib/gifting";
@@ -26,6 +34,9 @@ function CartPage() {
   const [pincode, setPincode] = useState<string | null>(() => getStoredPincode());
   const [airportOverride, setAirportOverride] = useState(false);
   const [deliveryNotes, setDeliveryNotes] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [address, setAddress] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,8 +49,20 @@ function CartPage() {
   }, []);
 
   const isAirport = isAirportPincodeFn(pincode);
-  const showPickup = isAirport || airportOverride;
-  const pickupRequired = showPickup;
+  const showPickup = isAirport || airportOverride || isTalukPincode(pincode);
+  const pickupRequired = isAirport || airportOverride;
+  const pickupOptions = showPickup
+    ? (pickupPointsForPincode(pincode) .length > 0 ? pickupPointsForPincode(pincode) : PICKUP_POINTS)
+    : [];
+
+  // Payment may only start once every mandatory detail is present.
+  const missing: string[] = [];
+  if (fullName.trim().length < 2) missing.push("Full name");
+  if (mobile.replace(/\D/g, "").length < 10) missing.push("Mobile number");
+  if (!pincode || !/^[1-9]\d{5}$/.test(pincode)) missing.push("Delivery pincode");
+  if (pickupRequired && !pickup) missing.push("Pickup location");
+  if (!pickupRequired && address.trim().length < 8) missing.push("Full address");
+  const canPay = missing.length === 0;
 
   const ref = typeof window !== "undefined" ? getStoredRef() : null;
   const refLine = ref ? `\n\nReferral code: ${ref}` : "";
@@ -158,7 +181,7 @@ function CartPage() {
                   className="mt-2 w-full bg-[color:var(--noir)] border hairline rounded-lg px-3 py-2.5 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
                 >
                   <option value="">Select a pickup point…</option>
-                  {PICKUP_POINTS.map((p) => (
+                  {pickupOptions.map((p) => (
                     <option key={p.id} value={p.id}>{p.label}</option>
                   ))}
                 </select>
@@ -172,6 +195,41 @@ function CartPage() {
                 <p className="mt-2 text-[11px] text-[color:var(--gold)]">⚡ Express 30–45 minute delivery window.</p>
               </div>
             )}
+
+            <div className="mb-5 space-y-3">
+              <p className="text-[11px] tracking-[0.18em] uppercase text-[color:var(--gold)]">
+                Delivery Details <span className="text-[color:var(--destructive)]">*</span>
+              </p>
+              <input
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Full name"
+                maxLength={120}
+                autoComplete="name"
+                aria-label="Full name"
+                className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+              />
+              <input
+                value={mobile}
+                onChange={(e) => setMobile(e.target.value.replace(/[^\d+ ]/g, "").slice(0, 15))}
+                placeholder="Mobile number"
+                inputMode="tel"
+                autoComplete="tel"
+                aria-label="Mobile number"
+                className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+              />
+              {!pickupRequired && (
+                <textarea
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Full delivery address (house/flat, street, area, landmark)"
+                  rows={3}
+                  maxLength={400}
+                  aria-label="Full delivery address"
+                  className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                />
+              )}
+            </div>
 
             <div className="mb-5">
               <label className="flex items-center gap-1.5 text-[11px] tracking-[0.18em] uppercase text-[color:var(--gold)] mb-1.5">
@@ -202,9 +260,9 @@ function CartPage() {
             </div>
             {ref && <p className="mt-3 text-xs text-[color:var(--gold)]">Referral applied: {ref}</p>}
             <button
-              disabled={paying || items.length === 0}
+              disabled={paying || items.length === 0 || !canPay}
               onClick={async () => {
-                if (pickupRequired && !pickup) { toast.error("Please select an airport pickup point to continue."); return; }
+                if (!canPay) { toast.error(`Please complete: ${missing.join(", ")}`); return; }
                 setPaying(true);
                 try {
                   const { getCustomerTier } = await import("@/lib/delivery");
@@ -216,7 +274,13 @@ function CartPage() {
                     pincode: pincode,
                     customerTier: getCustomerTier(),
                     pickupPointId: showPickup ? pickup || null : null,
-                    deliveryNotes: deliveryNotes.trim() || null,
+                    customerName: fullName.trim(),
+                    customerPhone: mobile.replace(/\D/g, ""),
+                    deliveryNotes:
+                      [address.trim() ? `Address: ${address.trim()}` : "", deliveryNotes.trim()]
+                        .filter(Boolean)
+                        .join(" | ")
+                        .slice(0, 300) || null,
                   });
                 } finally {
                   setPaying(false);
@@ -224,8 +288,13 @@ function CartPage() {
               }}
               className="btn-gold mt-6 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm disabled:opacity-60"
             >
-              <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Pay with Razorpay"}
+              <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Proceed to Pay"}
             </button>
+            {!canPay && items.length > 0 && (
+              <p className="mt-2 text-center text-[11px] text-[color:var(--muted-foreground)]">
+                Complete to pay: {missing.join(", ")}
+              </p>
+            )}
 
             <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-outline-gold mt-3 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
               <MessageCircle className="h-4 w-4" /> Order via WhatsApp
