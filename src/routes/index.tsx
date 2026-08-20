@@ -10,6 +10,8 @@ import {
   PackagingBand,
   StoryBand,
   TrustBanner,
+  BestsellersSlider,
+  NewlyLaunchedSlider,
 } from "@/components/site/HomeSections";
 import { HomeCategoryGrid } from "@/components/site/HomeCategoryGrid";
 import { GiftFinder } from "@/components/site/GiftFinder";
