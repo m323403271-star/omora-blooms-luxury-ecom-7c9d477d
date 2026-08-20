@@ -59,7 +59,7 @@ export function Hero() {
 
             <Link
               to="/shop"
-              className="btn-gold px-6 md:px-8 py-3 md:py-3.5 rounded-full text-sm inline-flex items-center gap-2"
+              className="btn-gold whitespace-nowrap px-4 md:px-8 py-2.5 md:py-3.5 rounded-full text-[13px] md:text-sm inline-flex items-center gap-1.5 md:gap-2"
             >
               Shop Now <ArrowRight className="h-4 w-4" />
             </Link>
@@ -67,16 +67,17 @@ export function Hero() {
               href={whatsappLink("Hello OMORA BLOOMS! I'd like to place an order.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-gold px-6 md:px-8 py-3 md:py-3.5 rounded-full text-sm inline-flex items-center gap-2"
+              className="btn-outline-gold whitespace-nowrap px-4 md:px-8 py-2.5 md:py-3.5 rounded-full text-[13px] md:text-sm inline-flex items-center gap-1.5 md:gap-2"
             >
-              <MessageCircle className="h-4 w-4" /> Order on WhatsApp
+              <MessageCircle className="h-4 w-4" /> WhatsApp
             </a>
           </div>
-          <div className="mt-5 md:mt-10 flex items-center gap-4 md:gap-6 text-[11px] md:text-xs text-[color:var(--muted-foreground)]">
+          <div className="mt-3 md:mt-10 flex items-center gap-4 md:gap-6 text-[11px] md:text-xs text-[color:var(--muted-foreground)]">
             <span className="inline-flex items-center gap-2"><Sparkles className="h-3.5 w-3.5 text-[color:var(--gold)]" /> Handmade to order</span>
             <span className="inline-flex items-center gap-2"><Package className="h-3.5 w-3.5 text-[color:var(--gold)]" /> Luxury packaging</span>
             <span className="inline-flex items-center gap-2 hidden sm:inline-flex"><Truck className="h-3.5 w-3.5 text-[color:var(--gold)]" /> Same-day delivery</span>
           </div>
+
         </div>
         <div className="relative">
           <div className="absolute -inset-10 bg-gradient-to-br from-[color:var(--gold)]/20 via-transparent to-[color:var(--blush)]/10 blur-3xl -z-10" />
