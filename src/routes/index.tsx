@@ -62,9 +62,12 @@ function HomePage() {
       <GiftFinder />
       <HomeDealsGrid />
       <HomeCategoryGrid />
-      {HOME_SHOWCASE.map((s) => (
-        <HomeShowcaseSection key={s.id} section={s} />
-      ))}
+      {HOME_SHOWCASE.map((s) => {
+        // Bestsellers and new arrivals are driven by live catalog data.
+        if (s.id === "bestsellers") return <BestsellersSlider key={s.id} />;
+        if (s.id === "new") return <NewlyLaunchedSlider key={s.id} />;
+        return <HomeShowcaseSection key={s.id} section={s} />;
+      })}
       <HomeGiftingStories />
       <StoryBand />
       <FeatureGrid />
