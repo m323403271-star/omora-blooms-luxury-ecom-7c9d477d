@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { X, Minus, Plus, MessageCircle, CreditCard, MapPin, ShieldAlert, Plane } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -6,19 +6,15 @@ import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { getStoredRef } from "@/lib/referral";
-import { supabase } from "@/integrations/supabase/client";
-import { startRazorpayCheckout } from "@/lib/razorpay";
-import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, savePickupForOrder, findPickup } from "@/lib/pickup";
+import { PICKUP_POINTS, getSelectedPickup, setSelectedPickup, findPickup } from "@/lib/pickup";
 import {  getStoredPincode , isAirportPincode as isAirportPincodeFn } from "@/lib/delivery";
 import { formatGiftForWhatsApp } from "@/lib/gifting";
 
 export function CartDrawer() {
-  const { items, isOpen, close, remove, setQuantity, total, count, clear } = useCart();
-  const [paying, setPaying] = useState(false);
+  const { items, isOpen, close, remove, setQuantity, total, count } = useCart();
   const [pickup, setPickup] = useState<string>(() => getSelectedPickup() ?? "");
   const [pincode, setPincode] = useState<string | null>(() => getStoredPincode());
   const [airportOverride, setAirportOverride] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const handler = (e: Event) => {
