@@ -44,17 +44,19 @@ const RAIL =
 export function Hero() {
   return (
     <section className="relative overflow-hidden">
-      <div className="container-luxe grid lg:grid-cols-2 gap-6 lg:gap-16 items-center pt-8 pb-10 lg:pt-24 lg:pb-32">
+      <div className="container-luxe grid lg:grid-cols-2 gap-6 lg:gap-16 items-center pt-5 pb-6 lg:pt-24 lg:pb-32">
         <div className="relative z-10 max-w-xl">
-          <p className="eyebrow mb-3 md:mb-6">Est. Handmade Luxury · India · Worldwide</p>
+          <p className="eyebrow mb-2 md:mb-6">Est. Handmade Luxury · India · Worldwide</p>
           <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl leading-[1.08] md:leading-[1.05] tracking-tight">
             Luxury Handmade <span className="text-gold-gradient italic">Bouquets</span> That Last Forever
           </h1>
-          <p className="mt-3 md:mt-6 text-sm md:text-lg text-[color:var(--muted-foreground)] leading-relaxed max-w-lg line-clamp-3 md:line-clamp-none">
-            Beautiful crochet flowers, pipe cleaner bouquets, mother recovery kits and baby essentials — thoughtfully handcrafted for every special occasion.
+          <p className="mt-2 md:mt-6 text-sm md:text-lg text-[color:var(--muted-foreground)] leading-relaxed max-w-lg">
+            <span className="md:hidden">Handcrafted bouquets, gift boxes & kits — made to last.</span>
+            <span className="hidden md:inline">Beautiful crochet flowers, pipe cleaner bouquets, mother recovery kits and baby essentials — thoughtfully handcrafted for every special occasion.</span>
           </p>
-          <CraftNote className="mt-4" />
-          <div className="mt-4 md:mt-6 flex flex-wrap gap-2.5 md:gap-3">
+          <CraftNote className="mt-3" />
+          <div className="mt-3 md:mt-6 flex flex-row flex-nowrap items-center gap-2 md:gap-3">
+
             <Link
               to="/shop"
               className="btn-gold px-6 md:px-8 py-3 md:py-3.5 rounded-full text-sm inline-flex items-center gap-2"
