@@ -31,7 +31,7 @@ function Card({ card }: { card: CategoryCard }) {
     <Link
       to="/collections/$slug"
       params={{ slug: card.slug }}
-      className="group relative block w-[62%] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition sm:w-[44%] md:w-[32%] lg:w-[23%]"
+      className="group relative block w-[29%] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition sm:w-[44%] md:w-[32%] lg:w-[23%]"
       aria-label={`Explore ${card.title}`}
     >
       <div className="aspect-[4/5] overflow-hidden">
@@ -109,7 +109,7 @@ export function HomeCategoryGrid() {
           className="group relative block overflow-hidden rounded-3xl hairline border ring-1 ring-[color:var(--gold)]/40 shadow-[0_30px_80px_-30px_rgba(200,162,74,0.55)] transition-shadow duration-500 hover:shadow-[0_40px_100px_-30px_rgba(200,162,74,0.75)]"
           aria-label="Explore The Eternal Bond Luxury Kit"
         >
-          <div className="relative aspect-[5/4] sm:aspect-[16/9] md:aspect-[21/9]">
+          <div className="relative aspect-[16/10] sm:aspect-[16/9] md:aspect-[21/9]">
             <img
               src={eternalBondBanner}
               alt="The Eternal Bond Luxury Kit — OMORA BLOOMS"

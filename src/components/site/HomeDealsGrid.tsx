@@ -52,7 +52,7 @@ export function HomeDealsGrid({
               key={p.id}
               to="/products/$slug"
               params={{ slug: p.slug }}
-              className="group flex w-[46%] max-w-[220px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border hairline bg-[color:var(--card)] transition hover:ring-1 hover:ring-[color:var(--gold)]/60 sm:w-[38%] md:w-[26%] lg:w-[23%]"
+              className="group flex w-[29%] max-w-[220px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border hairline bg-[color:var(--card)] transition hover:ring-1 hover:ring-[color:var(--gold)]/60 sm:w-[38%] md:w-[26%] lg:w-[23%]"
             >
 
               <div className="relative aspect-square overflow-hidden">

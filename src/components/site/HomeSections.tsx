@@ -85,7 +85,7 @@ export function Hero() {
             <img
               src={heroBouquet}
               alt="Luxury OMORA BLOOMS handmade bouquet"
-              className="w-full h-[300px] sm:h-[420px] md:h-[620px] object-cover rounded-2xl"
+              className="w-full h-[210px] sm:h-[420px] md:h-[620px] object-cover rounded-2xl"
             />
           </div>
           <div className="absolute -bottom-6 -left-6 glass-card rounded-2xl px-5 py-4 hidden md:block">
@@ -259,7 +259,7 @@ function ProductSlider({
               key={p.id}
               to="/products/$slug"
               params={{ slug: p.slug }}
-              className="group flex w-[46%] max-w-[220px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border hairline bg-[color:var(--card)] transition hover:ring-1 hover:ring-[color:var(--gold)]/60 sm:w-[38%] md:w-[26%] lg:w-[23%]"
+              className="group flex w-[29%] max-w-[220px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border hairline bg-[color:var(--card)] transition hover:ring-1 hover:ring-[color:var(--gold)]/60 sm:w-[38%] md:w-[26%] lg:w-[23%]"
             >
               <div className="relative aspect-square overflow-hidden">
                 <img
@@ -356,7 +356,7 @@ function CollectionCard({ card }: { card: CategoryCard }) {
     <Link
       to="/collections/$slug"
       params={{ slug: card.slug }}
-      className="group relative block w-[62%] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition sm:w-[44%] md:w-[32%] lg:w-[23%]"
+      className="group relative block w-[29%] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition sm:w-[44%] md:w-[32%] lg:w-[23%]"
       aria-label={`Explore ${card.title}`}
     >
       <div className="aspect-[4/5] overflow-hidden">
@@ -482,7 +482,7 @@ export function ShopByCollection() {
           className="group relative block overflow-hidden rounded-3xl hairline border ring-1 ring-[color:var(--gold)]/40 shadow-[0_30px_80px_-30px_rgba(200,162,74,0.55)] transition-shadow duration-500 hover:shadow-[0_40px_100px_-30px_rgba(200,162,74,0.75)]"
           aria-label="Explore The Eternal Bond Luxury Kit"
         >
-          <div className="relative aspect-[5/4] sm:aspect-[16/9] md:aspect-[21/9]">
+          <div className="relative aspect-[16/10] sm:aspect-[16/9] md:aspect-[21/9]">
             <img
               src={eternalBondBanner}
               alt="The Eternal Bond Luxury Kit — OMORA BLOOMS"
@@ -568,7 +568,7 @@ export function EternalBondBanner() {
         params={{ slug: "eternal-bond-luxury-kit" }}
         className="group relative block overflow-hidden rounded-3xl hairline border ring-1 ring-[color:var(--gold)]/40 shadow-[0_30px_80px_-30px_rgba(200,162,74,0.55)] transition-shadow duration-500 hover:shadow-[0_40px_100px_-30px_rgba(200,162,74,0.7)]"
       >
-        <div className="relative aspect-[4/5] sm:aspect-[16/9] md:aspect-[21/9]">
+        <div className="relative aspect-[16/10] sm:aspect-[16/9] md:aspect-[21/9]">
           <img
             src={eternalBondBanner}
             alt="The Eternal Bond Luxury Kit — royal luxury gift combo for new mother and newborn baby | OMORA BLOOMS"
