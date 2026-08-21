@@ -21,6 +21,8 @@ type VariantRow = {
   description: string | null;
   images: string[];
   video_url: string | null;
+  product_video_url: string | null;
+  packaging_video_url: string | null;
   active: boolean;
   sort_order: number;
   stock: number;
@@ -28,7 +30,7 @@ type VariantRow = {
 };
 
 const SELECT =
-  "id, product_id, slug, name, color_name, color_hex, price, description, images, video_url, active, sort_order, stock, track_stock";
+  "id, product_id, slug, name, color_name, color_hex, price, description, images, video_url, product_video_url, packaging_video_url, active, sort_order, stock, track_stock";
 
 function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
