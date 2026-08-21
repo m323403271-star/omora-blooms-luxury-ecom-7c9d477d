@@ -186,3 +186,12 @@
   0%   { opacity: 0; transform: translateY(10px) scale(0.96); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
+
+/* Intro splash gating — hide app shell until the logo video finishes. */
+#omora-app {
+  transition: opacity 600ms ease;
+}
+html.omora-intro-pending #omora-app {
+  opacity: 0;
+  pointer-events: none;
+}
