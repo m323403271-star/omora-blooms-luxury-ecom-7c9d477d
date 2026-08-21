@@ -88,6 +88,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       {
+        children: `try{var s=sessionStorage.getItem('omora-intro-shown')==='1';var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(!s&&!r){document.documentElement.classList.add('omora-intro-pending');setTimeout(function(){document.documentElement.classList.remove('omora-intro-pending')},9000)}}catch(e){}`,
+      },
+      {
+
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
