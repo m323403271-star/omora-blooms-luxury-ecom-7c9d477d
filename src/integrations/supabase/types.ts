@@ -299,8 +299,10 @@ export type Database = {
           id: string
           images: string[]
           name: string
+          packaging_video_url: string | null
           price: number
           product_id: string
+          product_video_url: string | null
           slug: string
           sort_order: number
           stock: number
@@ -317,8 +319,10 @@ export type Database = {
           id?: string
           images?: string[]
           name: string
+          packaging_video_url?: string | null
           price?: number
           product_id: string
+          product_video_url?: string | null
           slug: string
           sort_order?: number
           stock?: number
@@ -335,8 +339,10 @@ export type Database = {
           id?: string
           images?: string[]
           name?: string
+          packaging_video_url?: string | null
           price?: number
           product_id?: string
+          product_video_url?: string | null
           slug?: string
           sort_order?: number
           stock?: number
