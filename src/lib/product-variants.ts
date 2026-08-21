@@ -13,6 +13,8 @@ export type ProductVariantRow = {
   description: string | null;
   images: string[];
   video_url: string | null;
+  product_video_url: string | null;
+  packaging_video_url: string | null;
   active: boolean;
   sort_order: number;
   stock: number;
@@ -30,6 +32,8 @@ async function signRows(rows: ProductVariantRow[]): Promise<ProductVariantRow[]>
   for (const r of rows) {
     for (const u of r.images ?? []) if (u) all.push(u);
     if (r.video_url) all.push(r.video_url);
+    if (r.product_video_url) all.push(r.product_video_url);
+    if (r.packaging_video_url) all.push(r.packaging_video_url);
   }
   const signed = await signProductImages(all);
   return rows.map((r) => ({
@@ -37,11 +41,13 @@ async function signRows(rows: ProductVariantRow[]): Promise<ProductVariantRow[]>
     price: Number(r.price),
     images: (r.images ?? []).map((u) => signed[u] ?? u),
     video_url: r.video_url ? signed[r.video_url] ?? r.video_url : null,
+    product_video_url: r.product_video_url ? signed[r.product_video_url] ?? r.product_video_url : null,
+    packaging_video_url: r.packaging_video_url ? signed[r.packaging_video_url] ?? r.packaging_video_url : null,
   }));
 }
 
 const SELECT =
-  "id, product_id, slug, name, color_name, color_hex, price, description, images, video_url, active, sort_order, stock, track_stock";
+  "id, product_id, slug, name, color_name, color_hex, price, description, images, video_url, product_video_url, packaging_video_url, active, sort_order, stock, track_stock";
 
 /** Active variants for one product (Pick Your Shade page). */
 export function activeVariantsQuery(productId: string | undefined) {
