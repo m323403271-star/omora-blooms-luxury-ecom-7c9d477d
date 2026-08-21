@@ -70,7 +70,7 @@ export function HomeDealsGrid({
                   </span>
                 ) : null}
               </div>
-              <div className="flex flex-1 flex-col gap-1 p-2.5 md:p-3.5">
+              <div className="flex flex-1 flex-col gap-0.5 p-2 md:p-3.5">
                 <h3 className="line-clamp-2 font-serif text-[13px] leading-snug md:text-base">{p.name}</h3>
                 <div className="mt-auto flex items-baseline gap-1.5 pt-1">
                   <span className="text-base font-semibold text-[color:var(--gold)] md:text-lg">

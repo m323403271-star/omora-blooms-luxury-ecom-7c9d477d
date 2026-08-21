@@ -276,7 +276,7 @@ function ProductSlider({
                   </span>
                 ) : null}
               </div>
-              <div className="flex flex-1 flex-col gap-1 p-2.5 md:p-3.5">
+              <div className="flex flex-1 flex-col gap-0.5 p-2 md:p-3.5">
                 <h3 className="line-clamp-2 font-serif text-[13px] leading-snug md:text-base">
                   {p.name}
                 </h3>
@@ -359,7 +359,7 @@ function CollectionCard({ card }: { card: CategoryCard }) {
       className="group relative block w-[29%] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition sm:w-[44%] md:w-[32%] lg:w-[23%]"
       aria-label={`Explore ${card.title}`}
     >
-      <div className="aspect-[4/5] overflow-hidden">
+      <div className="aspect-[3/4] md:aspect-[4/5] overflow-hidden">
         <img
           src={card.image}
           alt={`${card.title} — OMORA BLOOMS`}
@@ -537,7 +537,7 @@ export function HomeThreeProductsSection() {
             params={{ slug: c.slug }}
             className="group relative snap-start shrink-0 w-[45%] sm:w-[32%] md:w-[24%] lg:w-[20%] rounded-2xl overflow-hidden hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
           >
-            <div className="aspect-[4/5] overflow-hidden">
+            <div className="aspect-[3/4] md:aspect-[4/5] overflow-hidden">
               <img
                 src={c.image}
                 alt={c.name}
@@ -662,7 +662,7 @@ export function FeaturedCarousel() {
             params={it.params}
             className="group relative snap-start shrink-0 w-[42%] sm:w-[30%] md:w-[22%] lg:w-[18%] rounded-2xl overflow-hidden hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
           >
-            <div className="aspect-[4/5] overflow-hidden">
+            <div className="aspect-[3/4] md:aspect-[4/5] overflow-hidden">
               <img
                 src={it.image}
                 alt={`${it.title} — OMORA BLOOMS`}

@@ -34,7 +34,7 @@ function Card({ card }: { card: CategoryCard }) {
       className="group relative block w-[29%] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition sm:w-[44%] md:w-[32%] lg:w-[23%]"
       aria-label={`Explore ${card.title}`}
     >
-      <div className="aspect-[4/5] overflow-hidden">
+      <div className="aspect-[3/4] md:aspect-[4/5] overflow-hidden">
         <img
           src={src}
           alt={`${card.title} — OMORA BLOOMS`}
