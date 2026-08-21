@@ -88,6 +88,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     scripts: [
       {
+        children: `try{var s=sessionStorage.getItem('omora-intro-shown')==='1';var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches;if(!s&&!r){document.documentElement.classList.add('omora-intro-pending');setTimeout(function(){document.documentElement.classList.remove('omora-intro-pending')},9000)}}catch(e){}`,
+      },
+      {
+
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
@@ -145,7 +149,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <CartProvider>
-        <div className="flex min-h-screen flex-col">
+        <div id="omora-app" className="flex min-h-screen flex-col">
           <Header />
           <main className="flex-1">
             <Outlet />

@@ -22,7 +22,10 @@ export function IntroSplash() {
       seen = true;
     }
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (seen || reduced) return;
+    if (seen || reduced) {
+      document.documentElement.classList.remove("omora-intro-pending");
+      return;
+    }
 
     try {
       sessionStorage.setItem(SESSION_KEY, "1");
@@ -32,7 +35,7 @@ export function IntroSplash() {
     setVisible(true);
     document.body.style.overflow = "hidden";
 
-    const holdMs = INTRO_VIDEO_SRC ? 6500 : 1600;
+    const holdMs = INTRO_VIDEO_SRC ? 8000 : 1600;
     const fadeAt = window.setTimeout(() => setFading(true), holdMs);
     const hideAt = window.setTimeout(() => {
       setVisible(false);
@@ -43,8 +46,21 @@ export function IntroSplash() {
       window.clearTimeout(fadeAt);
       window.clearTimeout(hideAt);
       document.body.style.overflow = "";
+      document.documentElement.classList.remove("omora-intro-pending");
     };
   }, []);
+
+  // Reveal the homepage exactly when the splash starts fading out.
+  useEffect(() => {
+    if (!fading) return;
+    document.documentElement.classList.remove("omora-intro-pending");
+    const t = window.setTimeout(() => {
+      setVisible(false);
+      document.body.style.overflow = "";
+    }, 700);
+    return () => window.clearTimeout(t);
+  }, [fading]);
+
 
   // Force muted inline autoplay — mobile browsers block sound-on autoplay.
   useEffect(() => {
