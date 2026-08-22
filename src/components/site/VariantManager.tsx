@@ -141,15 +141,17 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
   const [signed, setSigned] = useState<Record<string, string>>({});
 
   const images = variant.images ?? [];
-  const video = variant.video_url;
+  const productVideo = variant.product_video_url ?? variant.video_url;
+  const packagingVideo = variant.packaging_video_url;
+  const videos = [productVideo, packagingVideo].filter((v): v is string => Boolean(v));
 
   useEffect(() => {
-    const all = [...images, ...(video ? [video] : [])].filter(Boolean);
+    const all = [...images, ...videos].filter(Boolean);
     if (all.length === 0) return;
     let active = true;
     signProductImages(all).then((m) => { if (active) setSigned(m); });
     return () => { active = false; };
-  }, [images.join("|"), video]);
+  }, [images.join("|"), videos.join("|")]);
 
   const src = (u: string) => signed[u] ?? u;
 
