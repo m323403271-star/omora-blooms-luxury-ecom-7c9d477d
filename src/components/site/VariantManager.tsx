@@ -9,6 +9,23 @@ import { handleImageError } from "@/lib/image-fallback";
 const MAX_IMAGES = 4;
 const MAX_IMG_MB = 5;
 const MAX_VIDEO_MB = 25;
+const MAX_VIDEO_SECONDS = 15;
+
+/** Reads a chosen video's duration in the browser; null when it can't be determined. */
+function readVideoDuration(file: File): Promise<number | null> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const el = document.createElement("video");
+    el.preload = "metadata";
+    el.onloadedmetadata = () => {
+      const d = el.duration;
+      URL.revokeObjectURL(url);
+      resolve(Number.isFinite(d) ? d : null);
+    };
+    el.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+    el.src = url;
+  });
+}
 
 type VariantRow = {
   id: string;
