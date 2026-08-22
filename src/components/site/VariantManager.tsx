@@ -343,8 +343,11 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
         </button>
       </div>
 
-      {(images.length > 0 || video) && (
-        <div className="mt-3 grid grid-cols-5 gap-2">
+      {(images.length > 0 || videos.length > 0) && (
+        <div className="mt-3 grid grid-cols-6 gap-2">
+          {productVideo && (
+            <VideoThumb src={src(productVideo)} label="Product" busy={busy} onRemove={() => removeVideo("product")} />
+          )}
           {images.map((url, i) => (
             <div key={url} className="relative aspect-square rounded-xl overflow-hidden hairline border">
               <img src={src(url)} alt={`${variant.name} ${i + 1}`} onError={handleImageError} className="h-full w-full object-cover" />
@@ -353,19 +356,23 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
               </button>
             </div>
           ))}
-          {video && (
-            <div className="relative aspect-square rounded-xl overflow-hidden hairline border">
-              {isVideoRef(video) ? (
-                <video src={src(video)} muted playsInline preload="metadata" className="h-full w-full object-cover" />
-              ) : null}
-              <button onClick={removeVideo} disabled={busy} aria-label="Remove video" className="absolute top-1 right-1 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-600 disabled:opacity-50">
-                <Trash2 className="h-3 w-3" />
-              </button>
-              <span className="absolute bottom-1 left-1 text-[9px] uppercase tracking-wider bg-black/70 text-white rounded-full px-2 py-0.5">Video</span>
-            </div>
+          {packagingVideo && (
+            <VideoThumb src={src(packagingVideo)} label="Packaging" busy={busy} onRemove={() => removeVideo("packaging")} />
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function VideoThumb({ src, label, busy, onRemove }: { src: string; label: string; busy: boolean; onRemove: () => void }) {
+  return (
+    <div className="relative aspect-square rounded-xl overflow-hidden hairline border">
+      <video src={src} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+      <button onClick={onRemove} disabled={busy} aria-label={`Remove ${label} video`} className="absolute top-1 right-1 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-600 disabled:opacity-50">
+        <Trash2 className="h-3 w-3" />
+      </button>
+      <span className="absolute bottom-1 left-1 text-[9px] uppercase tracking-wider bg-black/70 text-white rounded-full px-2 py-0.5">{label}</span>
     </div>
   );
 }
