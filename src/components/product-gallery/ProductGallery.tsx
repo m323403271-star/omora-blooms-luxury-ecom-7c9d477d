@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GalleryStage } from "./GalleryStage";
 import { GalleryThumbnailRail } from "./GalleryThumbnailRail";
+import { ZoomLightbox } from "./ZoomLightbox";
 import type { GalleryMediaItem } from "./types";
 
 export interface ProductGalleryProps {
@@ -19,6 +20,7 @@ export interface ProductGalleryProps {
 export function ProductGallery({ items, onActiveChange, className = "" }: ProductGalleryProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [zoomIndex, setZoomIndex] = useState<number | null>(null);
 
   const activeId = useMemo(
     () => items[activeIndex]?.id ?? items[0]?.id ?? "",
@@ -63,7 +65,12 @@ export function ProductGallery({ items, onActiveChange, className = "" }: Produc
               key={item.id}
               className="h-[260px] w-full shrink-0 snap-center sm:aspect-square sm:h-auto"
             >
-              <GalleryStage item={item} isActive={index === activeIndex} priority={index === 0} />
+              <GalleryStage
+                item={item}
+                isActive={index === activeIndex}
+                priority={index === 0}
+                onZoom={() => setZoomIndex(index)}
+              />
             </div>
           ))}
         </div>
@@ -72,6 +79,14 @@ export function ProductGallery({ items, onActiveChange, className = "" }: Produc
           {activeIndex + 1} / {items.length}
         </span>
       </div>
+
+      {zoomIndex !== null && items[zoomIndex] && (
+        <ZoomLightbox
+          src={items[zoomIndex].src}
+          alt={items[zoomIndex].alt}
+          onClose={() => setZoomIndex(null)}
+        />
+      )}
 
       <div className="mt-3 sm:mt-4">
         <GalleryThumbnailRail items={items} activeId={activeId} onSelect={goTo} />
