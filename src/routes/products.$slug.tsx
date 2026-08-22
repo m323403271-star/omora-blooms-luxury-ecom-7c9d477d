@@ -104,8 +104,14 @@ function ProductPage() {
   const gallery = useMemo(() => resolveGallery(product, collection?.image, related), [product, collection?.image, related]);
 
   const galleryMedia = useMemo(
-    () => buildProductGalleryMedia({ photos: gallery, productName: product.name }),
-    [gallery, product.name],
+    () =>
+      buildProductGalleryMedia({
+        photos: gallery,
+        productName: product.name,
+        productVideo: product.product_video_url,
+        packagingVideo: product.packaging_video_url,
+      }),
+    [gallery, product.name, product.product_video_url, product.packaging_video_url],
   );
 
   /** Exact image the customer is looking at — sent through checkout to the warehouse. */

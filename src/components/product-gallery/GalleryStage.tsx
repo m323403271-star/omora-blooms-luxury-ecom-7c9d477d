@@ -1,14 +1,16 @@
 import { useEffect, useRef } from "react";
+import { TiltImage } from "./TiltImage";
 import type { GalleryMediaItem } from "./types";
 
 interface GalleryStageProps {
   item: GalleryMediaItem;
   isActive: boolean;
   priority?: boolean | undefined;
+  onZoom?: (() => void) | undefined;
 }
 
 /** Renders a single media item: video, photo, or the 3D-depth dimension card. */
-export function GalleryStage({ item, isActive, priority = false }: GalleryStageProps) {
+export function GalleryStage({ item, isActive, priority = false, onZoom }: GalleryStageProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -61,12 +63,5 @@ export function GalleryStage({ item, isActive, priority = false }: GalleryStageP
     );
   }
 
-  return (
-    <img
-      src={item.src}
-      alt={item.alt}
-      {...(priority ? {} : { loading: "lazy" as const })}
-      className="h-full w-full rounded-2xl object-cover"
-    />
-  );
+  return <TiltImage src={item.src} alt={item.alt} priority={priority} onZoom={onZoom} />;
 }

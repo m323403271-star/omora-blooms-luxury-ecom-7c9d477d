@@ -374,7 +374,9 @@ export type Database = {
           is_bestseller: boolean
           is_trending: boolean
           name: string
+          packaging_video_url: string | null
           price: number
+          product_video_url: string | null
           slug: string
           sort_order: number
           tagline: string | null
@@ -393,7 +395,9 @@ export type Database = {
           is_bestseller?: boolean
           is_trending?: boolean
           name: string
+          packaging_video_url?: string | null
           price?: number
+          product_video_url?: string | null
           slug: string
           sort_order?: number
           tagline?: string | null
@@ -412,7 +416,9 @@ export type Database = {
           is_bestseller?: boolean
           is_trending?: boolean
           name?: string
+          packaging_video_url?: string | null
           price?: number
+          product_video_url?: string | null
           slug?: string
           sort_order?: number
           tagline?: string | null

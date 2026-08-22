@@ -13,6 +13,8 @@ export type Product = {
   category: string;
   image_url: string;
   images?: string[] | null;
+  product_video_url?: string | null;
+  packaging_video_url?: string | null;
   tags: string[] | null;
   featured: boolean;
   available: boolean;
@@ -156,7 +158,7 @@ async function fetchProducts(): Promise<Product[]> {
     const { data, error } = await supabase
       .from("products")
       .select(
-        "id, slug, name, tagline, description, price, compare_at_price, category, image_url, images, tags, featured, available, sort_order, is_trending, is_bestseller, created_at",
+        "id, slug, name, tagline, description, price, compare_at_price, category, image_url, images, product_video_url, packaging_video_url, tags, featured, available, sort_order, is_trending, is_bestseller, created_at",
       )
       .eq("available", true)
       .order("sort_order", { ascending: true })
@@ -169,6 +171,8 @@ async function fetchProducts(): Promise<Product[]> {
     for (const p of data) {
       if (p.image_url) all.push(p.image_url);
       for (const u of p.images ?? []) if (u) all.push(u);
+      if (p.product_video_url) all.push(p.product_video_url);
+      if (p.packaging_video_url) all.push(p.packaging_video_url);
     }
     const signed = await signProductImages(all);
 
@@ -176,6 +180,8 @@ async function fetchProducts(): Promise<Product[]> {
       ...p,
       image_url: resolveProductImage(signed[p.image_url] ?? p.image_url),
       images: (p.images ?? []).map((u) => resolveProductImage(signed[u] ?? u)),
+      product_video_url: p.product_video_url ? (signed[p.product_video_url] ?? p.product_video_url) : null,
+      packaging_video_url: p.packaging_video_url ? (signed[p.packaging_video_url] ?? p.packaging_video_url) : null,
       price: Number(p.price),
       compare_at_price: p.compare_at_price === null ? null : Number(p.compare_at_price),
     })) as Product[];
