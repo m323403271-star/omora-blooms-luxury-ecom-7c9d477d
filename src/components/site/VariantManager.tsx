@@ -245,33 +245,48 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
     } finally { setBusy(false); }
   }
 
-  async function onVideo(list: FileList | null) {
+  async function onVideo(list: FileList | null, kind: "product" | "packaging") {
     const file = list?.[0];
     if (!file) return;
     if (!file.type.startsWith("video/")) { toast.error("Please choose a video file"); return; }
     if (file.size > MAX_VIDEO_MB * 1024 * 1024) { toast.error(`Video must be under ${MAX_VIDEO_MB}MB`); return; }
+    const duration = await readVideoDuration(file);
+    if (duration !== null && duration > MAX_VIDEO_SECONDS + 0.5) {
+      toast.error(`Video must be ${MAX_VIDEO_SECONDS} seconds or shorter`);
+      return;
+    }
     setBusy(true);
     try {
       const ref = await uploadTo(variant.product_id, file);
       if (!ref) return;
-      const { error } = await supabase.from("product_variants").update({ video_url: ref }).eq("id", variant.id);
+      const previous = kind === "product" ? productVideo : packagingVideo;
+      const patch =
+        kind === "product"
+          ? { product_video_url: ref, video_url: ref }
+          : { packaging_video_url: ref };
+      const { error } = await supabase.from("product_variants").update(patch).eq("id", variant.id);
       if (error) { toast.error(error.message); return; }
-      if (video) {
-        const old = productImagePath(video);
+      if (previous) {
+        const old = productImagePath(previous);
         if (old) await supabase.storage.from(PRODUCT_BUCKET).remove([old]);
       }
-      toast.success("Video uploaded");
+      toast.success(kind === "product" ? "Product video uploaded" : "Packaging video uploaded");
       onChanged();
     } finally { setBusy(false); }
   }
 
-  async function removeVideo() {
-    if (!video) return;
+  async function removeVideo(kind: "product" | "packaging") {
+    const current = kind === "product" ? productVideo : packagingVideo;
+    if (!current) return;
     setBusy(true);
     try {
-      const { error } = await supabase.from("product_variants").update({ video_url: null }).eq("id", variant.id);
+      const patch =
+        kind === "product"
+          ? { product_video_url: null, video_url: null }
+          : { packaging_video_url: null };
+      const { error } = await supabase.from("product_variants").update(patch).eq("id", variant.id);
       if (error) { toast.error(error.message); return; }
-      const path = productImagePath(video);
+      const path = productImagePath(current);
       if (path) await supabase.storage.from(PRODUCT_BUCKET).remove([path]);
       toast.success("Video removed");
       onChanged();
