@@ -3,12 +3,29 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Plus, Trash2, Save, Loader2, Upload, Eye, EyeOff, Film } from "lucide-react";
 import { PRODUCT_BUCKET, productImagePath, signProductImages } from "@/lib/storage-image";
-import { isVideoRef } from "@/lib/product-variants";
+
 import { handleImageError } from "@/lib/image-fallback";
 
 const MAX_IMAGES = 4;
 const MAX_IMG_MB = 5;
 const MAX_VIDEO_MB = 25;
+const MAX_VIDEO_SECONDS = 15;
+
+/** Reads a chosen video's duration in the browser; null when it can't be determined. */
+function readVideoDuration(file: File): Promise<number | null> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const el = document.createElement("video");
+    el.preload = "metadata";
+    el.onloadedmetadata = () => {
+      const d = el.duration;
+      URL.revokeObjectURL(url);
+      resolve(Number.isFinite(d) ? d : null);
+    };
+    el.onerror = () => { URL.revokeObjectURL(url); resolve(null); };
+    el.src = url;
+  });
+}
 
 type VariantRow = {
   id: string;
@@ -141,15 +158,17 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
   const [signed, setSigned] = useState<Record<string, string>>({});
 
   const images = variant.images ?? [];
-  const video = variant.video_url;
+  const productVideo = variant.product_video_url ?? variant.video_url;
+  const packagingVideo = variant.packaging_video_url;
+  const videos = [productVideo, packagingVideo].filter((v): v is string => Boolean(v));
 
   useEffect(() => {
-    const all = [...images, ...(video ? [video] : [])].filter(Boolean);
+    const all = [...images, ...videos].filter(Boolean);
     if (all.length === 0) return;
     let active = true;
     signProductImages(all).then((m) => { if (active) setSigned(m); });
     return () => { active = false; };
-  }, [images.join("|"), video]);
+  }, [images.join("|"), videos.join("|")]);
 
   const src = (u: string) => signed[u] ?? u;
 
@@ -202,7 +221,7 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
   async function removeVariant() {
     setBusy(true);
     try {
-      const paths = [...images, ...(video ? [video] : [])]
+      const paths = [...images, ...videos]
         .map((u) => productImagePath(u))
         .filter((p): p is string => Boolean(p));
       const { error } = await supabase.from("product_variants").delete().eq("id", variant.id);
@@ -245,33 +264,48 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
     } finally { setBusy(false); }
   }
 
-  async function onVideo(list: FileList | null) {
+  async function onVideo(list: FileList | null, kind: "product" | "packaging") {
     const file = list?.[0];
     if (!file) return;
     if (!file.type.startsWith("video/")) { toast.error("Please choose a video file"); return; }
     if (file.size > MAX_VIDEO_MB * 1024 * 1024) { toast.error(`Video must be under ${MAX_VIDEO_MB}MB`); return; }
+    const duration = await readVideoDuration(file);
+    if (duration !== null && duration > MAX_VIDEO_SECONDS + 0.5) {
+      toast.error(`Video must be ${MAX_VIDEO_SECONDS} seconds or shorter`);
+      return;
+    }
     setBusy(true);
     try {
       const ref = await uploadTo(variant.product_id, file);
       if (!ref) return;
-      const { error } = await supabase.from("product_variants").update({ video_url: ref }).eq("id", variant.id);
+      const previous = kind === "product" ? productVideo : packagingVideo;
+      const patch =
+        kind === "product"
+          ? { product_video_url: ref, video_url: ref }
+          : { packaging_video_url: ref };
+      const { error } = await supabase.from("product_variants").update(patch).eq("id", variant.id);
       if (error) { toast.error(error.message); return; }
-      if (video) {
-        const old = productImagePath(video);
+      if (previous) {
+        const old = productImagePath(previous);
         if (old) await supabase.storage.from(PRODUCT_BUCKET).remove([old]);
       }
-      toast.success("Video uploaded");
+      toast.success(kind === "product" ? "Product video uploaded" : "Packaging video uploaded");
       onChanged();
     } finally { setBusy(false); }
   }
 
-  async function removeVideo() {
-    if (!video) return;
+  async function removeVideo(kind: "product" | "packaging") {
+    const current = kind === "product" ? productVideo : packagingVideo;
+    if (!current) return;
     setBusy(true);
     try {
-      const { error } = await supabase.from("product_variants").update({ video_url: null }).eq("id", variant.id);
+      const patch =
+        kind === "product"
+          ? { product_video_url: null, video_url: null }
+          : { packaging_video_url: null };
+      const { error } = await supabase.from("product_variants").update(patch).eq("id", variant.id);
       if (error) { toast.error(error.message); return; }
-      const path = productImagePath(video);
+      const path = productImagePath(current);
       if (path) await supabase.storage.from(PRODUCT_BUCKET).remove([path]);
       toast.success("Video removed");
       onChanged();
@@ -335,16 +369,23 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
           <input type="file" accept="image/*" multiple hidden onChange={(e) => { onImages(e.target.files); e.currentTarget.value = ""; }} />
         </label>
         <label className={`btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 cursor-pointer ${busy ? "opacity-50 pointer-events-none" : ""}`}>
-          <Film className="h-3 w-3" /> {video ? "Replace video" : "Add video (≤10s)"}
-          <input type="file" accept="video/*" hidden onChange={(e) => { onVideo(e.target.files); e.currentTarget.value = ""; }} />
+          <Film className="h-3 w-3" /> {productVideo ? "Replace Product Video (≤15s)" : "Add Product Video (≤15s)"}
+          <input type="file" accept="video/*" hidden onChange={(e) => { onVideo(e.target.files, "product"); e.currentTarget.value = ""; }} />
+        </label>
+        <label className={`btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 cursor-pointer ${busy ? "opacity-50 pointer-events-none" : ""}`}>
+          <Film className="h-3 w-3" /> {packagingVideo ? "Replace Packaging Video (≤15s)" : "Add Packaging Video (≤15s)"}
+          <input type="file" accept="video/*" hidden onChange={(e) => { onVideo(e.target.files, "packaging"); e.currentTarget.value = ""; }} />
         </label>
         <button onClick={saveDetails} disabled={!dirty || busy} className="btn-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 disabled:opacity-40">
           {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />} Save variant
         </button>
       </div>
 
-      {(images.length > 0 || video) && (
-        <div className="mt-3 grid grid-cols-5 gap-2">
+      {(images.length > 0 || videos.length > 0) && (
+        <div className="mt-3 grid grid-cols-6 gap-2">
+          {productVideo && (
+            <VideoThumb src={src(productVideo)} label="Product" busy={busy} onRemove={() => removeVideo("product")} />
+          )}
           {images.map((url, i) => (
             <div key={url} className="relative aspect-square rounded-xl overflow-hidden hairline border">
               <img src={src(url)} alt={`${variant.name} ${i + 1}`} onError={handleImageError} className="h-full w-full object-cover" />
@@ -353,19 +394,23 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
               </button>
             </div>
           ))}
-          {video && (
-            <div className="relative aspect-square rounded-xl overflow-hidden hairline border">
-              {isVideoRef(video) ? (
-                <video src={src(video)} muted playsInline preload="metadata" className="h-full w-full object-cover" />
-              ) : null}
-              <button onClick={removeVideo} disabled={busy} aria-label="Remove video" className="absolute top-1 right-1 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-600 disabled:opacity-50">
-                <Trash2 className="h-3 w-3" />
-              </button>
-              <span className="absolute bottom-1 left-1 text-[9px] uppercase tracking-wider bg-black/70 text-white rounded-full px-2 py-0.5">Video</span>
-            </div>
+          {packagingVideo && (
+            <VideoThumb src={src(packagingVideo)} label="Packaging" busy={busy} onRemove={() => removeVideo("packaging")} />
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+function VideoThumb({ src, label, busy, onRemove }: { src: string; label: string; busy: boolean; onRemove: () => void }) {
+  return (
+    <div className="relative aspect-square rounded-xl overflow-hidden hairline border">
+      <video src={src} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+      <button onClick={onRemove} disabled={busy} aria-label={`Remove ${label} video`} className="absolute top-1 right-1 bg-black/80 text-white rounded-full p-1.5 hover:bg-red-600 disabled:opacity-50">
+        <Trash2 className="h-3 w-3" />
+      </button>
+      <span className="absolute bottom-1 left-1 text-[9px] uppercase tracking-wider bg-black/70 text-white rounded-full px-2 py-0.5">{label}</span>
     </div>
   );
 }

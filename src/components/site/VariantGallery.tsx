@@ -37,7 +37,17 @@ export function VariantGallery({
 
   const stage = (cls: string) =>
     isVideoRef(active) ? (
-      <video src={active} controls playsInline preload="metadata" className={cls} />
+      <video
+        key={active}
+        src={active}
+        autoPlay
+        muted
+        loop
+        playsInline
+        controls
+        preload="metadata"
+        className={cls}
+      />
     ) : (
       <img src={active} alt={alt} onError={handleImageError} className={cls} />
     );
