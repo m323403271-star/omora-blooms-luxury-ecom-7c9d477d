@@ -335,8 +335,12 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
           <input type="file" accept="image/*" multiple hidden onChange={(e) => { onImages(e.target.files); e.currentTarget.value = ""; }} />
         </label>
         <label className={`btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 cursor-pointer ${busy ? "opacity-50 pointer-events-none" : ""}`}>
-          <Film className="h-3 w-3" /> {video ? "Replace video" : "Add video (≤10s)"}
-          <input type="file" accept="video/*" hidden onChange={(e) => { onVideo(e.target.files); e.currentTarget.value = ""; }} />
+          <Film className="h-3 w-3" /> {productVideo ? "Replace Product Video (≤15s)" : "Add Product Video (≤15s)"}
+          <input type="file" accept="video/*" hidden onChange={(e) => { onVideo(e.target.files, "product"); e.currentTarget.value = ""; }} />
+        </label>
+        <label className={`btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 cursor-pointer ${busy ? "opacity-50 pointer-events-none" : ""}`}>
+          <Film className="h-3 w-3" /> {packagingVideo ? "Replace Packaging Video (≤15s)" : "Add Packaging Video (≤15s)"}
+          <input type="file" accept="video/*" hidden onChange={(e) => { onVideo(e.target.files, "packaging"); e.currentTarget.value = ""; }} />
         </label>
         <button onClick={saveDetails} disabled={!dirty || busy} className="btn-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2 disabled:opacity-40">
           {busy ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />} Save variant
