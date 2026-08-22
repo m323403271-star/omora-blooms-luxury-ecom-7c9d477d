@@ -159,7 +159,13 @@ function BuyPage() {
 
   const soldOut = isSoldOut(variant);
   const parent = products.find((p) => p.id === variant.product_id);
-  const media = [...(variant.images ?? []), ...(variant.video_url ? [variant.video_url] : [])].filter(Boolean);
+  // Locked gallery order: product video → variant images → packaging video.
+  const productVideo = variant.product_video_url ?? variant.video_url;
+  const media = [
+    ...(productVideo ? [productVideo] : []),
+    ...(variant.images ?? []),
+    ...(variant.packaging_video_url ? [variant.packaging_video_url] : []),
+  ].filter(Boolean);
   const displayImage = selectedImage || variant.images?.[0] || parent?.image_url || "";
 
   const pin = pincode.trim();

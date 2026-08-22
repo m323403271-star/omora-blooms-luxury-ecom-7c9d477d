@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Plus, Trash2, Save, Loader2, Upload, Eye, EyeOff, Film } from "lucide-react";
 import { PRODUCT_BUCKET, productImagePath, signProductImages } from "@/lib/storage-image";
-import { isVideoRef } from "@/lib/product-variants";
+
 import { handleImageError } from "@/lib/image-fallback";
 
 const MAX_IMAGES = 4;
