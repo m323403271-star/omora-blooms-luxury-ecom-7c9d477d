@@ -44,6 +44,7 @@ import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpa
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
 import { Route as ApiCouponValidateRouteImport } from './routes/api/coupon/validate'
 import { Route as AuthenticatedAdminWarehouseRouteImport } from './routes/_authenticated/admin.warehouse'
+import { Route as AuthenticatedAdminShowcaseRouteImport } from './routes/_authenticated/admin.showcase'
 import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
 import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
 import { Route as AuthenticatedAdminManageImagesRouteImport } from './routes/_authenticated/admin.manage-images'
@@ -227,6 +228,12 @@ const AuthenticatedAdminWarehouseRoute =
     path: '/admin/warehouse',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminShowcaseRoute =
+  AuthenticatedAdminShowcaseRouteImport.update({
+    id: '/admin/showcase',
+    path: '/admin/showcase',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminReferralsRoute =
   AuthenticatedAdminReferralsRouteImport.update({
     id: '/admin/referrals',
@@ -289,6 +296,7 @@ export interface FileRoutesByFullPath {
   '/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
+  '/admin/showcase': typeof AuthenticatedAdminShowcaseRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/coupon/validate': typeof ApiCouponValidateRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
@@ -330,6 +338,7 @@ export interface FileRoutesByTo {
   '/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/admin/products': typeof AuthenticatedAdminProductsRoute
   '/admin/referrals': typeof AuthenticatedAdminReferralsRoute
+  '/admin/showcase': typeof AuthenticatedAdminShowcaseRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/coupon/validate': typeof ApiCouponValidateRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
@@ -373,6 +382,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/manage-images': typeof AuthenticatedAdminManageImagesRoute
   '/_authenticated/admin/products': typeof AuthenticatedAdminProductsRoute
   '/_authenticated/admin/referrals': typeof AuthenticatedAdminReferralsRoute
+  '/_authenticated/admin/showcase': typeof AuthenticatedAdminShowcaseRoute
   '/_authenticated/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/coupon/validate': typeof ApiCouponValidateRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
@@ -416,6 +426,7 @@ export interface FileRouteTypes {
     | '/admin/manage-images'
     | '/admin/products'
     | '/admin/referrals'
+    | '/admin/showcase'
     | '/admin/warehouse'
     | '/api/coupon/validate'
     | '/api/public/razorpay-webhook'
@@ -457,6 +468,7 @@ export interface FileRouteTypes {
     | '/admin/manage-images'
     | '/admin/products'
     | '/admin/referrals'
+    | '/admin/showcase'
     | '/admin/warehouse'
     | '/api/coupon/validate'
     | '/api/public/razorpay-webhook'
@@ -499,6 +511,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/manage-images'
     | '/_authenticated/admin/products'
     | '/_authenticated/admin/referrals'
+    | '/_authenticated/admin/showcase'
     | '/_authenticated/admin/warehouse'
     | '/api/coupon/validate'
     | '/api/public/razorpay-webhook'
@@ -790,6 +803,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminWarehouseRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/showcase': {
+      id: '/_authenticated/admin/showcase'
+      path: '/admin/showcase'
+      fullPath: '/admin/showcase'
+      preLoaderRoute: typeof AuthenticatedAdminShowcaseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/referrals': {
       id: '/_authenticated/admin/referrals'
       path: '/admin/referrals'
@@ -837,6 +857,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminManageImagesRoute: typeof AuthenticatedAdminManageImagesRoute
   AuthenticatedAdminProductsRoute: typeof AuthenticatedAdminProductsRoute
   AuthenticatedAdminReferralsRoute: typeof AuthenticatedAdminReferralsRoute
+  AuthenticatedAdminShowcaseRoute: typeof AuthenticatedAdminShowcaseRoute
   AuthenticatedAdminWarehouseRoute: typeof AuthenticatedAdminWarehouseRoute
 }
 
@@ -849,6 +870,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminManageImagesRoute: AuthenticatedAdminManageImagesRoute,
   AuthenticatedAdminProductsRoute: AuthenticatedAdminProductsRoute,
   AuthenticatedAdminReferralsRoute: AuthenticatedAdminReferralsRoute,
+  AuthenticatedAdminShowcaseRoute: AuthenticatedAdminShowcaseRoute,
   AuthenticatedAdminWarehouseRoute: AuthenticatedAdminWarehouseRoute,
 }
 
