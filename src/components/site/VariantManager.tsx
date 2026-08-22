@@ -202,7 +202,7 @@ function VariantEditor({ variant, onChanged }: { variant: VariantRow; onChanged:
   async function removeVariant() {
     setBusy(true);
     try {
-      const paths = [...images, ...(video ? [video] : [])]
+      const paths = [...images, ...videos]
         .map((u) => productImagePath(u))
         .filter((p): p is string => Boolean(p));
       const { error } = await supabase.from("product_variants").delete().eq("id", variant.id);
