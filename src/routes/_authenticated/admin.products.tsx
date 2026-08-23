@@ -94,7 +94,10 @@ function AdminProductsPage() {
           <h1 className="font-serif text-3xl md:text-4xl mt-1">Products &amp; Shades</h1>
           <p className="text-sm text-[color:var(--muted-foreground)] mt-1">Upload up to {MAX_PER_PRODUCT} gallery images per product (max {MAX_MB}MB each), and edit price & description — changes go live instantly.</p>
         </div>
-        <Link to="/" className="btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2"><ArrowLeft className="h-3 w-3" /> Back to site</Link>
+        <div className="flex items-center gap-2 flex-wrap">
+          <Link to="/admin/showcase" className="btn-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2">Showcase Media</Link>
+          <Link to="/" className="btn-outline-gold px-4 py-2 rounded-full text-xs inline-flex items-center gap-2"><ArrowLeft className="h-3 w-3" /> Back to site</Link>
+        </div>
 
       </div>
 
