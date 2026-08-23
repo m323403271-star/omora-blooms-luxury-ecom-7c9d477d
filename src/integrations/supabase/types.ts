@@ -372,6 +372,7 @@ export type Database = {
           image_url: string
           images: string[]
           is_bestseller: boolean
+          is_new_launch: boolean
           is_trending: boolean
           name: string
           packaging_video_url: string | null
@@ -393,6 +394,7 @@ export type Database = {
           image_url: string
           images?: string[]
           is_bestseller?: boolean
+          is_new_launch?: boolean
           is_trending?: boolean
           name: string
           packaging_video_url?: string | null
@@ -414,6 +416,7 @@ export type Database = {
           image_url?: string
           images?: string[]
           is_bestseller?: boolean
+          is_new_launch?: boolean
           is_trending?: boolean
           name?: string
           packaging_video_url?: string | null
