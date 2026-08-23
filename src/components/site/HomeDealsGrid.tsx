@@ -19,8 +19,9 @@ export function HomeDealsGrid({
   const { data } = useSuspenseQuery(productsQuery);
   const catalog = data && data.length > 0 ? data : LOCAL_PRODUCTS;
   // Trending feed comes straight from the catalog flag, with a graceful fallback.
-  const trending = catalog.filter((p) => p.is_trending);
-  const products = (trending.length > 0 ? trending : catalog).slice(0, limit);
+  const products = catalog.filter((p) => p.is_trending).slice(0, limit);
+
+  if (products.length === 0) return null;
 
   return (
     <section className="container-luxe py-3 md:py-14">

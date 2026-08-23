@@ -307,16 +307,14 @@ function useCatalog() {
 
 export function TrendingSlider() {
   const products = useCatalog();
-  const flagged = products.filter((p) => p.is_trending);
-  const items = (flagged.length > 0 ? flagged : products).slice(0, 8);
+  const items = products.filter((p) => p.is_trending).slice(0, 8);
   if (items.length === 0) return null;
   return <ProductSlider title="Trending Now" eyebrow="Handpicked for you" products={items} />;
 }
 
 export function BestsellersSlider() {
   const products = useCatalog();
-  const flagged = products.filter((p) => p.is_bestseller);
-  const items = (flagged.length > 0 ? flagged : products.filter((p) => p.featured)).slice(0, 8);
+  const items = products.filter((p) => p.is_bestseller).slice(0, 8);
   if (items.length === 0) return null;
   return (
     <ProductSlider title="Shop by Bestsellers" eyebrow="Loved by our customers" products={items} />
@@ -325,9 +323,7 @@ export function BestsellersSlider() {
 
 export function NewlyLaunchedSlider() {
   const products = useCatalog();
-  const items = [...products]
-    .sort((a, b) => (b.created_at ?? "").localeCompare(a.created_at ?? ""))
-    .slice(0, 8);
+  const items = products.filter((p) => p.is_new_launch).slice(0, 8);
   if (items.length === 0) return null;
   return <ProductSlider title="Newly Launched" eyebrow="Fresh from the atelier" products={items} />;
 }
