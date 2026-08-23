@@ -156,7 +156,14 @@ function ShowcaseCard({ row, onChanged }: { row: Row; onChanged: () => void | Pr
     return `${PRODUCT_BUCKET}/${key}`;
   }
 
-  async function patch(update: Record<string, unknown>, message: string) {
+  type ProductUpdate = Partial<{
+    images: string[];
+    image_url: string;
+    product_video_url: string | null;
+    packaging_video_url: string | null;
+  }>;
+
+  async function patch(update: ProductUpdate, message: string) {
     const { error } = await supabase.from("products").update(update).eq("id", row.id);
     if (error) { toast.error(error.message); return; }
     toast.success(message);
@@ -193,8 +200,8 @@ function ShowcaseCard({ row, onChanged }: { row: Row; onChanged: () => void | Pr
         if (ref) next.push(ref);
       }
       if (next.length === images.length) return;
-      const update: Record<string, unknown> = { images: next };
-      if (next[0]) update['image_url'] = next[0];
+      const update: ProductUpdate = { images: next };
+      if (next[0]) update.image_url = next[0];
       await patch(update, "Photos updated");
     } finally { setBusy(false); }
   }
@@ -204,8 +211,8 @@ function ShowcaseCard({ row, onChanged }: { row: Row; onChanged: () => void | Pr
     try {
       const target = images[index];
       const next = images.filter((_, i) => i !== index);
-      const update: Record<string, unknown> = { images: next };
-      if (next[0]) update['image_url'] = next[0];
+      const update: ProductUpdate = { images: next };
+      if (next[0]) update.image_url = next[0];
       await patch(update, "Photo removed");
       const path = target ? productImagePath(target) : null;
       if (path) await supabase.storage.from(PRODUCT_BUCKET).remove([path]);
