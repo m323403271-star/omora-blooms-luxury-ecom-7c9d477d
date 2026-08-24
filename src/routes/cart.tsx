@@ -258,53 +258,52 @@ function CartPage() {
                 <span>Total</span><span className="text-[color:var(--gold)]">{formatPrice(total)}</span>
               </div>
             </div>
-            {ref && <p className="mt-3 text-xs text-[color:var(--gold)]">Referral applied: {ref}</p>}
-            <button
-              disabled={paying || items.length === 0 || !canPay}
-              onClick={async () => {
-                if (!canPay) { toast.error(`Please complete: ${missing.join(", ")}`); return; }
-                setPaying(true);
-                try {
-                  const { getCustomerTier } = await import("@/lib/delivery");
-                  await startRazorpayCheckout(items, (orderId) => {
-                    if (showPickup && pickup) savePickupForOrder(orderId, pickup);
-                    clear();
-                    navigate({ to: "/order/$orderId", params: { orderId } });
-                  }, {
-                    pincode: pincode,
-                    customerTier: getCustomerTier(),
-                    pickupPointId: showPickup ? pickup || null : null,
-                    customerName: fullName.trim(),
-                    customerPhone: mobile.replace(/\D/g, ""),
-                    deliveryNotes:
-                      [address.trim() ? `Address: ${address.trim()}` : "", deliveryNotes.trim()]
-                        .filter(Boolean)
-                        .join(" | ")
-                        .slice(0, 300) || null,
-                  });
-                } finally {
-                  setPaying(false);
-                }
-              }}
-              className="btn-gold mt-6 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm disabled:opacity-60"
-            >
-              <CreditCard className="h-4 w-4" /> {paying ? "Starting…" : "Proceed to Pay"}
-            </button>
+            {ref && <p className="mt-2 text-xs text-[color:var(--gold)]">Referral applied: {ref}</p>}
+            <div className="mt-3 hidden sm:flex flex-row w-full gap-2">
+              <button
+                disabled={paying || items.length === 0 || !canPay}
+                onClick={startPay}
+                className="btn-gold flex-1 min-w-0 inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm disabled:opacity-60"
+              >
+                <CreditCard className="h-4 w-4 shrink-0" /> {paying ? "Starting…" : "Proceed to Pay"}
+              </button>
+              <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-outline-gold flex-1 min-w-0 inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm">
+                <MessageCircle className="h-4 w-4 shrink-0" /> WhatsApp
+              </a>
+            </div>
             {!canPay && items.length > 0 && (
               <p className="mt-2 text-center text-[11px] text-[color:var(--muted-foreground)]">
                 Complete to pay: {missing.join(", ")}
               </p>
             )}
 
-            <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-outline-gold mt-3 w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm">
-              <MessageCircle className="h-4 w-4" /> Order via WhatsApp
-            </a>
-            <CraftNote className="mt-3" align="center" />
-            <p className="mt-3 text-[11px] text-[color:var(--muted-foreground)] text-center">UPI, cards & net banking. Or confirm with our concierge on WhatsApp.</p>
+            <CraftNote className="mt-2" align="center" />
+            <p className="mt-2 text-[11px] text-[color:var(--muted-foreground)] text-center">UPI, cards & net banking. Or confirm with our concierge on WhatsApp.</p>
           </aside>
+
+          {/* Mobile sticky total + CTAs */}
+          <div className="fixed bottom-0 left-0 right-0 z-50 p-3 bg-background border-t sm:hidden w-full max-w-full">
+            <div className="flex items-center justify-between mb-2 text-sm">
+              <span className="text-[color:var(--muted-foreground)]">Total</span>
+              <span className="font-serif text-lg text-[color:var(--gold)]">{formatPrice(total)}</span>
+            </div>
+            <div className="flex flex-row w-full gap-2">
+              <button
+                disabled={paying || items.length === 0 || !canPay}
+                onClick={startPay}
+                className="btn-gold flex-1 min-w-0 inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm disabled:opacity-60"
+              >
+                <CreditCard className="h-4 w-4 shrink-0" /> {paying ? "Starting…" : "Pay Now"}
+              </button>
+              <a href={whatsappLink(message)} onClick={handleCheckout} target="_blank" rel="noopener noreferrer" className="btn-outline-gold flex-1 min-w-0 inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm">
+                <MessageCircle className="h-4 w-4 shrink-0" /> WhatsApp
+              </a>
+            </div>
+          </div>
 
         </div>
       )}
+
     </div>
   );
 }
