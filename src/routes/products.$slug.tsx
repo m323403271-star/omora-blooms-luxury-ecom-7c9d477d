@@ -234,14 +234,15 @@ function ProductPage() {
       <ReviewSection productId={product.id} productName={product.name} />
 
       {related.length > 0 && (
-        <section className="container-luxe pb-20 border-t hairline pt-16">
-          <div className="flex items-end justify-between mb-8">
+        <section className="container-luxe px-3 pb-10 md:pb-20 border-t hairline pt-6 md:pt-16">
+          <div className="flex items-end justify-between mb-3 md:mb-8">
             <div>
-              <p className="eyebrow mb-2">You may also love</p>
-              <h2 className="font-serif text-3xl md:text-4xl">Complete the moment</h2>
+              <p className="eyebrow mb-1 md:mb-2">You may also love</p>
+              <h2 className="font-serif text-2xl md:text-4xl">Complete the moment</h2>
             </div>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-8">
+
             {related.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         </section>
