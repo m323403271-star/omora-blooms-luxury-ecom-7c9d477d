@@ -132,8 +132,8 @@ function ProductPage() {
   );
 
   return (
-    <div>
-      <div className="container-luxe pt-10 text-xs text-[color:var(--muted-foreground)] tracking-widest uppercase">
+    <div className="w-full max-w-full overflow-x-hidden pb-4">
+      <div className="container-luxe px-3 pt-4 md:pt-10 text-xs text-[color:var(--muted-foreground)] tracking-widest uppercase">
         <Link to="/" className="hover:text-[color:var(--gold)]">Home</Link>
         <span className="mx-2">/</span>
         <Link to="/shop" className="hover:text-[color:var(--gold)]">Shop</Link>
@@ -143,9 +143,10 @@ function ProductPage() {
         </>)}
       </div>
 
-      <section className="container-luxe grid lg:grid-cols-2 gap-10 md:gap-16 py-10 md:py-16">
+      <section className="container-luxe px-3 grid lg:grid-cols-2 gap-4 md:gap-16 py-4 md:py-16">
         <div>
           <ProductGallery items={galleryMedia} onActiveChange={setActiveMediaId} />
+
 
           <PdpAdminUpload
             productId={product.id}
