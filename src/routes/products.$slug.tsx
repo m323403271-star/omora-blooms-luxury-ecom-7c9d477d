@@ -158,26 +158,26 @@ function ProductPage() {
 
 
 
-        <div>
-          {collection && <p className="eyebrow mb-3">{collection.name}</p>}
-          <h1 className="font-serif text-4xl md:text-5xl leading-tight">{product.name}</h1>
-          {product.tagline && <p className="mt-3 text-[color:var(--muted-foreground)]">{product.tagline}</p>}
-          <div className="mt-6 flex items-baseline gap-3">
-            <span className="text-3xl text-[color:var(--gold)] font-medium">{formatPrice(unitPrice)}</span>
+        <div className="min-w-0">
+          {collection && <p className="eyebrow mb-2">{collection.name}</p>}
+          <h1 className="font-serif text-2xl md:text-5xl leading-tight">{product.name}</h1>
+          {product.tagline && <p className="mt-2 text-sm md:text-base text-[color:var(--muted-foreground)]">{product.tagline}</p>}
+          <div className="mt-2 md:mt-6 flex items-baseline gap-2 flex-wrap">
+            <span className="text-2xl md:text-3xl text-[color:var(--gold)] font-medium">{formatPrice(unitPrice)}</span>
             {product.compare_at_price && (
-              <span className="text-lg text-[color:var(--muted-foreground)] line-through">{formatPrice(product.compare_at_price)}</span>
+              <span className="text-base text-[color:var(--muted-foreground)] line-through">{formatPrice(product.compare_at_price)}</span>
             )}
             {addOnTotal > 0 && (
               <span className="text-xs text-[color:var(--muted-foreground)]">(incl. +{formatPrice(addOnTotal)} customization)</span>
             )}
           </div>
 
-          <div className="mt-4">
+          <div className="mt-2 md:mt-4">
             <DeliveryEtaChecker />
           </div>
 
           {product.description && (
-            <p className="mt-6 text-[color:var(--muted-foreground)] leading-relaxed">{product.description}</p>
+            <p className="mt-2 md:mt-6 text-sm md:text-base text-[color:var(--muted-foreground)] leading-relaxed">{product.description}</p>
           )}
 
           <GiftAndBouquetCustomizer
@@ -189,34 +189,34 @@ function ProductPage() {
             }}
           />
 
-          <div className="mt-8 flex items-center gap-4">
-            <div className="flex items-center hairline border rounded-full">
-              <button className="p-3" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease"><Minus className="h-4 w-4" /></button>
+          <div className="mt-3 md:mt-8 flex items-center gap-2">
+            <div className="flex items-center hairline border rounded-full shrink-0">
+              <button className="p-2.5" onClick={() => setQty((q) => Math.max(1, q - 1))} aria-label="Decrease"><Minus className="h-4 w-4" /></button>
               <span className="px-3 min-w-8 text-center">{qty}</span>
-              <button className="p-3" onClick={() => setQty((q) => q + 1)} aria-label="Increase"><Plus className="h-4 w-4" /></button>
+              <button className="p-2.5" onClick={() => setQty((q) => q + 1)} aria-label="Increase"><Plus className="h-4 w-4" /></button>
             </div>
-            <button
-              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: unitPrice, image: selectedImage, gift, bouquet }, qty)}
-              className="btn-gold flex-1 py-3.5 px-6 rounded-full text-sm inline-flex items-center justify-center gap-2"
-            >
-              <ShoppingBag className="h-4 w-4" /> Add to bag
-            </button>
           </div>
 
-          <a
-            href={whatsappLink(waMessage)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-3 btn-outline-gold w-full py-3.5 rounded-full text-sm inline-flex items-center justify-center gap-2"
-          >
-            <MessageCircle className="h-4 w-4" /> Order on WhatsApp
-          </a>
+          <div className="mt-2 flex flex-row w-full gap-2">
+            <button
+              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: unitPrice, image: selectedImage, gift, bouquet }, qty)}
+              className="btn-gold flex-1 min-w-0 py-3 px-3 rounded-full text-sm inline-flex items-center justify-center gap-2"
+            >
+              <ShoppingBag className="h-4 w-4 shrink-0" /> Add to Bag
+            </button>
+            <a
+              href={whatsappLink(waMessage)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline-gold flex-1 min-w-0 py-3 px-3 rounded-full text-sm inline-flex items-center justify-center gap-2"
+            >
+              <MessageCircle className="h-4 w-4 shrink-0" /> WhatsApp
+            </a>
+          </div>
 
-          <CraftNote className="mt-3" />
+          <CraftNote className="mt-2" />
 
-
-
-          <div className="mt-10 grid grid-cols-2 gap-3 text-xs">
+          <div className="mt-3 md:mt-10 grid grid-cols-2 gap-2 text-xs">
             <Feature icon={Sparkles} title="Handmade to order" copy="Crafted by our artisans" />
             <Feature icon={Heart} title="Everlasting" copy="Made to last forever" />
             <Feature icon={Truck} title="Same-day delivery" copy="Order before 12 PM" />
@@ -225,7 +225,8 @@ function ProductPage() {
         </div>
       </section>
 
-      <div className="container-luxe border-t hairline pt-16 pb-4 space-y-14">
+      <div className="container-luxe px-3 border-t hairline pt-6 md:pt-16 pb-2 space-y-6 md:space-y-14">
+
         <YouMightAlsoLike products={alsoLike} tone="dark" viewAllHref="/shop" />
         <PeopleAlsoViewed products={alsoViewed} tone="dark" viewAllHref="/shop" />
       </div>
