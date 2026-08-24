@@ -78,11 +78,11 @@ function ItemCard({ product }: { product: Product }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
       </div>
-      <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
+      <div className="absolute inset-x-0 bottom-0 p-2.5 md:p-5">
         <h3 className="font-serif text-base md:text-xl text-white leading-snug tracking-tight line-clamp-2">
           {product.name}
         </h3>
-        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/70 text-[color:var(--gold)] group-hover:bg-[color:var(--gold)] group-hover:text-[color:var(--noir)] text-[10px] md:text-[11px] tracking-[0.18em] uppercase font-semibold px-3.5 py-1.5 transition">
+        <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/70 text-[color:var(--gold)] group-hover:bg-[color:var(--gold)] group-hover:text-[color:var(--noir)] text-[10px] md:text-[11px] tracking-[0.18em] uppercase font-semibold px-3.5 py-1.5 transition">
           View Details <ArrowRight className="h-3.5 w-3.5" />
         </span>
       </div>
@@ -109,23 +109,23 @@ function CollectionPage() {
       : LOCAL_PRODUCTS.filter((p) => fallbackSlugs.includes(p.slug));
 
   return (
-    <div>
-      <section className="relative h-[42vh] min-h-[320px] overflow-hidden bg-[color:var(--noir)]">
+    <div className="w-full max-w-full overflow-x-hidden">
+      <section className="relative h-[28vh] min-h-[200px] md:h-[42vh] md:min-h-[320px] overflow-hidden bg-[color:var(--noir)]">
         {heroImg && (
           <img src={heroImg} alt={name} onError={handleImageError} className="absolute inset-0 h-full w-full object-cover opacity-70" />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30" />
-        <div className="relative container-luxe h-full flex flex-col justify-end pb-10">
-          <p className="eyebrow mb-3 text-[color:var(--gold)]">Collection</p>
-          <h1 className="font-serif text-4xl md:text-6xl">{name}</h1>
-          <p className="mt-3 text-[color:var(--muted-foreground)] max-w-xl">{tagline}</p>
+        <div className="relative container-luxe px-3 h-full flex flex-col justify-end pb-4 md:pb-10">
+          <p className="eyebrow mb-1 md:mb-3 text-[color:var(--gold)]">Collection</p>
+          <h1 className="font-serif text-2xl md:text-6xl">{name}</h1>
+          <p className="mt-1 md:mt-3 text-xs md:text-base text-[color:var(--muted-foreground)] max-w-xl">{tagline}</p>
         </div>
       </section>
 
       {gallery.length > 0 && (
-        <section className="container-luxe pt-12 md:pt-16">
+        <section className="container-luxe px-3 pt-4 md:pt-16">
           <h2 className="sr-only">{name} gallery</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
             {gallery.map((g) => (
               <div key={g.id} className="overflow-hidden rounded-2xl hairline border aspect-[4/5] bg-black/40">
                 <img
@@ -142,16 +142,16 @@ function CollectionPage() {
         </section>
       )}
 
-      <section className="container-luxe py-12 md:py-16">
-        <h2 className="eyebrow mb-6">Pieces in this collection</h2>
+      <section className="container-luxe px-3 py-4 md:py-16">
+        <h2 className="eyebrow mb-2 md:mb-6">Pieces in this collection</h2>
         {items.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
             {items.map((p) => (
               <ItemCard key={p.id} product={p} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-24">
+          <div className="text-center py-10 md:py-24">
             <p className="font-serif text-3xl">New pieces coming soon</p>
             <p className="text-sm text-[color:var(--muted-foreground)] mt-2">
               This collection is being crafted with love — get in touch for a bespoke order.
@@ -162,7 +162,7 @@ function CollectionPage() {
           </div>
         )}
 
-        <div className="mt-16 md:mt-20 text-center">
+        <div className="mt-6 md:mt-20 text-center">
           <p className="eyebrow mb-3">Discover more</p>
           <div className="flex flex-wrap justify-center gap-2">
             {COLLECTIONS.filter((c) => c.slug !== slug)
