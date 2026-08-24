@@ -93,6 +93,31 @@ function CartPage() {
     // after admin confirmation; never logged directly from the client.
   }
 
+  async function startPay() {
+    if (!canPay) { toast.error(`Please complete: ${missing.join(", ")}`); return; }
+    setPaying(true);
+    try {
+      const { getCustomerTier } = await import("@/lib/delivery");
+      await startRazorpayCheckout(items, (orderId) => {
+        if (showPickup && pickup) savePickupForOrder(orderId, pickup);
+        clear();
+        navigate({ to: "/order/$orderId", params: { orderId } });
+      }, {
+        pincode: pincode,
+        customerTier: getCustomerTier(),
+        pickupPointId: showPickup ? pickup || null : null,
+        customerName: fullName.trim(),
+        customerPhone: mobile.replace(/\D/g, ""),
+        deliveryNotes:
+          [address.trim() ? `Address: ${address.trim()}` : "", deliveryNotes.trim()]
+            .filter(Boolean)
+            .join(" | ")
+            .slice(0, 300) || null,
+      });
+    } finally {
+      setPaying(false);
+    }
+  }
 
 
   return (
