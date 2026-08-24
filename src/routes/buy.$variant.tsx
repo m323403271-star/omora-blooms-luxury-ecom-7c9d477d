@@ -372,8 +372,8 @@ function BuyPage() {
   }
 
   return (
-    <div>
-      <div className="container-luxe pt-8 flex items-center gap-1.5 text-[11px] tracking-[0.18em] uppercase text-[color:var(--muted-foreground)]">
+    <div className="w-full max-w-full overflow-x-hidden pb-32 lg:pb-0">
+      <div className="container-luxe px-3 pt-4 md:pt-8 flex items-center gap-1.5 text-[11px] tracking-[0.18em] uppercase text-[color:var(--muted-foreground)]">
         <Link to="/" className="hover:text-[color:var(--gold)] transition-colors">Home</Link>
         <ChevronRight className="h-3 w-3" />
         {parent ? (
@@ -391,13 +391,13 @@ function BuyPage() {
         <span className="text-[color:var(--gold)]">Order</span>
       </div>
 
-      <div className="container-luxe py-10 md:py-14">
-        <p className="eyebrow mb-2">Direct Checkout</p>
-        <h1 className="font-serif text-4xl md:text-5xl mb-10">{variant.name}</h1>
+      <div className="container-luxe px-3 py-4 md:py-14">
+        <p className="eyebrow mb-1">Direct Checkout</p>
+        <h1 className="font-serif text-2xl md:text-5xl mb-3 md:mb-10">{variant.name}</h1>
 
-        <div className="grid lg:grid-cols-5 gap-10 md:gap-14">
+        <div className="grid lg:grid-cols-5 gap-4 md:gap-14">
           {/* Left: gallery + details + shipping */}
-          <div className="lg:col-span-3 space-y-8">
+          <div className="lg:col-span-3 space-y-3 md:space-y-8">
             {media.length > 0 && (
               <VariantGallery
                 media={media}
@@ -406,7 +406,7 @@ function BuyPage() {
               />
             )}
 
-            <div className="glass-card rounded-2xl p-6">
+            <div className="glass-card rounded-2xl p-3 md:p-6">
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
                   {variant.color_name ? (
@@ -430,12 +430,12 @@ function BuyPage() {
               ) : null}
             </div>
 
-            <div className="glass-card rounded-2xl p-6">
+            <div className="glass-card rounded-2xl p-3 md:p-6">
               <p className="eyebrow mb-4 text-[color:var(--gold)]">Check Delivery</p>
               <DeliveryEtaChecker />
             </div>
 
-            <div className="glass-card rounded-2xl p-6">
+            <div className="glass-card rounded-2xl p-3 md:p-6">
               <p className="eyebrow mb-5 text-[color:var(--gold)]">Shipping Details</p>
               <div className="space-y-4">
                 <Field label="Full Name" icon={User} value={name} onChange={setName} placeholder="Your full name" required />
@@ -528,7 +528,7 @@ function BuyPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="grid grid-cols-2 gap-2 text-xs">
               {[
                 { icon: Sparkles, title: "Handmade to order", copy: "Crafted by artisans" },
                 { icon: Truck, title: "Same-day delivery", copy: "Order before 12 PM" },
@@ -548,7 +548,7 @@ function BuyPage() {
 
           {/* Right: order summary */}
           <aside className="lg:col-span-2">
-            <div className="glass-card rounded-2xl p-6 sticky top-28 space-y-6">
+            <div className="glass-card rounded-2xl p-3 md:p-6 lg:sticky lg:top-28 space-y-3 md:space-y-6">
               <div>
                 <p className="eyebrow mb-4 text-[color:var(--gold)]">Your Order</p>
                 {soldOut && (
@@ -556,7 +556,7 @@ function BuyPage() {
                     This shade is currently sold out. Message us on WhatsApp and we'll craft it to order.
                   </div>
                 )}
-                <div className="flex gap-4 p-4 hairline border rounded-xl">
+                <div className="flex gap-3 p-2.5 md:p-4 hairline border rounded-xl">
                   <div className="relative h-24 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-black/40">
                     {displayImage ? (
                       <img src={displayImage} alt={variant.name} className="h-full w-full object-cover" />
@@ -581,7 +581,7 @@ function BuyPage() {
               </div>
 
               {/* Coupon */}
-              <div className="border-t hairline pt-5">
+              <div className="border-t hairline pt-3 md:pt-5">
                 <p className="eyebrow mb-3 text-[color:var(--gold)]">Coupon Code</p>
                 {coupon ? (
                   <div className="flex items-center justify-between gap-3 rounded-xl border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/5 px-4 py-3">
@@ -618,7 +618,7 @@ function BuyPage() {
               </div>
 
               {/* Payment options */}
-              <div className="border-t hairline pt-5">
+              <div className="border-t hairline pt-3 md:pt-5">
                 <p className="eyebrow mb-3 text-[color:var(--gold)]">Payment Option</p>
                 <div className="space-y-3">
                   <button
@@ -658,7 +658,7 @@ function BuyPage() {
                 </div>
               </div>
 
-              <div className="space-y-2.5 text-sm border-t hairline pt-4">
+              <div className="space-y-1.5 md:space-y-2.5 text-sm border-t hairline pt-3 md:pt-4">
                 <div className="flex justify-between">
                   <span className="text-[color:var(--muted-foreground)]">Subtotal</span>
                   <span>{formatPrice(listTotal)}</span>
