@@ -88,7 +88,8 @@ function AdminShowcasePage() {
   const [pickerOpen, setPickerOpen] = useState(false);
 
   async function setFlag(id: string, value: boolean) {
-    const { error } = await supabase.from("products").update({ [field]: value }).eq("id", id);
+    const update: Partial<Record<FlagField, boolean>> = { [field]: value };
+    const { error } = await supabase.from("products").update(update).eq("id", id);
     if (error) { toast.error(error.message); return; }
     toast.success(value ? "Added to section" : "Removed from section");
     await load();
