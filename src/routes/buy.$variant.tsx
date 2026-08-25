@@ -703,31 +703,32 @@ function BuyPage() {
                 )}
               </div>
 
-              <div className="space-y-3">
-                <button
-                  onClick={handleRazorpay}
-                  disabled={paying || soldOut}
-                  className="btn-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  <CreditCard className="h-4 w-4" />
-                  {soldOut
-                    ? "Sold Out"
-                    : paying
-                    ? "Opening payment…"
-                    : payMode === "advance"
-                      ? `Pay ${formatPrice(payNow)} Advance`
-                      : `Pay ${formatPrice(payNow)} & Save 5%`}
-                </button>
+              <div className="space-y-2">
+                <div className="hidden sm:flex flex-row w-full gap-2">
+                  <button
+                    onClick={handleRazorpay}
+                    disabled={paying || soldOut}
+                    className="btn-gold flex-1 min-w-0 inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    <CreditCard className="h-4 w-4 shrink-0" />
+                    {soldOut
+                      ? "Sold Out"
+                      : paying
+                      ? "Opening payment…"
+                      : payMode === "advance"
+                        ? `Pay ${formatPrice(payNow)} Advance`
+                        : `Pay ${formatPrice(payNow)} & Save 5%`}
+                  </button>
 
-
-                <a
-                  href={whatsappLink(waMessage)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-outline-gold w-full inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm"
-                >
-                  <MessageCircle className="h-4 w-4" /> Order via WhatsApp
-                </a>
+                  <a
+                    href={whatsappLink(waMessage)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-outline-gold flex-1 min-w-0 inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm"
+                  >
+                    <MessageCircle className="h-4 w-4 shrink-0" /> WhatsApp
+                  </a>
+                </div>
 
                 <p className="text-[10px] text-[color:var(--muted-foreground)] text-center leading-relaxed">
                   UPI · Cards · Net Banking · Wallets via Razorpay. Cash on delivery is not available.<br />
@@ -739,6 +740,35 @@ function BuyPage() {
           </aside>
         </div>
       </div>
+
+      {/* Mobile sticky total + CTAs */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 p-3 bg-background border-t sm:hidden w-full max-w-full">
+        <div className="flex items-center justify-between mb-2 text-sm">
+          <span className="text-[color:var(--muted-foreground)]">
+            {payMode === "advance" ? "Pay now (30%)" : "Total"}
+          </span>
+          <span className="font-serif text-lg text-[color:var(--gold)]">{formatPrice(payNow)}</span>
+        </div>
+        <div className="flex flex-row w-full gap-2">
+          <button
+            onClick={handleRazorpay}
+            disabled={paying || soldOut}
+            className="btn-gold flex-1 min-w-0 inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm disabled:opacity-60"
+          >
+            <CreditCard className="h-4 w-4 shrink-0" />
+            {soldOut ? "Sold Out" : paying ? "Opening…" : "Pay Now"}
+          </button>
+          <a
+            href={whatsappLink(waMessage)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline-gold flex-1 min-w-0 inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm"
+          >
+            <MessageCircle className="h-4 w-4 shrink-0" /> WhatsApp
+          </a>
+        </div>
+      </div>
     </div>
+
   );
 }
