@@ -49,7 +49,7 @@ export function TiltImage({
         alt={alt}
         {...(priority ? {} : { loading: "lazy" as const })}
         style={style}
-        className="h-full w-full rounded-2xl object-cover transition-transform duration-200 ease-out will-change-transform"
+        className="h-full w-full rounded-2xl object-contain transition-transform duration-200 ease-out will-change-transform"
       />
     </div>
   );
