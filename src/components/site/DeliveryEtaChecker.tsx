@@ -83,7 +83,7 @@ export function DeliveryEtaChecker({
   }
 
   return (
-    <div className={variant === "checkout" ? "rounded-2xl border hairline p-5 bg-[color:var(--noir)]/60" : "rounded-2xl border hairline p-5"}>
+    <div className={variant === "checkout" ? "rounded-2xl border hairline p-3 md:p-5 bg-[color:var(--noir)]/60" : "rounded-2xl border hairline p-3 md:p-5"}>
       <div className="flex items-center justify-between gap-3">
         <label className="flex items-center gap-2 text-[11px] tracking-[0.2em] uppercase text-[color:var(--gold)]">
           <MapPin className="h-3.5 w-3.5" /> {title ?? "Check Delivery ETA"}
@@ -94,7 +94,7 @@ export function DeliveryEtaChecker({
           </span>
         )}
       </div>
-      <div className="mt-3 flex gap-2">
+      <div className="mt-2 flex gap-2">
         <input
           inputMode="numeric"
           maxLength={6}
@@ -115,9 +115,9 @@ export function DeliveryEtaChecker({
         </button>
       </div>
       {result && (
-        <div className="mt-4">
+        <div className="mt-2">
           <BadgePill result={result} />
-          <p className="mt-2 text-xs text-[color:var(--muted-foreground)] leading-relaxed">
+          <p className="mt-1.5 text-xs text-[color:var(--muted-foreground)] leading-relaxed">
             {result.message}
           </p>
         </div>
