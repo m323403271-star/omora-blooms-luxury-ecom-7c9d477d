@@ -36,7 +36,7 @@ export function GalleryStage({ item, isActive, priority = false, onZoom }: Galle
         autoPlay={item.autoPlay !== false}
         preload="metadata"
         aria-label={item.alt}
-        className="h-full w-full rounded-2xl object-cover"
+        className="h-full w-full rounded-2xl object-contain"
       />
     );
   }

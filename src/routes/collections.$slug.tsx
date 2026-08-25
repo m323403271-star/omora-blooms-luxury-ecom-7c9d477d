@@ -64,9 +64,9 @@ function ItemCard({ product }: { product: Product }) {
     <Link
       to="/varieties/$slug"
       params={{ slug: product.slug }}
-      className="group relative block overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
+      className="group block overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
     >
-      <div className="aspect-[4/5] overflow-hidden bg-black/40 relative">
+      <div className="aspect-square overflow-hidden bg-black/40">
         <img
           src={img}
           alt={`${product.name} — OMORA BLOOMS`}
@@ -76,14 +76,13 @@ function ItemCard({ product }: { product: Product }) {
           onError={handleImageError}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent pointer-events-none" />
       </div>
-      <div className="absolute inset-x-0 bottom-0 p-2.5 md:p-5">
-        <h3 className="font-serif text-base md:text-xl text-white leading-snug tracking-tight line-clamp-2">
+      <div className="p-2 md:p-4">
+        <h3 className="font-serif text-sm md:text-xl leading-snug tracking-tight line-clamp-2">
           {product.name}
         </h3>
-        <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/70 text-[color:var(--gold)] group-hover:bg-[color:var(--gold)] group-hover:text-[color:var(--noir)] text-[10px] md:text-[11px] tracking-[0.18em] uppercase font-semibold px-3.5 py-1.5 transition">
-          View Details <ArrowRight className="h-3.5 w-3.5" />
+        <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/70 text-[color:var(--gold)] group-hover:bg-[color:var(--gold)] group-hover:text-[color:var(--noir)] text-[9px] md:text-[11px] tracking-[0.16em] uppercase font-semibold px-2.5 py-1 transition">
+          View Details <ArrowRight className="h-3 w-3" />
         </span>
       </div>
     </Link>

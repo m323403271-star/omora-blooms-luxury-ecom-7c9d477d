@@ -352,10 +352,10 @@ function CollectionCard({ card }: { card: CategoryCard }) {
     <Link
       to="/collections/$slug"
       params={{ slug: card.slug }}
-      className="group relative block w-[29%] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition sm:w-[44%] md:w-[32%] lg:w-[23%]"
+      className="group block w-[29%] max-w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition sm:w-[44%] md:w-[32%] lg:w-[23%]"
       aria-label={`Explore ${card.title}`}
     >
-      <div className="aspect-[3/4] md:aspect-[4/5] overflow-hidden">
+      <div className="aspect-square overflow-hidden bg-black/40">
         <img
           src={card.image}
           alt={`${card.title} — OMORA BLOOMS`}
@@ -364,16 +364,15 @@ function CollectionCard({ card }: { card: CategoryCard }) {
           onError={handleImageError}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 p-4 md:p-5">
-        <h3 className="font-serif text-lg md:text-xl text-white leading-snug tracking-tight line-clamp-2">
+      <div className="p-2 md:p-4">
+        <h3 className="font-serif text-sm md:text-lg leading-snug tracking-tight line-clamp-2">
           {card.title}
         </h3>
-        <p className="mt-1 text-xs text-white/60 line-clamp-1">{card.subtitle}</p>
-        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[10px] tracking-[0.18em] uppercase font-semibold px-3 py-1.5 shadow-lg transition-transform group-hover:translate-x-1">
-          Explore <ArrowRight className="h-3.5 w-3.5" />
+        <p className="mt-0.5 text-[10px] md:text-xs text-[color:var(--muted-foreground)] line-clamp-1">{card.subtitle}</p>
+        <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-gold-gradient text-[color:var(--noir)] text-[9px] md:text-[10px] tracking-[0.16em] uppercase font-semibold px-2.5 py-1 shadow-lg transition-transform group-hover:translate-x-1">
+          Explore <ArrowRight className="h-3 w-3" />
         </span>
       </div>
     </Link>
