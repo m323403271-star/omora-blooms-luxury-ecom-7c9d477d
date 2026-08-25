@@ -44,7 +44,7 @@ export function GalleryThumbnailRail({ items, activeId, onSelect }: GalleryThumb
       <div
         ref={trackRef}
         onScroll={update}
-        className="flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
+        className="flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:hidden"
       >
         {items.map((item) => {
           const isActive = item.id === activeId;

@@ -88,7 +88,7 @@ export function ProductGallery({ items, onActiveChange, className = "" }: Produc
         />
       )}
 
-      <div className="mt-3 sm:mt-4">
+      <div className="mt-2 sm:mt-4">
         <GalleryThumbnailRail items={items} activeId={activeId} onSelect={goTo} />
       </div>
     </div>
