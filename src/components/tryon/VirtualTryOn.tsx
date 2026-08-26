@@ -46,8 +46,8 @@ function writeCached(url: string, png: string) {
 type Placement = { x: number; y: number; scale: number; rot: number };
 
 const DEFAULTS: Record<TryOnMode, Placement> = {
-  // Bouquet sits in the hands, décor sits on the surface, frames sit on the wall.
-  hands: { x: 50, y: 58, scale: 0.52, rot: 0 },
+  // 3/4 knee-length framing: bouquet sits in front of the waist/torso.
+  hands: { x: 50, y: 55, scale: 0.42, rot: 0 },
   room: { x: 50, y: 68, scale: 0.34, rot: 0 },
   wall: { x: 50, y: 38, scale: 0.3, rot: 0 },
 };
@@ -58,14 +58,30 @@ const LABELS: Record<TryOnMode, string> = {
   wall: "View on Wall",
 };
 
+/** Shared styling rules for the AI-generated model pose. */
+const POSE_RULES =
+  "Full 3/4 view framed from the head down to the knees, natural relaxed standing posture, " +
+  "both hands together in front of the waist holding an EMPTY space as if about to hold a bouquet, " +
+  "hands clearly visible and completely empty, no flowers and no objects anywhere in frame. " +
+  "Wardrobe: if the subject reads as male (teen 15+ or adult), dress him in modern tailored smart-casual or " +
+  "luxury formal wear — blazer, stylish suit or crisp smart shirt, trousers visible to the knee. " +
+  "If the subject reads as female (teen 15+ or adult), dress her in a contemporary elegant knee-length dress, " +
+  "stylish semi-formal or luxury party wear. Age-appropriate for 15+ teens, young adults and adults. " +
+  "Soft studio lighting, warm neutral background, luxury editorial fashion photography.";
+
 const SCENE_PROMPT: Record<TryOnMode, string> = {
-  hands:
-    "Elegant editorial half-body portrait of a person from chest up, arms bent forward holding an EMPTY space in front of the chest with both open hands, hands clearly visible and empty, soft studio lighting, neutral warm background, luxury fashion photography, no flowers, no objects in hands",
+  hands: `Photorealistic portrait of a single elegant person. ${POSE_RULES}`,
   room:
     "Photorealistic interior photo of a minimal luxury living room with an empty wooden side table in the foreground, soft daylight, warm neutral tones, nothing on the table",
   wall:
     "Photorealistic interior photo of a clean empty beige wall with soft daylight and gentle shadows, minimal luxury living room, nothing hanging on the wall",
 };
+
+/** Prompt used when we restyle the customer's own selfie into a knee-length pose. */
+const RESTYLE_PROMPT =
+  "Using the person in the reference photo, keep their apparent gender and age group exactly as they appear " +
+  `and recreate them as a photorealistic full-body-to-knee editorial portrait. ${POSE_RULES}`;
+
 
 export function VirtualTryOn({
   open,
