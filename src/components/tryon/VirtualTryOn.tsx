@@ -299,9 +299,13 @@ export function VirtualTryOn({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
           useSelfie && photo.startsWith("data:image/")
-            ? { prompt: RESTYLE_PROMPT, referenceImage: photo }
-            : { prompt: SCENE_PROMPT[mode] },
+            ? { prompt: restylePrompt(pose), referenceImage: photo }
+            : {
+                prompt:
+                  mode === "hands" ? `${SCENE_PROMPT.hands} ${poseRules(pose)}` : SCENE_PROMPT[mode],
+              },
         ),
+
       });
       if (!res.ok) {
         toast.error(res.status === 402 ? "AI scene credits are exhausted." : "Could not create a scene.");
