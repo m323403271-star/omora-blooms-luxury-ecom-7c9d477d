@@ -1,6 +1,9 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
-import { ArrowRight, ChevronRight, Loader2 } from "lucide-react";
+import { ArrowRight, ChevronRight, Loader2, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { VirtualTryOn, tryOnModeForCategory } from "@/components/tryon/VirtualTryOn";
 import { productsQuery, formatPrice, LOCAL_PRODUCTS, resolveProductImage } from "@/lib/products";
 import { collectionBySlug } from "@/lib/collections";
 import { activeVariantsQuery, isSoldOut, type ProductVariantRow } from "@/lib/product-variants";
@@ -93,6 +96,10 @@ function VarietiesPage() {
   const collection = collectionBySlug(product.category);
   const { data: variants, isLoading } = useQuery(activeVariantsQuery(product.id));
   const list = variants ?? [];
+  const [tryOnOpen, setTryOnOpen] = useState(false);
+  const [tryOnSlug, setTryOnSlug] = useState("");
+  const navigate = useNavigate();
+  const tryOnMode = tryOnModeForCategory(product.category);
   const cover = resolveProductImage(product.images?.[0] || product.image_url);
 
   return (
@@ -130,6 +137,18 @@ function VarietiesPage() {
           <p className="mt-2 text-[color:var(--muted-foreground)] text-sm md:text-base">
             Handcrafted to order — choose the colour you love
           </p>
+          {list.length > 0 ? (
+            <button
+              onClick={() => {
+                setTryOnSlug(list[0]!.slug);
+                setTryOnOpen(true);
+              }}
+              className="mt-2 self-start inline-flex items-center gap-1.5 rounded-full border border-[color:var(--gold)]/60 px-4 py-1.5 text-[10px] uppercase tracking-[0.18em] text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10 transition"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              {tryOnMode === "hands" ? "Try-On" : "View in Room"}
+            </button>
+          ) : null}
         </div>
       </section>
 
@@ -164,6 +183,22 @@ function VarietiesPage() {
             ))}
           </div>
         )}
+
+        <VirtualTryOn
+          open={tryOnOpen}
+          onClose={() => setTryOnOpen(false)}
+          mode={tryOnMode}
+          shades={list.map((v) => ({
+            slug: v.slug,
+            name: v.name,
+            colorName: v.color_name,
+            colorHex: v.color_hex,
+            image: v.images?.[0] || cover,
+          }))}
+          activeSlug={tryOnSlug || list[0]?.slug || ""}
+          onSelectShade={(slug) => setTryOnSlug(slug)}
+          productName={product.name}
+        />
 
         <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
