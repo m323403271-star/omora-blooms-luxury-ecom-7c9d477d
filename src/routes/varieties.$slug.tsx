@@ -97,7 +97,7 @@ function VarietiesPage() {
 
   return (
     <div>
-      <section className="relative h-[38vh] min-h-[280px] overflow-hidden bg-[color:var(--noir)]">
+      <section className="relative h-[26vh] min-h-[190px] md:h-[38vh] md:min-h-[280px] overflow-hidden bg-[color:var(--noir)]">
         <img
           src={list[0]?.images?.[0] || cover}
           alt={product.name}
@@ -124,17 +124,17 @@ function VarietiesPage() {
           <span className="text-[color:var(--gold)]">Pick Your Shade</span>
         </div>
 
-        <div className="relative container-luxe h-full flex flex-col justify-end pb-10">
+        <div className="relative container-luxe px-3 h-full flex flex-col justify-end pb-4 md:pb-10">
           <p className="eyebrow mb-2 text-[color:var(--gold)]">Select Your Shade</p>
-          <h1 className="font-serif text-3xl md:text-5xl leading-tight">{product.name}</h1>
+          <h1 className="font-serif text-2xl md:text-5xl leading-tight">{product.name}</h1>
           <p className="mt-2 text-[color:var(--muted-foreground)] text-sm md:text-base">
             Handcrafted to order — choose the colour you love
           </p>
         </div>
       </section>
 
-      <section className="container-luxe py-12 md:py-16">
-        <div className="mb-8 flex items-center justify-between">
+      <section className="container-luxe px-3 py-4 md:py-16">
+        <div className="mb-3 md:mb-8 flex items-center justify-between">
           <div>
             <p className="eyebrow mb-1">
               {list.length} {list.length === 1 ? "Shade" : "Shades"} Available
