@@ -84,6 +84,16 @@ export function VariantGallery({
                 i === index ? "ring-2 ring-[color:var(--gold)] border-transparent" : "hairline opacity-80 hover:opacity-100"
               }`}
             >
+              {onTryOn ? (
+                <TryOnBadge
+                  compact
+                  label={tryOnLabel}
+                  onClick={() => {
+                    setIndex(i);
+                    onTryOn();
+                  }}
+                />
+              ) : null}
               {isVideoRef(m) ? (
                 <>
                   <video src={m} muted playsInline preload="metadata" className="h-full w-full object-cover" />
