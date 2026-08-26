@@ -292,7 +292,8 @@ export function VirtualTryOn({
    * photo so the model keeps their apparent gender and age group while being
    * restyled into the knee-length luxury pose.
    */
-  async function generateScene(useSelfie = false) {
+  async function generateScene(useSelfie = false, poseOverride?: PoseId) {
+    const activePose = poseOverride ?? pose;
     setScening(true);
     try {
       const res = await fetch("/api/generate-image", {
