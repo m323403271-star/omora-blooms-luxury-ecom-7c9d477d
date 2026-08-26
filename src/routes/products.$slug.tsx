@@ -22,6 +22,7 @@ import { ReviewSection } from "@/components/site/ReviewSection";
 import { PdpAdminUpload } from "@/components/site/PdpAdminUpload";
 import { CraftNote } from "@/components/site/CraftNote";
 import { pageSeo, SITE_URL } from "@/lib/seo";
+import { VirtualTryOn, tryOnModeForCategory } from "@/components/tryon/VirtualTryOn";
 
 
 export const Route = createFileRoute("/products/$slug")({
@@ -89,6 +90,7 @@ function ProductPage() {
   const [bouquet, setBouquet] = useState<CustomBouquet | null>(null);
   const [addOnTotal, setAddOnTotal] = useState(0);
   const [activeMediaId, setActiveMediaId] = useState<string | null>(null);
+  const [tryOnOpen, setTryOnOpen] = useState(false);
 
   const unitPrice = product.price + addOnTotal;
   const related = data.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
@@ -122,6 +124,8 @@ function ProductPage() {
     return img;
   }, [galleryMedia, activeMediaId, img]);
 
+  const tryOnMode = tryOnModeForCategory(product.category);
+
   const alsoLike = useMemo(
     () => pickYouMightAlsoLike(data, product).map(toRecommendedProduct),
     [data, product],
@@ -145,7 +149,21 @@ function ProductPage() {
 
       <section className="container-luxe px-3 grid lg:grid-cols-2 gap-4 md:gap-16 py-4 md:py-16">
         <div>
-          <ProductGallery items={galleryMedia} onActiveChange={setActiveMediaId} />
+          <ProductGallery
+            items={galleryMedia}
+            onActiveChange={setActiveMediaId}
+            onTryOn={() => setTryOnOpen(true)}
+            tryOnLabel={tryOnMode === "room" ? "View in Room" : "Try-On"}
+          />
+
+          <VirtualTryOn
+            open={tryOnOpen}
+            onClose={() => setTryOnOpen(false)}
+            mode={tryOnMode}
+            shades={[{ slug: product.slug, name: product.name, image: selectedImage }]}
+            activeSlug={product.slug}
+            productName={product.name}
+          />
 
 
           <PdpAdminUpload
