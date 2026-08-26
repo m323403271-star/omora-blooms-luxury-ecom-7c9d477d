@@ -78,7 +78,7 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         required={required}
-        className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-4 py-3 text-sm text-[color:var(--foreground)] placeholder:text-[color:var(--muted-foreground)]/60 focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)] transition"
+        className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-3 py-2.5 text-sm text-[color:var(--foreground)] placeholder:text-[color:var(--muted-foreground)]/60 focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)] transition"
       />
     </div>
   );
@@ -391,13 +391,13 @@ function BuyPage() {
         <span className="text-[color:var(--gold)]">Order</span>
       </div>
 
-      <div className="container-luxe px-3 py-4 md:py-14">
+      <div className="container-luxe px-3 py-3 md:py-14">
         <p className="eyebrow mb-1">Direct Checkout</p>
-        <h1 className="font-serif text-2xl md:text-5xl mb-3 md:mb-10">{variant.name}</h1>
+        <h1 className="font-serif text-xl md:text-5xl mb-2 md:mb-10">{variant.name}</h1>
 
-        <div className="grid lg:grid-cols-5 gap-4 md:gap-14">
+        <div className="grid lg:grid-cols-5 gap-3 md:gap-14">
           {/* Left: gallery + details + shipping */}
-          <div className="lg:col-span-3 space-y-3 md:space-y-8">
+          <div className="lg:col-span-3 space-y-2.5 md:space-y-8">
             {media.length > 0 && (
               <VariantGallery
                 media={media}
@@ -406,7 +406,7 @@ function BuyPage() {
               />
             )}
 
-            <div className="glass-card rounded-2xl p-3 md:p-6">
+            <div className="glass-card rounded-2xl p-2.5 md:p-6">
               <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-2">
                   {variant.color_name ? (
@@ -430,14 +430,14 @@ function BuyPage() {
               ) : null}
             </div>
 
-            <div className="glass-card rounded-2xl p-3 md:p-6">
-              <p className="eyebrow mb-4 text-[color:var(--gold)]">Check Delivery</p>
+            <div className="glass-card rounded-2xl p-2.5 md:p-6">
+              <p className="eyebrow mb-2.5 text-[color:var(--gold)]">Check Delivery</p>
               <DeliveryEtaChecker />
             </div>
 
-            <div className="glass-card rounded-2xl p-3 md:p-6">
-              <p className="eyebrow mb-5 text-[color:var(--gold)]">Shipping Details</p>
-              <div className="space-y-4">
+            <div className="glass-card rounded-2xl p-2.5 md:p-6">
+              <p className="eyebrow mb-3 text-[color:var(--gold)]">Shipping Details</p>
+              <div className="space-y-2.5 md:space-y-4">
                 <Field label="Full Name" icon={User} value={name} onChange={setName} placeholder="Your full name" required />
                 <Field label="Phone Number" icon={Phone} value={phone} onChange={setPhone} type="tel" placeholder="10-digit mobile number" required />
                 <Field label="Email (for order updates)" icon={Mail} value={email} onChange={setEmail} type="email" placeholder="you@email.com" />
@@ -451,7 +451,7 @@ function BuyPage() {
                     <select
                       value={sharedMode}
                       onChange={(e) => setSharedMode(e.target.value as DeliveryMode)}
-                      className="w-full rounded-xl border hairline bg-[color:var(--noir)] px-4 py-3 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                      className="w-full rounded-xl border hairline bg-[color:var(--noir)] px-3 py-2.5 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
                     >
                       {SHARED_PIN_OPTIONS.map((o) => (
                         <option key={o.value} value={o.value}>
@@ -522,7 +522,7 @@ function BuyPage() {
                     placeholder="Gate number, villa number, or flight details — anything that helps our delivery executive find you easily"
                     rows={2}
                     maxLength={300}
-                    className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-4 py-3 text-sm text-[color:var(--foreground)] placeholder:text-[color:var(--muted-foreground)]/60 focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)] transition resize-none"
+                    className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-3 py-2.5 text-sm text-[color:var(--foreground)] placeholder:text-[color:var(--muted-foreground)]/60 focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)] transition resize-none"
                   />
                 </div>
               </div>
@@ -548,9 +548,9 @@ function BuyPage() {
 
           {/* Right: order summary */}
           <aside className="lg:col-span-2">
-            <div className="glass-card rounded-2xl p-3 md:p-6 lg:sticky lg:top-28 space-y-3 md:space-y-6">
+            <div className="glass-card rounded-2xl p-2.5 md:p-6 lg:sticky lg:top-28 space-y-3 md:space-y-6">
               <div>
-                <p className="eyebrow mb-4 text-[color:var(--gold)]">Your Order</p>
+                <p className="eyebrow mb-2.5 text-[color:var(--gold)]">Your Order</p>
                 {soldOut && (
                   <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs text-red-300">
                     This shade is currently sold out. Message us on WhatsApp and we'll craft it to order.
