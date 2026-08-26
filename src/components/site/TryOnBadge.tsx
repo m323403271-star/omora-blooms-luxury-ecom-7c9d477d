@@ -40,7 +40,7 @@ export function TryOnBadge({
       aria-label={`Launch virtual ${label}`}
       className={`${base} transition hover:bg-black/85 ${className}`}
     >
-      <Camera className="h-3 w-3" /> {label}
+      <Camera className="h-3 w-3" /> {compact ? null : label}
     </button>
   );
 }
