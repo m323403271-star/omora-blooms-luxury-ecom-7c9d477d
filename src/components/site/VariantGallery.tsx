@@ -54,8 +54,8 @@ export function VariantGallery({
 
   return (
     <div>
-      <div className="relative overflow-hidden rounded-2xl hairline border bg-black/40 aspect-[4/5]">
-        {stage("h-full w-full object-cover")}
+      <div className="relative overflow-hidden rounded-2xl hairline border bg-black/40 aspect-square">
+        {stage("h-full w-full object-contain")}
         <button
           type="button"
           onClick={() => setFull(true)}
