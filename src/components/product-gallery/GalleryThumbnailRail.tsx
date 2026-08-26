@@ -1,14 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { TryOnBadge } from "@/components/site/TryOnBadge";
 import type { GalleryMediaItem } from "./types";
 
 interface GalleryThumbnailRailProps {
   items: GalleryMediaItem[];
   activeId: string;
   onSelect: (id: string) => void;
+  onTryOn?: (() => void) | undefined;
+  tryOnLabel?: string | undefined;
 }
 
 /** Smooth horizontal swipe/slide rail of thumbnails. */
-export function GalleryThumbnailRail({ items, activeId, onSelect }: GalleryThumbnailRailProps) {
+export function GalleryThumbnailRail({ items, activeId, onSelect, onTryOn, tryOnLabel = "Try-On" }: GalleryThumbnailRailProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [canPrev, setCanPrev] = useState(false);
   const [canNext, setCanNext] = useState(false);
@@ -62,6 +65,16 @@ export function GalleryThumbnailRail({ items, activeId, onSelect }: GalleryThumb
                   : "border-neutral-200 opacity-80 hover:opacity-100"
               }`}
             >
+              {onTryOn ? (
+                <TryOnBadge
+                  compact
+                  label={tryOnLabel}
+                  onClick={() => {
+                    onSelect(item.id);
+                    onTryOn();
+                  }}
+                />
+              ) : null}
               <img
                 src={item.thumbnail}
                 alt=""
