@@ -39,7 +39,7 @@ function VariantCard({ variant, fallbackImage }: { variant: ProductVariantRow; f
       params={{ variant: variant.slug }}
       className="group relative block overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-2 hover:ring-[color:var(--gold)]/70 transition-all duration-300"
     >
-      <div className="aspect-[4/5] overflow-hidden bg-black/40 relative">
+      <div className="aspect-square overflow-hidden bg-black/40 relative">
         <img
           src={img}
           alt={variant.name}
@@ -96,7 +96,7 @@ function VarietiesPage() {
   const cover = resolveProductImage(product.images?.[0] || product.image_url);
 
   return (
-    <div>
+    <div className="w-full max-w-full overflow-x-hidden">
       <section className="relative h-[26vh] min-h-[190px] md:h-[38vh] md:min-h-[280px] overflow-hidden bg-[color:var(--noir)]">
         <img
           src={list[0]?.images?.[0] || cover}
