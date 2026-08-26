@@ -162,6 +162,7 @@ function ProductPage() {
             mode={tryOnMode}
             shades={[{ slug: product.slug, name: product.name, image: selectedImage }]}
             activeSlug={product.slug}
+            onSelectShade={() => undefined}
             productName={product.name}
           />
 
