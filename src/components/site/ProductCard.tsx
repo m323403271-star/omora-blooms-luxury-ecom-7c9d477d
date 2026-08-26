@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { formatPrice, resolveProductImage, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 import { handleImageError } from "@/lib/image-fallback";
+import { TryOnBadge } from "@/components/site/TryOnBadge";
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
@@ -23,6 +24,7 @@ export function ProductCard({ product }: { product: Product }) {
             onError={handleImageError}
             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
+          <TryOnBadge />
 
           {/* Badge stack — anchored to top corners with safe insets so they
               never bleed over the image border or the title below. Both
