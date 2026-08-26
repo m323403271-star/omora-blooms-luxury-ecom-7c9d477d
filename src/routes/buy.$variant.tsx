@@ -416,6 +416,8 @@ function BuyPage() {
                 media={media}
                 alt={variant.name}
                 onActiveImageChange={(img) => setSelectedImage(img)}
+                onTryOn={() => setTryOnOpen(true)}
+                tryOnLabel={tryOnMode === "hands" ? "Try-On" : "View in Room"}
               />
             )}
 
