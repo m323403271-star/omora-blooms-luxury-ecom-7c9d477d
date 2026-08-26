@@ -32,6 +32,7 @@ import { Route as OrderOrderIdRouteImport } from './routes/order.$orderId'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
 import { Route as BuyVariantRouteImport } from './routes/buy.$variant'
 import { Route as ApiTrackRouteImport } from './routes/api/track'
+import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
 import { Route as ApiAbandonedCartRouteImport } from './routes/api/abandoned-cart'
 import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
 import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/agent'
@@ -165,6 +166,11 @@ const ApiTrackRoute = ApiTrackRouteImport.update({
   path: '/api/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
+  id: '/api/generate-image',
+  path: '/api/generate-image',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAbandonedCartRoute = ApiAbandonedCartRouteImport.update({
   id: '/api/abandoned-cart',
   path: '/api/abandoned-cart',
@@ -284,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
   '/api/abandoned-cart': typeof ApiAbandonedCartRoute
+  '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
@@ -326,6 +333,7 @@ export interface FileRoutesByTo {
   '/agent': typeof AuthenticatedAgentRoute
   '/partner': typeof AuthenticatedPartnerRoute
   '/api/abandoned-cart': typeof ApiAbandonedCartRoute
+  '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
@@ -370,6 +378,7 @@ export interface FileRoutesById {
   '/_authenticated/agent': typeof AuthenticatedAgentRoute
   '/_authenticated/partner': typeof AuthenticatedPartnerRoute
   '/api/abandoned-cart': typeof ApiAbandonedCartRoute
+  '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/track': typeof ApiTrackRoute
   '/buy/$variant': typeof BuyVariantRoute
   '/collections/$slug': typeof CollectionsSlugRoute
@@ -414,6 +423,7 @@ export interface FileRouteTypes {
     | '/agent'
     | '/partner'
     | '/api/abandoned-cart'
+    | '/api/generate-image'
     | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
@@ -456,6 +466,7 @@ export interface FileRouteTypes {
     | '/agent'
     | '/partner'
     | '/api/abandoned-cart'
+    | '/api/generate-image'
     | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
@@ -499,6 +510,7 @@ export interface FileRouteTypes {
     | '/_authenticated/agent'
     | '/_authenticated/partner'
     | '/api/abandoned-cart'
+    | '/api/generate-image'
     | '/api/track'
     | '/buy/$variant'
     | '/collections/$slug'
@@ -540,6 +552,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   TrackRoute: typeof TrackRoute
   ApiAbandonedCartRoute: typeof ApiAbandonedCartRoute
+  ApiGenerateImageRoute: typeof ApiGenerateImageRoute
   ApiTrackRoute: typeof ApiTrackRoute
   BuyVariantRoute: typeof BuyVariantRoute
   CollectionsSlugRoute: typeof CollectionsSlugRoute
@@ -719,6 +732,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/generate-image': {
+      id: '/api/generate-image'
+      path: '/api/generate-image'
+      fullPath: '/api/generate-image'
+      preLoaderRoute: typeof ApiGenerateImageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/abandoned-cart': {
       id: '/api/abandoned-cart'
       path: '/api/abandoned-cart'
@@ -895,6 +915,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   TrackRoute: TrackRoute,
   ApiAbandonedCartRoute: ApiAbandonedCartRoute,
+  ApiGenerateImageRoute: ApiGenerateImageRoute,
   ApiTrackRoute: ApiTrackRoute,
   BuyVariantRoute: BuyVariantRoute,
   CollectionsSlugRoute: CollectionsSlugRoute,
