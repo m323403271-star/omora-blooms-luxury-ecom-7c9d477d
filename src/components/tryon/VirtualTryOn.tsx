@@ -58,19 +58,73 @@ const LABELS: Record<TryOnMode, string> = {
   wall: "View on Wall",
 };
 
+/** Five bouquet poses the customer can switch between. */
+export type PoseId = "center" | "side" | "presenting" | "shoulder" | "candid";
+
+const POSES: Array<{
+  id: PoseId;
+  label: string;
+  posture: string;
+  place: Placement;
+}> = [
+  {
+    id: "center",
+    label: "Center Hold",
+    posture:
+      "standing squarely facing the camera, both hands together in front of the waist, forearms level, " +
+      "holding an EMPTY space directly at the centre of the torso",
+    place: { x: 50, y: 55, scale: 0.42, rot: 0 },
+  },
+  {
+    id: "side",
+    label: "Side Carry",
+    posture:
+      "standing relaxed with the body angled slightly, one arm hanging down along the side of the hip and " +
+      "that hand curled as if carrying an EMPTY space low beside the thigh, other arm relaxed",
+    place: { x: 34, y: 66, scale: 0.36, rot: -12 },
+  },
+  {
+    id: "presenting",
+    label: "Presenting",
+    posture:
+      "standing and extending both arms forward toward the camera at chest height, palms open and cupped " +
+      "as if offering an EMPTY space to the viewer, warm confident smile",
+    place: { x: 50, y: 47, scale: 0.46, rot: 0 },
+  },
+  {
+    id: "shoulder",
+    label: "Shoulder Rest",
+    posture:
+      "standing in a 3/4 turn with one arm raised so the hand rests near the shoulder, fingers curled around " +
+      "an EMPTY space held up beside the shoulder, chin slightly lifted",
+    place: { x: 62, y: 30, scale: 0.34, rot: 14 },
+  },
+  {
+    id: "candid",
+    label: "Candid Look",
+    posture:
+      "standing in a natural candid stance, weight on one leg, head turned slightly away looking off-camera, " +
+      "both hands loosely holding an EMPTY space near the hip",
+    place: { x: 42, y: 60, scale: 0.38, rot: -6 },
+  },
+];
+
 /** Shared styling rules for the AI-generated model pose. */
-const POSE_RULES =
-  "Full 3/4 view framed from the head down to the knees, natural relaxed standing posture, " +
-  "both hands together in front of the waist holding an EMPTY space as if about to hold a bouquet, " +
-  "hands clearly visible and completely empty, no flowers and no objects anywhere in frame. " +
-  "Wardrobe: if the subject reads as male (teen 15+ or adult), dress him in modern tailored smart-casual or " +
-  "luxury formal wear — blazer, stylish suit or crisp smart shirt, trousers visible to the knee. " +
-  "If the subject reads as female (teen 15+ or adult), dress her in a contemporary elegant knee-length dress, " +
-  "stylish semi-formal or luxury party wear. Age-appropriate for 15+ teens, young adults and adults. " +
-  "Soft studio lighting, warm neutral background, luxury editorial fashion photography.";
+function poseRules(pose: PoseId) {
+  const p = POSES.find((x) => x.id === pose) ?? POSES[0];
+  return (
+    `Full 3/4 view framed from the head down to the knees, ${p.posture}. ` +
+    "Hands clearly visible and completely empty, no flowers and no objects anywhere in frame. " +
+    "Wardrobe: if the subject reads as male (teen 15+ or adult), dress him in modern tailored smart-casual or " +
+    "luxury formal wear — blazer, stylish suit or crisp smart shirt, trousers visible to the knee. " +
+    "If the subject reads as female (teen 15+ or adult), dress her in a contemporary elegant knee-length dress, " +
+    "stylish semi-formal or luxury party wear. Age-appropriate for 15+ teens, young adults and adults. " +
+    "Soft studio lighting, warm neutral background, luxury editorial fashion photography."
+  );
+}
 
 const SCENE_PROMPT: Record<TryOnMode, string> = {
-  hands: `Photorealistic portrait of a single elegant person. ${POSE_RULES}`,
+  hands: "Photorealistic portrait of a single elegant person.",
   room:
     "Photorealistic interior photo of a minimal luxury living room with an empty wooden side table in the foreground, soft daylight, warm neutral tones, nothing on the table",
   wall:
@@ -78,9 +132,14 @@ const SCENE_PROMPT: Record<TryOnMode, string> = {
 };
 
 /** Prompt used when we restyle the customer's own selfie into a knee-length pose. */
-const RESTYLE_PROMPT =
-  "Using the person in the reference photo, keep their apparent gender and age group exactly as they appear " +
-  `and recreate them as a photorealistic full-body-to-knee editorial portrait. ${POSE_RULES}`;
+function restylePrompt(pose: PoseId) {
+  return (
+    "Using the person in the reference photo, preserve their exact facial identity, features and skin tone, " +
+    "and keep their apparent gender and age group exactly as they appear, " +
+    `then recreate them as a photorealistic full-body-to-knee editorial portrait. ${poseRules(pose)}`
+  );
+}
+
 
 
 export function VirtualTryOn({
