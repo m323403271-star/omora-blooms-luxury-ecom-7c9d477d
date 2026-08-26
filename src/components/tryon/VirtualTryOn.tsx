@@ -464,6 +464,18 @@ export function VirtualTryOn({
             </div>
             <p className="text-[10px] text-white/40">Drag the product to reposition it.</p>
 
+            {mode === "hands" ? (
+              <button
+                onClick={() => void generateScene(true)}
+                disabled={scening}
+                className="mt-2 w-full inline-flex items-center justify-center gap-1.5 rounded-full border border-[color:var(--gold)]/50 py-2 text-[10px] uppercase tracking-[0.16em] text-[color:var(--gold)] disabled:opacity-60"
+              >
+                {scening ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                Style my pose (head-to-knee)
+              </button>
+            ) : null}
+
+
             {shades.length > 1 ? (
               <div className="mt-2">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--gold)] mb-1.5">Switch shade</p>
