@@ -6,7 +6,9 @@ import {
   Truck, Sparkles, MapPin, User, Phone, Home, CheckCircle, Loader2, StickyNote, Mail, Tag,
 } from "lucide-react";
 import { productsQuery, formatPrice } from "@/lib/products";
-import { variantBySlugQuery, isSoldOut } from "@/lib/product-variants";
+import { variantBySlugQuery, isSoldOut, activeVariantsQuery } from "@/lib/product-variants";
+import { VirtualTryOn, tryOnModeForCategory } from "@/components/tryon/VirtualTryOn";
+import { useNavigate } from "@tanstack/react-router";
 import { VariantGallery } from "@/components/site/VariantGallery";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -121,7 +123,9 @@ function BuyPage() {
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
   const [couponBusy, setCouponBusy] = useState(false);
+  const [tryOnOpen, setTryOnOpen] = useState(false);
   const savedRef = useRef("");
+  const navigate = useNavigate();
 
 
   // Save an in-progress checkout so the concierge can nudge on WhatsApp later.
@@ -159,6 +163,15 @@ function BuyPage() {
 
   const soldOut = isSoldOut(variant);
   const parent = products.find((p) => p.id === variant.product_id);
+  const { data: siblingVariants } = useQuery(activeVariantsQuery(variant.product_id));
+  const tryOnMode = tryOnModeForCategory(parent?.category);
+  const tryOnShades = (siblingVariants ?? [variant]).map((v) => ({
+    slug: v.slug,
+    name: v.name,
+    colorName: v.color_name,
+    colorHex: v.color_hex,
+    image: v.images?.[0] || parent?.image_url || "",
+  }));
   // Locked gallery order: product video → variant images → packaging video.
   const productVideo = variant.product_video_url ?? variant.video_url;
   const media = [
@@ -704,6 +717,14 @@ function BuyPage() {
               </div>
 
               <div className="space-y-2">
+                <button
+                  onClick={() => setTryOnOpen(true)}
+                  className="w-full mb-1 inline-flex items-center justify-center gap-2 rounded-full border border-[color:var(--gold)]/60 py-2.5 text-xs uppercase tracking-[0.18em] text-[color:var(--gold)] hover:bg-[color:var(--gold)]/10 transition"
+                >
+                  <Sparkles className="h-4 w-4 shrink-0" />
+                  {tryOnMode === "hands" ? "Try-On" : "View in Room"}
+                </button>
+
                 <div className="hidden sm:flex flex-row w-full gap-2">
                   <button
                     onClick={handleRazorpay}
@@ -740,6 +761,16 @@ function BuyPage() {
           </aside>
         </div>
       </div>
+
+      <VirtualTryOn
+        open={tryOnOpen}
+        onClose={() => setTryOnOpen(false)}
+        mode={tryOnMode}
+        shades={tryOnShades}
+        activeSlug={variant.slug}
+        onSelectShade={(slug) => navigate({ to: "/buy/$variant", params: { variant: slug } })}
+        productName={parent?.name ?? variant.name}
+      />
 
       {/* Mobile sticky total + CTAs */}
       <div className="fixed bottom-0 left-0 right-0 z-50 p-3 bg-background border-t sm:hidden w-full max-w-full">
