@@ -34,6 +34,7 @@ import {
 } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
 import { handleImageError } from "@/lib/image-fallback";
+import { TryOnBadge } from "@/components/site/TryOnBadge";
 import { HOME_SHOWCASE, type ShowcaseSection } from "@/lib/home-showcase";
 import { ProductCard } from "@/components/site/ProductCard";
 import { CraftNote } from "@/components/site/CraftNote";
@@ -270,6 +271,7 @@ function ProductSlider({
                   onError={handleImageError}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
+                <TryOnBadge />
                 {off ? (
                   <span className="absolute left-2 top-2 rounded-full bg-gold-gradient px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[color:var(--noir)] shadow">
                     {off}% Off

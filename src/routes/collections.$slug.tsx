@@ -6,6 +6,7 @@ import { collectionBySlug, COLLECTIONS } from "@/lib/collections";
 import { SUB_CATALOG } from "@/lib/subcategories";
 import { productsQuery, resolveProductImage, LOCAL_PRODUCTS, type Product } from "@/lib/products";
 import { handleImageError } from "@/lib/image-fallback";
+import { TryOnBadge } from "@/components/site/TryOnBadge";
 import { siteImagesQuery, subcategoryImages } from "@/lib/site-images";
 
 
@@ -66,7 +67,7 @@ function ItemCard({ product }: { product: Product }) {
       params={{ slug: product.slug }}
       className="group block overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
     >
-      <div className="aspect-square overflow-hidden bg-black/40">
+      <div className="relative aspect-square overflow-hidden bg-black/40">
         <img
           src={img}
           alt={`${product.name} — OMORA BLOOMS`}
@@ -76,6 +77,7 @@ function ItemCard({ product }: { product: Product }) {
           onError={handleImageError}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.06]"
         />
+        <TryOnBadge />
       </div>
       <div className="p-2 md:p-4">
         <h3 className="font-serif text-sm md:text-xl leading-snug tracking-tight line-clamp-2">
