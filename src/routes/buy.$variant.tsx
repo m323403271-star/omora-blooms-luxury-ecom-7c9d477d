@@ -104,6 +104,7 @@ function BuyPage() {
   const { variant: variantSlug } = Route.useParams();
   const { data: products } = useSuspenseQuery(productsQuery);
   const { data: variant, isLoading } = useQuery(variantBySlugQuery(variantSlug));
+  const { data: siblingVariants } = useQuery(activeVariantsQuery(variant?.product_id));
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -163,7 +164,6 @@ function BuyPage() {
 
   const soldOut = isSoldOut(variant);
   const parent = products.find((p) => p.id === variant.product_id);
-  const { data: siblingVariants } = useQuery(activeVariantsQuery(variant.product_id));
   const tryOnMode = tryOnModeForCategory(parent?.category);
   const tryOnShades = (siblingVariants ?? [variant]).map((v) => ({
     slug: v.slug,
