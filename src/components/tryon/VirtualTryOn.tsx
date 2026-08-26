@@ -301,10 +301,10 @@ export function VirtualTryOn({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
           useSelfie && photo.startsWith("data:image/")
-            ? { prompt: restylePrompt(pose), referenceImage: photo }
+            ? { prompt: restylePrompt(activePose), referenceImage: photo }
             : {
                 prompt:
-                  mode === "hands" ? `${SCENE_PROMPT.hands} ${poseRules(pose)}` : SCENE_PROMPT[mode],
+                  mode === "hands" ? `${SCENE_PROMPT.hands} ${poseRules(activePose)}` : SCENE_PROMPT[mode],
               },
         ),
 
