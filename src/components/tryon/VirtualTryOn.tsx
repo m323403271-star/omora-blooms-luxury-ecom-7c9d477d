@@ -529,6 +529,32 @@ export function VirtualTryOn({
             <p className="text-[10px] text-white/40">Drag the product to reposition it.</p>
 
             {mode === "hands" ? (
+              <div className="mt-2">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--gold)] mb-1.5">Choose a pose</p>
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {POSES.map((p) => (
+                    <button
+                      key={p.id}
+                      onClick={() => {
+                        setPose(p.id);
+                        setPlace(p.place);
+                        if (photo.startsWith("data:image/")) void generateScene(true, p.id);
+                      }}
+                      disabled={scening}
+                      className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] transition disabled:opacity-60 ${
+                        pose === p.id
+                          ? "border-[color:var(--gold)] text-[color:var(--gold)]"
+                          : "border-white/15 text-white/70 hover:border-white/40"
+                      }`}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {mode === "hands" ? (
               <button
                 onClick={() => void generateScene(true)}
                 disabled={scening}
