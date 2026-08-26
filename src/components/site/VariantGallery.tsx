@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Maximize2, Play } from "lucide-react";
 import { isVideoRef } from "@/lib/product-variants";
 import { handleImageError } from "@/lib/image-fallback";
+import { TryOnBadge } from "@/components/site/TryOnBadge";
 
 /**
  * One large preview + small thumbnails (photos and one short video).
@@ -11,10 +12,14 @@ export function VariantGallery({
   media,
   alt,
   onActiveImageChange,
+  onTryOn,
+  tryOnLabel = "Try-On",
 }: {
   media: string[];
   alt: string;
   onActiveImageChange?: (image: string) => void;
+  onTryOn?: (() => void) | undefined;
+  tryOnLabel?: string;
 }) {
   const [index, setIndex] = useState(0);
   const [full, setFull] = useState(false);
@@ -56,6 +61,7 @@ export function VariantGallery({
     <div>
       <div className="relative overflow-hidden rounded-2xl hairline border bg-black/40 aspect-square">
         {stage("h-full w-full object-contain")}
+        {onTryOn ? <TryOnBadge label={tryOnLabel} onClick={onTryOn} /> : null}
         <button
           type="button"
           onClick={() => setFull(true)}
