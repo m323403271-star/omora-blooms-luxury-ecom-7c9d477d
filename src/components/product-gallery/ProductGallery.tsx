@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { GalleryStage } from "./GalleryStage";
 import { GalleryThumbnailRail } from "./GalleryThumbnailRail";
 import { ZoomLightbox } from "./ZoomLightbox";
+import { TryOnBadge } from "@/components/site/TryOnBadge";
 import type { GalleryMediaItem } from "./types";
 
 export interface ProductGalleryProps {
@@ -9,6 +10,9 @@ export interface ProductGalleryProps {
   /** Fires with the id of the media item currently in view. */
   onActiveChange?: ((id: string) => void) | undefined;
   className?: string | undefined;
+  /** Launches the Virtual Try-On tool from the stage chip and every thumbnail chip. */
+  onTryOn?: (() => void) | undefined;
+  tryOnLabel?: string | undefined;
 }
 
 /**
@@ -17,7 +21,7 @@ export interface ProductGalleryProps {
  * - Main stage is swipeable; thumbnails scroll horizontally and stay in sync.
  * - Compact height on mobile, full square from sm upwards.
  */
-export function ProductGallery({ items, onActiveChange, className = "" }: ProductGalleryProps) {
+export function ProductGallery({ items, onActiveChange, className = "", onTryOn, tryOnLabel = "Try-On" }: ProductGalleryProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoomIndex, setZoomIndex] = useState<number | null>(null);
@@ -75,6 +79,8 @@ export function ProductGallery({ items, onActiveChange, className = "" }: Produc
           ))}
         </div>
 
+        {onTryOn ? <TryOnBadge label={tryOnLabel} onClick={onTryOn} /> : null}
+
         <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-neutral-900/70 px-2.5 py-1 text-[11px] font-medium text-white">
           {activeIndex + 1} / {items.length}
         </span>
@@ -89,7 +95,7 @@ export function ProductGallery({ items, onActiveChange, className = "" }: Produc
       )}
 
       <div className="mt-2 sm:mt-4">
-        <GalleryThumbnailRail items={items} activeId={activeId} onSelect={goTo} />
+        <GalleryThumbnailRail items={items} activeId={activeId} onSelect={goTo} onTryOn={onTryOn} tryOnLabel={tryOnLabel} />
       </div>
     </div>
   );
