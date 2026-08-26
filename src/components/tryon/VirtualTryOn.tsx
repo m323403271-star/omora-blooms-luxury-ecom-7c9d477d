@@ -227,13 +227,22 @@ export function VirtualTryOn({
     savePhoto(canvas.toDataURL("image/jpeg", 0.92));
   }
 
-  async function generateScene() {
+  /**
+   * Builds the backdrop. When `useSelfie` is set we send the customer's own
+   * photo so the model keeps their apparent gender and age group while being
+   * restyled into the knee-length luxury pose.
+   */
+  async function generateScene(useSelfie = false) {
     setScening(true);
     try {
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: SCENE_PROMPT[mode] }),
+        body: JSON.stringify(
+          useSelfie && photo.startsWith("data:image/")
+            ? { prompt: RESTYLE_PROMPT, referenceImage: photo }
+            : { prompt: SCENE_PROMPT[mode] },
+        ),
       });
       if (!res.ok) {
         toast.error(res.status === 402 ? "AI scene credits are exhausted." : "Could not create a scene.");
@@ -250,6 +259,7 @@ export function VirtualTryOn({
       setScening(false);
     }
   }
+
 
   function onPointerDown(e: React.PointerEvent) {
     dragRef.current = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: place.x, oy: place.y };
