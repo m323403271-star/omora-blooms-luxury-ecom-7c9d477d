@@ -165,6 +165,7 @@ export function VirtualTryOn({
   const [busy, setBusy] = useState(false);
   const [scening, setScening] = useState(false);
   const [place, setPlace] = useState<Placement>(DEFAULTS[mode]);
+  const [pose, setPose] = useState<PoseId>("center");
   const [hiRes, setHiRes] = useState(false);
   const [camera, setCamera] = useState<"user" | "environment" | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
