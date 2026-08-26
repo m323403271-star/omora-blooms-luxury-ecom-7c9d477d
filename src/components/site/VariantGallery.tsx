@@ -75,15 +75,26 @@ export function VariantGallery({
       {media.length > 1 && (
         <div className="mt-3 grid grid-cols-5 gap-2">
           {media.map((m, i) => (
-            <button
-              key={m + i}
-              type="button"
-              onClick={() => setIndex(i)}
-              aria-label={`View item ${i + 1}`}
-              className={`relative aspect-square overflow-hidden rounded-xl border transition ${
-                i === index ? "ring-2 ring-[color:var(--gold)] border-transparent" : "hairline opacity-80 hover:opacity-100"
-              }`}
-            >
+            <div key={m + i} className="relative aspect-square">
+              <button
+                type="button"
+                onClick={() => setIndex(i)}
+                aria-label={`View item ${i + 1}`}
+                className={`relative block h-full w-full overflow-hidden rounded-xl border transition ${
+                  i === index ? "ring-2 ring-[color:var(--gold)] border-transparent" : "hairline opacity-80 hover:opacity-100"
+                }`}
+              >
+                {isVideoRef(m) ? (
+                  <>
+                    <video src={m} muted playsInline preload="metadata" className="h-full w-full object-cover" />
+                    <span className="absolute inset-0 flex items-center justify-center bg-black/35">
+                      <Play className="h-4 w-4 text-white" />
+                    </span>
+                  </>
+                ) : (
+                  <img src={m} alt={`${alt} ${i + 1}`} onError={handleImageError} className="h-full w-full object-cover" />
+                )}
+              </button>
               {onTryOn ? (
                 <TryOnBadge
                   compact
@@ -94,17 +105,7 @@ export function VariantGallery({
                   }}
                 />
               ) : null}
-              {isVideoRef(m) ? (
-                <>
-                  <video src={m} muted playsInline preload="metadata" className="h-full w-full object-cover" />
-                  <span className="absolute inset-0 flex items-center justify-center bg-black/35">
-                    <Play className="h-4 w-4 text-white" />
-                  </span>
-                </>
-              ) : (
-                <img src={m} alt={`${alt} ${i + 1}`} onError={handleImageError} className="h-full w-full object-cover" />
-              )}
-            </button>
+            </div>
           ))}
         </div>
       )}
