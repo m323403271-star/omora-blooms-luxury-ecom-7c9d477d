@@ -46,7 +46,6 @@ function writeCached(url: string, png: string) {
 type Placement = { x: number; y: number; scale: number; rot: number };
 
 const DEFAULTS: Record<TryOnMode, Placement> = {
-  // 3/4 knee-length framing: bouquet sits in front of the waist/torso.
   hands: { x: 50, y: 55, scale: 0.42, rot: 0 },
   room: { x: 50, y: 68, scale: 0.34, rot: 0 },
   wall: { x: 50, y: 38, scale: 0.3, rot: 0 },
@@ -58,68 +57,67 @@ const LABELS: Record<TryOnMode, string> = {
   wall: "View on Wall",
 };
 
-/** Five bouquet poses the customer can switch between. */
-export type PoseId = "center" | "side" | "presenting" | "shoulder" | "candid";
+/** The four bouquet poses the customer can switch between. */
+export type PoseId = "waist" | "walking" | "shoulder" | "closeup";
 
-const POSES: Array<{
-  id: PoseId;
-  label: string;
-  posture: string;
-  place: Placement;
-}> = [
+const POSES: Array<{ id: PoseId; label: string; posture: string }> = [
   {
-    id: "center",
-    label: "Center Hold",
+    id: "waist",
+    label: "Classic Waist Pose",
     posture:
-      "standing squarely facing the camera, both hands together in front of the waist, forearms level, " +
-      "holding an EMPTY space directly at the centre of the torso",
-    place: { x: 50, y: 55, scale: 0.42, rot: 0 },
+      "standing squarely facing the camera, framed head to knees, both hands naturally holding the bouquet " +
+      "at waist level with fingers wrapped around the wrapped stems",
   },
   {
-    id: "side",
-    label: "Side Carry",
+    id: "walking",
+    label: "Walking Pose",
     posture:
-      "standing relaxed with the body angled slightly, one arm hanging down along the side of the hip and " +
-      "that hand curled as if carrying an EMPTY space low beside the thigh, other arm relaxed",
-    place: { x: 34, y: 66, scale: 0.36, rot: -12 },
-  },
-  {
-    id: "presenting",
-    label: "Presenting",
-    posture:
-      "standing and extending both arms forward toward the camera at chest height, palms open and cupped " +
-      "as if offering an EMPTY space to the viewer, warm confident smile",
-    place: { x: 50, y: 47, scale: 0.46, rot: 0 },
+      "walking forward toward the camera mid-stride, framed head to knees, carrying the bouquet in front " +
+      "with the fingers of one hand curled firmly around the stems, natural movement in the outfit",
   },
   {
     id: "shoulder",
-    label: "Shoulder Rest",
+    label: "Over the Shoulder Pose",
     posture:
-      "standing in a 3/4 turn with one arm raised so the hand rests near the shoulder, fingers curled around " +
-      "an EMPTY space held up beside the shoulder, chin slightly lifted",
-    place: { x: 62, y: 30, scale: 0.34, rot: 14 },
+      "body turned away from the camera with the head looking back over the shoulder, framed head to knees, " +
+      "holding the bouquet up beside the shoulder with the hand visibly gripping the stems",
   },
   {
-    id: "candid",
-    label: "Candid Look",
+    id: "closeup",
+    label: "Close-up Kissing Pose",
     posture:
-      "standing in a natural candid stance, weight on one leg, head turned slightly away looking off-camera, " +
-      "both hands loosely holding an EMPTY space near the hip",
-    place: { x: 42, y: 60, scale: 0.38, rot: -6 },
+      "close-up portrait from the chest up, holding the bouquet close to the face with the lips gently " +
+      "touching the blooms, eyes softly closed, fingers wrapped around the stems just below the blooms",
   },
 ];
 
-/** Shared styling rules for the AI-generated model pose. */
-function poseRules(pose: PoseId) {
-  const p = POSES.find((x) => x.id === pose) ?? POSES[0];
+const WARDROBE =
+  "Wardrobe: if the subject reads as male (teen 15+ or adult), dress him in modern tailored smart-casual or " +
+  "luxury formal wear — blazer, stylish suit or crisp smart shirt, trousers visible to the knee. " +
+  "If the subject reads as female (teen 15+ or adult), dress her in a contemporary elegant knee-length dress, " +
+  "stylish semi-formal or luxury party wear. Age-appropriate for 15+ teens, young adults and adults. " +
+  "Soft studio lighting, warm neutral background, luxury editorial fashion photography.";
+
+/**
+ * Composite prompt: image 1 is the customer (identity lock), image 2 is the
+ * EXACT catalog product. The product must be inpainted into the hands with
+ * real fingers wrapping it — never pasted as a flat 2D sticker.
+ */
+function compositePrompt(pose: PoseId, hasPerson: boolean) {
+  const p = POSES.find((x) => x.id === pose) ?? POSES[0]!;
+  const identity = hasPerson
+    ? "IDENTITY LOCK: the FIRST reference image is the customer. Reproduce their face with 100% identical " +
+      "facial features, bone structure, skin tone, hairline and expression geometry — no distortion, no " +
+      "beautification, no change of age or gender. Treat the face as a locked face embedding. "
+    : "Create a single elegant photorealistic model appropriate for a luxury florist campaign. ";
   return (
-    `Full 3/4 view framed from the head down to the knees, ${p.posture}. ` +
-    "Hands clearly visible and completely empty, no flowers and no objects anywhere in frame. " +
-    "Wardrobe: if the subject reads as male (teen 15+ or adult), dress him in modern tailored smart-casual or " +
-    "luxury formal wear — blazer, stylish suit or crisp smart shirt, trousers visible to the knee. " +
-    "If the subject reads as female (teen 15+ or adult), dress her in a contemporary elegant knee-length dress, " +
-    "stylish semi-formal or luxury party wear. Age-appropriate for 15+ teens, young adults and adults. " +
-    "Soft studio lighting, warm neutral background, luxury editorial fashion photography."
+    identity +
+    `PRODUCT LOCK: the LAST reference image is the exact catalog bouquet. Keep its exact shape, colours, ` +
+    "flower count, wrapping and texture pixel-faithful — do not redesign, recolour or restyle the product. " +
+    "Composite it into the scene with proper depth: the hands and fingers must realistically grip and wrap " +
+    "AROUND the bouquet stems with correct occlusion (some fingers in front of the stems, some behind), " +
+    "matched lighting, contact shadows and natural perspective. It must never look like a flat cutout " +
+    `pasted on the clothing. Pose: ${p.posture}. ${WARDROBE}`
   );
 }
 
@@ -130,17 +128,6 @@ const SCENE_PROMPT: Record<TryOnMode, string> = {
   wall:
     "Photorealistic interior photo of a clean empty beige wall with soft daylight and gentle shadows, minimal luxury living room, nothing hanging on the wall",
 };
-
-/** Prompt used when we restyle the customer's own selfie into a knee-length pose. */
-function restylePrompt(pose: PoseId) {
-  return (
-    "Using the person in the reference photo, preserve their exact facial identity, features and skin tone, " +
-    "and keep their apparent gender and age group exactly as they appear, " +
-    `then recreate them as a photorealistic full-body-to-knee editorial portrait. ${poseRules(pose)}`
-  );
-}
-
-
 
 export function VirtualTryOn({
   open,
@@ -161,11 +148,12 @@ export function VirtualTryOn({
 }) {
   const cutout = useServerFn(cutoutCatalogImage);
   const [photo, setPhoto] = useState<string>("");
+  const [look, setLook] = useState<string>("");
   const [png, setPng] = useState<string>("");
   const [busy, setBusy] = useState(false);
   const [scening, setScening] = useState(false);
   const [place, setPlace] = useState<Placement>(DEFAULTS[mode]);
-  const [pose, setPose] = useState<PoseId>("center");
+  const [pose, setPose] = useState<PoseId>("waist");
   const [hiRes, setHiRes] = useState(false);
   const [camera, setCamera] = useState<"user" | "environment" | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -175,6 +163,7 @@ export function VirtualTryOn({
   const dragRef = useRef<{ id: number; sx: number; sy: number; ox: number; oy: number } | null>(null);
 
   const active = shades.find((s) => s.slug === activeSlug) ?? shades[0];
+  const isHands = mode === "hands";
 
   // Persist the customer photo so shade switching is one click.
   useEffect(() => {
@@ -232,14 +221,60 @@ export function VirtualTryOn({
 
   if (!open) return null;
 
-  function savePhoto(url: string) {
+  /**
+   * Generates the final look. In hands mode the AI does the compositing so the
+   * fingers wrap the bouquet — no client-side sticker overlay is ever shown.
+   */
+  async function generateLook(opts?: { pose?: PoseId; source?: string; product?: string }) {
+    const activePose = opts?.pose ?? pose;
+    const source = opts?.source ?? photo;
+    const product = opts?.product ?? png || active?.image || "";
+    setScening(true);
+    if (isHands) setLook("");
+    try {
+      const refs = isHands
+        ? [source, product].filter((u): u is string => Boolean(u && /^(data:image\/|https?:)/.test(u)))
+        : [];
+      const body = isHands
+        ? {
+            prompt: compositePrompt(activePose, Boolean(source)),
+            referenceImages: refs,
+          }
+        : { prompt: SCENE_PROMPT[mode] };
+
+      const res = await fetch("/api/generate-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!res.ok) {
+        toast.error(res.status === 402 ? "AI credits are exhausted." : "Could not generate the look.");
+        return;
+      }
+      const json = (await res.json()) as { data?: Array<{ b64_json?: string; url?: string }> };
+      const item = json?.data?.[0];
+      const url = item?.b64_json ? `data:image/png;base64,${item.b64_json}` : item?.url;
+      if (!url) return toast.error("Generation returned no image.");
+      if (isHands) setLook(url);
+      else savePhoto(url, false);
+    } catch {
+      toast.error("Could not generate the look.");
+    } finally {
+      setScening(false);
+    }
+  }
+
+  function savePhoto(url: string, autoGenerate = true) {
     setPhoto(url);
     setPlace(DEFAULTS[mode]);
+    setLook("");
     try {
       sessionStorage.setItem(PHOTO_KEY, url);
     } catch {
       /* too large for storage — still usable this session */
     }
+    // Auto-trigger the AI composite right after capture/upload.
+    if (autoGenerate && isHands) void generateLook({ source: url });
   }
 
   function onFile(file: File | undefined) {
@@ -287,45 +322,6 @@ export function VirtualTryOn({
     savePhoto(canvas.toDataURL("image/jpeg", 0.92));
   }
 
-  /**
-   * Builds the backdrop. When `useSelfie` is set we send the customer's own
-   * photo so the model keeps their apparent gender and age group while being
-   * restyled into the knee-length luxury pose.
-   */
-  async function generateScene(useSelfie = false, poseOverride?: PoseId) {
-    const activePose = poseOverride ?? pose;
-    setScening(true);
-    try {
-      const res = await fetch("/api/generate-image", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(
-          useSelfie && photo.startsWith("data:image/")
-            ? { prompt: restylePrompt(activePose), referenceImage: photo }
-            : {
-                prompt:
-                  mode === "hands" ? `${SCENE_PROMPT.hands} ${poseRules(activePose)}` : SCENE_PROMPT[mode],
-              },
-        ),
-
-      });
-      if (!res.ok) {
-        toast.error(res.status === 402 ? "AI scene credits are exhausted." : "Could not create a scene.");
-        return;
-      }
-      const json = (await res.json()) as { data?: Array<{ b64_json?: string; url?: string }> };
-      const item = json?.data?.[0];
-      const url = item?.b64_json ? `data:image/png;base64,${item.b64_json}` : item?.url;
-      if (!url) return toast.error("Scene generation returned no image.");
-      savePhoto(url);
-    } catch {
-      toast.error("Could not create a scene.");
-    } finally {
-      setScening(false);
-    }
-  }
-
-
   function onPointerDown(e: React.PointerEvent) {
     dragRef.current = { id: e.pointerId, sx: e.clientX, sy: e.clientY, ox: place.x, oy: place.y };
     (e.target as HTMLElement).setPointerCapture?.(e.pointerId);
@@ -345,6 +341,16 @@ export function VirtualTryOn({
   }
 
   async function download() {
+    // Hands mode: the AI render IS the final image.
+    if (isHands) {
+      if (!look) return toast.error("Generate your look first.");
+      const link = document.createElement("a");
+      link.href = look;
+      link.download = `omora-tryon-${active?.slug || "look"}.png`;
+      link.click();
+      toast.success("Look downloaded.");
+      return;
+    }
     if (!photo || !png) return toast.error("Add a photo first.");
     try {
       const [bg, fg] = await Promise.all([loadImage(photo), loadImage(png)]);
@@ -362,11 +368,9 @@ export function VirtualTryOn({
       ctx.save();
       ctx.translate((place.x / 100) * W, (place.y / 100) * H);
       ctx.rotate((place.rot * Math.PI) / 180);
-      if (mode !== "hands") {
-        ctx.shadowColor = mode === "wall" ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.45)";
-        ctx.shadowBlur = targetW * (mode === "wall" ? 0.05 : 0.08);
-        ctx.shadowOffsetY = targetH * (mode === "wall" ? 0.02 : 0.04);
-      }
+      ctx.shadowColor = mode === "wall" ? "rgba(0,0,0,0.35)" : "rgba(0,0,0,0.45)";
+      ctx.shadowBlur = targetW * (mode === "wall" ? 0.05 : 0.08);
+      ctx.shadowOffsetY = targetH * (mode === "wall" ? 0.02 : 0.04);
       ctx.drawImage(fg, -targetW / 2, -targetH / 2, targetW, targetH);
       ctx.restore();
 
@@ -384,9 +388,10 @@ export function VirtualTryOn({
   const shadow =
     mode === "wall"
       ? "drop-shadow(0 10px 16px rgba(0,0,0,0.45))"
-      : mode === "room"
-        ? "drop-shadow(0 18px 22px rgba(0,0,0,0.55))"
-        : "drop-shadow(0 10px 14px rgba(0,0,0,0.4))";
+      : "drop-shadow(0 18px 22px rgba(0,0,0,0.55))";
+
+  const display = isHands ? look : photo;
+  const hasStage = isHands ? Boolean(look || scening) : Boolean(photo);
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-sm overflow-y-auto">
@@ -443,17 +448,21 @@ export function VirtualTryOn({
               </button>
             </div>
           </div>
-        ) : !photo ? (
+        ) : !hasStage ? (
           <div className="rounded-2xl border border-dashed border-[color:var(--gold)]/40 bg-white/[0.03] p-5 text-center">
             <Camera className="mx-auto h-7 w-7 text-[color:var(--gold)]" />
             <p className="mt-2 font-serif text-base text-white">
-              {mode === "hands"
-                ? "Take a selfie holding your hands out"
+              {isHands
+                ? "Take a photo of yourself"
                 : mode === "wall"
                   ? "Capture the wall you want it on"
                   : "Capture your table, floor or room"}
             </p>
-            <p className="text-xs text-white/60">We overlay the exact catalog artwork — never a redrawn image.</p>
+            <p className="text-xs text-white/60">
+              {isHands
+                ? "Your face stays exactly as captured — we only add the exact catalog bouquet into your hands."
+                : "We overlay the exact catalog artwork — never a redrawn image."}
+            </p>
 
             <div className="mt-4 grid grid-cols-3 gap-2">
               <SourceButton icon={<Camera className="h-4 w-4 scale-x-[-1]" />} label="Front Camera" onClick={() => void startCamera("user")} />
@@ -462,22 +471,26 @@ export function VirtualTryOn({
             </div>
 
             <button
-              onClick={() => void generateScene()}
+              onClick={() => void generateLook({ source: "" })}
               disabled={scening}
               className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-full border border-[color:var(--gold)]/50 px-4 py-2 text-[10px] uppercase tracking-[0.18em] text-[color:var(--gold)] disabled:opacity-60"
             >
               {scening ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-              {mode === "hands" ? "Use a model pose" : "Use a sample room"}
+              {isHands ? "Use a model pose" : "Use a sample room"}
             </button>
           </div>
         ) : (
           <>
             <div
               ref={stageRef}
-              className="relative w-full overflow-hidden rounded-2xl border border-white/10 bg-black touch-none select-none"
+              className="relative w-full overflow-hidden rounded-2xl border border-white/10 bg-black touch-none select-none min-h-[42vh]"
             >
-              <img src={photo} alt="Your photo" className="w-full h-auto max-h-[62vh] object-contain" />
-              {png ? (
+              {display ? (
+                <img src={display} alt="Your look" className="w-full h-auto max-h-[62vh] object-contain" />
+              ) : null}
+
+              {/* Overlay compositing is only for room / wall modes. */}
+              {!isHands && png ? (
                 <img
                   src={png}
                   alt={`${active?.name ?? productName} overlay`}
@@ -496,40 +509,51 @@ export function VirtualTryOn({
                   }}
                 />
               ) : null}
-              {busy ? (
-                <div className="absolute inset-0 grid place-items-center bg-black/50">
-                  <Loader2 className="h-6 w-6 animate-spin text-[color:var(--gold)]" />
+
+              {scening || (!isHands && busy) ? (
+                <div className="absolute inset-0 grid place-items-center gap-2 bg-black/70 text-center">
+                  <div>
+                    <Loader2 className="mx-auto h-7 w-7 animate-spin text-[color:var(--gold)]" />
+                    <p className="mt-2 text-[11px] uppercase tracking-[0.22em] text-[color:var(--gold)]">
+                      Generating look…
+                    </p>
+                    <p className="mt-1 text-[10px] text-white/50">Keeping your face and the exact bouquet intact</p>
+                  </div>
                 </div>
               ) : null}
             </div>
 
-            <div className="mt-2 grid grid-cols-2 gap-2">
-              <label className="text-[10px] uppercase tracking-[0.18em] text-white/60">
-                Size
-                <input
-                  type="range"
-                  min={10}
-                  max={100}
-                  value={Math.round(place.scale * 100)}
-                  onChange={(e) => setPlace((p) => ({ ...p, scale: Number(e.target.value) / 100 }))}
-                  className="w-full accent-[color:var(--gold)]"
-                />
-              </label>
-              <label className="text-[10px] uppercase tracking-[0.18em] text-white/60">
-                Rotate
-                <input
-                  type="range"
-                  min={-45}
-                  max={45}
-                  value={place.rot}
-                  onChange={(e) => setPlace((p) => ({ ...p, rot: Number(e.target.value) }))}
-                  className="w-full accent-[color:var(--gold)]"
-                />
-              </label>
-            </div>
-            <p className="text-[10px] text-white/40">Drag the product to reposition it.</p>
+            {!isHands ? (
+              <>
+                <div className="mt-2 grid grid-cols-2 gap-2">
+                  <label className="text-[10px] uppercase tracking-[0.18em] text-white/60">
+                    Size
+                    <input
+                      type="range"
+                      min={10}
+                      max={100}
+                      value={Math.round(place.scale * 100)}
+                      onChange={(e) => setPlace((p) => ({ ...p, scale: Number(e.target.value) / 100 }))}
+                      className="w-full accent-[color:var(--gold)]"
+                    />
+                  </label>
+                  <label className="text-[10px] uppercase tracking-[0.18em] text-white/60">
+                    Rotate
+                    <input
+                      type="range"
+                      min={-45}
+                      max={45}
+                      value={place.rot}
+                      onChange={(e) => setPlace((p) => ({ ...p, rot: Number(e.target.value) }))}
+                      className="w-full accent-[color:var(--gold)]"
+                    />
+                  </label>
+                </div>
+                <p className="text-[10px] text-white/40">Drag the product to reposition it.</p>
+              </>
+            ) : null}
 
-            {mode === "hands" ? (
+            {isHands ? (
               <div className="mt-2">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--gold)] mb-1.5">Choose a pose</p>
                 <div className="flex gap-2 overflow-x-auto pb-1">
@@ -538,8 +562,7 @@ export function VirtualTryOn({
                       key={p.id}
                       onClick={() => {
                         setPose(p.id);
-                        setPlace(p.place);
-                        if (photo.startsWith("data:image/")) void generateScene(true, p.id);
+                        void generateLook({ pose: p.id });
                       }}
                       disabled={scening}
                       className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] transition disabled:opacity-60 ${
@@ -555,18 +578,6 @@ export function VirtualTryOn({
               </div>
             ) : null}
 
-            {mode === "hands" ? (
-              <button
-                onClick={() => void generateScene(true)}
-                disabled={scening}
-                className="mt-2 w-full inline-flex items-center justify-center gap-1.5 rounded-full border border-[color:var(--gold)]/50 py-2 text-[10px] uppercase tracking-[0.16em] text-[color:var(--gold)] disabled:opacity-60"
-              >
-                {scening ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                Style my pose (head-to-knee)
-              </button>
-            ) : null}
-
-
             {shades.length > 1 ? (
               <div className="mt-2">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--gold)] mb-1.5">Switch shade</p>
@@ -574,7 +585,10 @@ export function VirtualTryOn({
                   {shades.map((s) => (
                     <button
                       key={s.slug}
-                      onClick={() => onSelectShade(s.slug)}
+                      onClick={() => {
+                        onSelectShade(s.slug);
+                        if (isHands) void generateLook({ product: readCached(s.image) || s.image });
+                      }}
                       className={`shrink-0 rounded-xl border p-1 transition ${
                         s.slug === active?.slug ? "border-[color:var(--gold)]" : "border-white/15 hover:border-white/40"
                       }`}
@@ -630,6 +644,7 @@ export function VirtualTryOn({
             <button
               onClick={() => {
                 setPhoto("");
+                setLook("");
                 try {
                   sessionStorage.removeItem(PHOTO_KEY);
                 } catch {
@@ -644,11 +659,11 @@ export function VirtualTryOn({
         )}
       </div>
 
-      {hiRes && photo ? (
+      {hiRes && display ? (
         <div className="fixed inset-0 z-[110] bg-black grid place-items-center p-2" onClick={() => setHiRes(false)}>
           <div className="relative w-full max-w-5xl">
-            <img src={photo} alt="High-res preview" className="w-full h-auto object-contain" />
-            {png ? (
+            <img src={display} alt="High-res preview" className="w-full h-auto object-contain" />
+            {!isHands && png ? (
               <img
                 src={png}
                 alt=""
@@ -658,7 +673,7 @@ export function VirtualTryOn({
                   top: `${place.y}%`,
                   width: `${place.scale * 100}%`,
                   transform: `translate(-50%, -50%) rotate(${place.rot}deg)`,
-                  filter: mode === "hands" ? "none" : shadow,
+                  filter: shadow,
                 }}
               />
             ) : null}
