@@ -187,8 +187,10 @@ export function VirtualTryOn({
   const [pose, setPose] = useState<PoseId>("waist");
   const [hiRes, setHiRes] = useState(false);
   const [camera, setCamera] = useState<"user" | "environment" | null>(null);
+  const [used, setUsed] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+
   const streamRef = useRef<MediaStream | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const dragRef = useRef<{ id: number; sx: number; sy: number; ox: number; oy: number } | null>(null);
