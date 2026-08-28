@@ -208,6 +208,9 @@ export function VirtualTryOn({
     }
   }, []);
 
+  useEffect(() => setUsed(readQuota()), [open]);
+
+
   useEffect(() => setPlace(DEFAULTS[mode]), [mode]);
 
   const stopCamera = useCallback(() => {
