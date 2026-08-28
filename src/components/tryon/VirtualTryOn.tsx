@@ -265,7 +265,14 @@ export function VirtualTryOn({
     const activePose = opts?.pose ?? pose;
     const source = opts?.source ?? photo;
     const product = opts?.product || png || active?.image || "";
+    if (readQuota() >= DAILY_LIMIT) {
+      setUsed(DAILY_LIMIT);
+      toast.error(`You've used all ${DAILY_LIMIT} Try-On looks for today. Please come back tomorrow.`);
+      return;
+    }
+    setUsed(bumpQuota());
     setScening(true);
+
     if (isHands) setLook("");
     try {
       const refs = isHands
