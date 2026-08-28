@@ -598,7 +598,12 @@ export function VirtualTryOn({
 
             {isHands ? (
               <div className="mt-2">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--gold)] mb-1.5">Choose a pose</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--gold)] mb-1.5">
+                  Choose a pose
+                  <span className="ml-2 normal-case tracking-normal text-white/40">
+                    {Math.max(0, DAILY_LIMIT - used)} of {DAILY_LIMIT} left today
+                  </span>
+                </p>
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   {POSES.map((p) => (
                     <button
@@ -607,7 +612,8 @@ export function VirtualTryOn({
                         setPose(p.id);
                         void generateLook({ pose: p.id });
                       }}
-                      disabled={scening}
+                      disabled={scening || used >= DAILY_LIMIT}
+
                       className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] transition disabled:opacity-60 ${
                         pose === p.id
                           ? "border-[color:var(--gold)] text-[color:var(--gold)]"
