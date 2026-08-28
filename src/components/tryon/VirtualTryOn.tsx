@@ -228,7 +228,7 @@ export function VirtualTryOn({
   async function generateLook(opts?: { pose?: PoseId; source?: string; product?: string }) {
     const activePose = opts?.pose ?? pose;
     const source = opts?.source ?? photo;
-    const product = opts?.product ?? png || active?.image || "";
+    const product = opts?.product || png || active?.image || "";
     setScening(true);
     if (isHands) setLook("");
     try {
