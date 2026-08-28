@@ -9,21 +9,27 @@ export const Route = createFileRoute("/api/generate-image")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { prompt, referenceImage } = (await request.json()) as {
+        const { prompt, referenceImage, referenceImages } = (await request.json()) as {
           prompt?: string;
           referenceImage?: string;
+          referenceImages?: string[];
         };
-        if (!prompt || prompt.length > 1600) {
+        if (!prompt || prompt.length > 3000) {
           return new Response("Invalid prompt", { status: 400 });
         }
         const key = process.env["LOVABLE_API_KEY"];
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
 
-        // With a selfie we use a Gemini image model so the generated model pose
-        // matches the person's apparent age group and gender. Without one we
-        // fall back to a plain text-to-image backdrop.
+        // Reference images, in order: [customer photo (identity lock),
+        // exact catalog product (texture lock)]. Any of them may be omitted.
+        const refs = (referenceImages ?? (referenceImage ? [referenceImage] : []))
+          .filter((u) => typeof u === "string" && /^(data:image\/|https?:\/\/)/.test(u))
+          .slice(0, 3);
+
+        // With references we use a Gemini image model so it can inpaint the
+        // exact catalog product into the hands while locking the face.
         const body =
-          referenceImage && referenceImage.startsWith("data:image/")
+          refs.length > 0
             ? {
                 model: "google/gemini-3.1-flash-image",
                 messages: [
@@ -31,7 +37,7 @@ export const Route = createFileRoute("/api/generate-image")({
                     role: "user",
                     content: [
                       { type: "text", text: prompt },
-                      { type: "image_url", image_url: { url: referenceImage } },
+                      ...refs.map((url) => ({ type: "image_url", image_url: { url } })),
                     ],
                   },
                 ],
