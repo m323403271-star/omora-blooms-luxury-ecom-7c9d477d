@@ -46,24 +46,40 @@ export const Route = createFileRoute("/api/generate-image")({
             }
           }
 
-          const g = await fetch(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent",
-            {
-              method: "POST",
-              headers: { "x-goog-api-key": geminiKey, "Content-Type": "application/json" },
-              body: JSON.stringify({ contents: [{ role: "user", parts }] }),
-            },
-          );
-          if (!g.ok) return new Response(await g.text(), { status: g.status });
-          const gj = (await g.json()) as {
-            candidates?: Array<{ content?: { parts?: Array<{ inlineData?: { data?: string } }> } }>;
-          };
-          const b64 = gj.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data)?.inlineData
-            ?.data;
-          if (!b64) return new Response("Gemini returned no image", { status: 502 });
-          return new Response(JSON.stringify({ data: [{ b64_json: b64 }] }), {
-            headers: { "Content-Type": "application/json" },
-          });
+          // Try the highest quality model first, then a lighter one if the
+          // personal key's quota/plan does not cover it.
+          const models = ["gemini-3-pro-image-preview", "gemini-2.5-flash-image"];
+          let lastError = "";
+          let lastStatus = 502;
+          for (const model of models) {
+            const g = await fetch(
+              `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+              {
+                method: "POST",
+                headers: { "x-goog-api-key": geminiKey, "Content-Type": "application/json" },
+                body: JSON.stringify({ contents: [{ role: "user", parts }] }),
+              },
+            );
+            if (!g.ok) {
+              lastStatus = g.status;
+              lastError = await g.text();
+              continue;
+            }
+            const gj = (await g.json()) as {
+              candidates?: Array<{ content?: { parts?: Array<{ inlineData?: { data?: string } }> } }>;
+            };
+            const b64 = gj.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data)
+              ?.inlineData?.data;
+            if (b64) {
+              return new Response(JSON.stringify({ data: [{ b64_json: b64 }] }), {
+                headers: { "Content-Type": "application/json" },
+              });
+            }
+            lastStatus = 502;
+            lastError = "Gemini returned no image";
+          }
+          // Personal key failed — fall back to the built-in gateway when available.
+          if (!key) return new Response(lastError || "Gemini failed", { status: lastStatus });
         }
 
         // Fallback: Lovable AI gateway.
