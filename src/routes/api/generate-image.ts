@@ -17,8 +17,10 @@ export const Route = createFileRoute("/api/generate-image")({
         if (!prompt || prompt.length > 3000) {
           return new Response("Invalid prompt", { status: 400 });
         }
+        const geminiKey = process.env["GEMINI_API_KEY"];
         const key = process.env["LOVABLE_API_KEY"];
-        if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
+        if (!key && !geminiKey) return new Response("Missing image generation key", { status: 500 });
+
 
         // Reference images, in order: [customer photo (identity lock),
         // exact catalog product (texture lock)]. Any of them may be omitted.
@@ -26,6 +28,45 @@ export const Route = createFileRoute("/api/generate-image")({
           .filter((u) => typeof u === "string" && /^(data:image\/|https?:\/\/)/.test(u))
           .slice(0, 3);
 
+        // Preferred path: the merchant's own Google Gemini key (direct API).
+        if (geminiKey) {
+          const parts: Array<Record<string, unknown>> = [{ text: prompt }];
+          for (const url of refs) {
+            if (url.startsWith("data:")) {
+              const [meta, b64] = url.split(",");
+              const mime = meta?.slice(5).split(";")[0] || "image/png";
+              if (b64) parts.push({ inlineData: { mimeType: mime, data: b64 } });
+            } else {
+              const r = await fetch(url);
+              if (!r.ok) continue;
+              const b = Buffer.from(await r.arrayBuffer()).toString("base64");
+              parts.push({
+                inlineData: { mimeType: r.headers.get("content-type") || "image/png", data: b },
+              });
+            }
+          }
+
+          const g = await fetch(
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent",
+            {
+              method: "POST",
+              headers: { "x-goog-api-key": geminiKey, "Content-Type": "application/json" },
+              body: JSON.stringify({ contents: [{ role: "user", parts }] }),
+            },
+          );
+          if (!g.ok) return new Response(await g.text(), { status: g.status });
+          const gj = (await g.json()) as {
+            candidates?: Array<{ content?: { parts?: Array<{ inlineData?: { data?: string } }> } }>;
+          };
+          const b64 = gj.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data)?.inlineData
+            ?.data;
+          if (!b64) return new Response("Gemini returned no image", { status: 502 });
+          return new Response(JSON.stringify({ data: [{ b64_json: b64 }] }), {
+            headers: { "Content-Type": "application/json" },
+          });
+        }
+
+        // Fallback: Lovable AI gateway.
         // With references we use a Gemini image model so it can inpaint the
         // exact catalog product into the hands while locking the face.
         const body =
