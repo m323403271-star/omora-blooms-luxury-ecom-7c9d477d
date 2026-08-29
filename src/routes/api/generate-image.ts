@@ -17,8 +17,10 @@ export const Route = createFileRoute("/api/generate-image")({
         if (!prompt || prompt.length > 3000) {
           return new Response("Invalid prompt", { status: 400 });
         }
+        const geminiKey = process.env["GEMINI_API_KEY"];
         const key = process.env["LOVABLE_API_KEY"];
-        if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
+        if (!key && !geminiKey) return new Response("Missing image generation key", { status: 500 });
+
 
         // Reference images, in order: [customer photo (identity lock),
         // exact catalog product (texture lock)]. Any of them may be omitted.
