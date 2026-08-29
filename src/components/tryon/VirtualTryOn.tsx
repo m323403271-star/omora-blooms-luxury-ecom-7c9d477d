@@ -189,7 +189,7 @@ export function VirtualTryOn({
     }
   }, []);
 
-  useEffect(() => setUsed(readQuota()), [open]);
+  useEffect(() => clearQuota(), [open]);
 
 
   useEffect(() => setPlace(DEFAULTS[mode]), [mode]);
