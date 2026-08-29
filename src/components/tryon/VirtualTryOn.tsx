@@ -43,34 +43,15 @@ function writeCached(url: string, png: string) {
   }
 }
 
-/** Strict 3 AI generations per visitor per day (LocalStorage). */
+/** Try-On usage is unlimited (daily quota removed). */
 const QUOTA_KEY = "omora:tryon:quota";
-const DAILY_LIMIT = 3;
 
-function todayKey() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function readQuota(): number {
+function clearQuota() {
   try {
-    const raw = localStorage.getItem(QUOTA_KEY);
-    if (!raw) return 0;
-    const parsed = JSON.parse(raw) as { day?: string; used?: number };
-    if (parsed?.day !== todayKey()) return 0;
-    return Math.max(0, Number(parsed.used) || 0);
-  } catch {
-    return 0;
-  }
-}
-
-function bumpQuota(): number {
-  const next = readQuota() + 1;
-  try {
-    localStorage.setItem(QUOTA_KEY, JSON.stringify({ day: todayKey(), used: next }));
+    localStorage.removeItem(QUOTA_KEY);
   } catch {
     /* ignore */
   }
-  return next;
 }
 
 type Placement = { x: number; y: number; scale: number; rot: number };
@@ -187,7 +168,7 @@ export function VirtualTryOn({
   const [pose, setPose] = useState<PoseId>("waist");
   const [hiRes, setHiRes] = useState(false);
   const [camera, setCamera] = useState<"user" | "environment" | null>(null);
-  const [used, setUsed] = useState(0);
+  
   const stageRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -265,12 +246,7 @@ export function VirtualTryOn({
     const activePose = opts?.pose ?? pose;
     const source = opts?.source ?? photo;
     const product = opts?.product || png || active?.image || "";
-    if (readQuota() >= DAILY_LIMIT) {
-      setUsed(DAILY_LIMIT);
-      toast.error(`You've used all ${DAILY_LIMIT} Try-On looks for today. Please come back tomorrow.`);
-      return;
-    }
-    setUsed(bumpQuota());
+
     setScening(true);
 
     if (isHands) setLook("");
@@ -600,9 +576,6 @@ export function VirtualTryOn({
               <div className="mt-2">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[color:var(--gold)] mb-1.5">
                   Choose a pose
-                  <span className="ml-2 normal-case tracking-normal text-white/40">
-                    {Math.max(0, DAILY_LIMIT - used)} of {DAILY_LIMIT} left today
-                  </span>
                 </p>
                 <div className="flex gap-2 overflow-x-auto pb-1">
                   {POSES.map((p) => (
@@ -612,7 +585,7 @@ export function VirtualTryOn({
                         setPose(p.id);
                         void generateLook({ pose: p.id });
                       }}
-                      disabled={scening || used >= DAILY_LIMIT}
+                      disabled={scening}
 
                       className={`shrink-0 rounded-full border px-3 py-1.5 text-[10px] uppercase tracking-[0.14em] transition disabled:opacity-60 ${
                         pose === p.id
