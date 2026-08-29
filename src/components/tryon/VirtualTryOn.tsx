@@ -279,13 +279,27 @@ export function VirtualTryOn({
   if (!open) return null;
 
   /**
-   * Generates the final look. In hands mode the AI does the compositing so the
-   * fingers wrap the bouquet — no client-side sticker overlay is ever shown.
+   * Generates the final look. Tries AI compositing first; if the AI image
+   * quota is unavailable (free tier / no billing), silently falls back to the
+   * zero-cost client-side canvas composition of the exact catalog cutout.
    */
   async function generateLook(opts?: { pose?: PoseId; source?: string; product?: string }) {
     const activePose = opts?.pose ?? pose;
     const source = opts?.source ?? photo;
     const product = opts?.product || png || active?.image || "";
+
+    async function fallback(note?: string) {
+      if (!isHands || !source || !product) {
+        if (note) toast.error(note);
+        return;
+      }
+      try {
+        setLook(await composeHandsFallback(source, product, activePose));
+        toast.success("Preview ready (free overlay mode).");
+      } catch {
+        toast.error(note || "Could not generate the look.");
+      }
+    }
 
     setScening(true);
 
@@ -307,21 +321,27 @@ export function VirtualTryOn({
         body: JSON.stringify(body),
       });
       if (!res.ok) {
-        toast.error(res.status === 402 ? "AI credits are exhausted." : "Could not generate the look.");
+        await fallback(
+          res.status === 402 ? "AI credits are exhausted." : "Could not generate the look.",
+        );
         return;
       }
       const json = (await res.json()) as { data?: Array<{ b64_json?: string; url?: string }> };
       const item = json?.data?.[0];
       const url = item?.b64_json ? `data:image/png;base64,${item.b64_json}` : item?.url;
-      if (!url) return toast.error("Generation returned no image.");
+      if (!url) {
+        await fallback("Generation returned no image.");
+        return;
+      }
       if (isHands) setLook(url);
       else savePhoto(url, false);
     } catch {
-      toast.error("Could not generate the look.");
+      await fallback();
     } finally {
       setScening(false);
     }
   }
+
 
   function savePhoto(url: string, autoGenerate = true) {
     setPhoto(url);
