@@ -103,6 +103,46 @@ const POSES: Array<{ id: PoseId; label: string; posture: string }> = [
   },
 ];
 
+/**
+ * Free-tier placement of the catalog cutout for each pose, used by the
+ * client-side compositor when AI image generation is unavailable.
+ */
+const POSE_PLACEMENT: Record<PoseId, Placement> = {
+  waist: { x: 50, y: 62, scale: 0.4, rot: 0 },
+  walking: { x: 44, y: 60, scale: 0.36, rot: -6 },
+  shoulder: { x: 64, y: 42, scale: 0.34, rot: 8 },
+  closeup: { x: 52, y: 66, scale: 0.55, rot: 0 },
+};
+
+/**
+ * Zero-cost fallback: composites the EXACT catalog cutout onto the customer
+ * photo with a soft contact shadow. No AI, no paid quota — pure canvas.
+ */
+async function composeHandsFallback(source: string, product: string, pose: PoseId): Promise<string> {
+  const [bg, fg] = await Promise.all([loadImage(source), loadImage(product)]);
+  const W = Math.min(1600, bg.naturalWidth || 1200);
+  const H = Math.round((W * (bg.naturalHeight || 1600)) / (bg.naturalWidth || 1200));
+  const canvas = document.createElement("canvas");
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("no canvas");
+  ctx.drawImage(bg, 0, 0, W, H);
+
+  const p = POSE_PLACEMENT[pose];
+  const targetW = W * p.scale;
+  const targetH = targetW * (fg.naturalHeight / fg.naturalWidth || 1);
+  ctx.save();
+  ctx.translate((p.x / 100) * W, (p.y / 100) * H);
+  ctx.rotate((p.rot * Math.PI) / 180);
+  ctx.shadowColor = "rgba(0,0,0,0.45)";
+  ctx.shadowBlur = targetW * 0.08;
+  ctx.shadowOffsetY = targetH * 0.03;
+  ctx.drawImage(fg, -targetW / 2, -targetH / 2, targetW, targetH);
+  ctx.restore();
+  return canvas.toDataURL("image/png");
+}
+
 const WARDROBE =
   "Wardrobe: if the subject reads as male (teen 15+ or adult), dress him in modern tailored smart-casual or " +
   "luxury formal wear — blazer, stylish suit or crisp smart shirt, trousers visible to the knee. " +
