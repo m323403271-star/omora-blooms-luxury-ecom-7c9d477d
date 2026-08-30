@@ -56,6 +56,7 @@ export function VirtualTryOn({
   const [look, setLook] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
+  const [modelPose, setModelPose] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
