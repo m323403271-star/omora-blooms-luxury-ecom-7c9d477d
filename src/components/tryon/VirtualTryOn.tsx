@@ -83,11 +83,11 @@ export function VirtualTryOn({
     setCameraActive(false);
   };
 
-  const startCamera = async () => {
+  const startCamera = async (facingMode: "user" | "environment" = "user") => {
     try {
       setCameraActive(true);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" },
+        video: { facingMode },
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
