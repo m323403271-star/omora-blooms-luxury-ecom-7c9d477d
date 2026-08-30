@@ -25,6 +25,13 @@ export function tryOnModeForCategory(category?: string | null): TryOnMode {
 
 const PHOTO_KEY = "omora-tryon-photo";
 
+const MODEL_POSES: { id: string; label: string; prompt: string }[] = [
+  { id: "waist", label: "Classic Waist Hold", prompt: "Standing naturally facing camera, holding the bouquet at waist height with both hands." },
+  { id: "walking", label: "Walking", prompt: "Mid-stride walking pose, carrying the bouquet at the side with one hand, relaxed and candid." },
+  { id: "shoulder", label: "Over the Shoulder", prompt: "Turned slightly away, glancing back over the shoulder, holding the bouquet near the shoulder." },
+  { id: "closeup", label: "Close-up Kissing", prompt: "Close-up portrait, gently holding the bouquet near the face as if kissing the blooms." },
+];
+
 const SCENE_PROMPT: Record<TryOnMode, string> = {
   hands: `Professional studio portrait photography. Maintain the person's exact face, facial structure, skin tone, hair, and identity from image 1.
 The person is naturally holding the exact crochet flower bouquet shown in image 2, standing naturally facing camera, holding the bouquet at waist height with both hands, fingers realistically wrapping around the stems.
@@ -56,6 +63,7 @@ export function VirtualTryOn({
   const [look, setLook] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [cameraActive, setCameraActive] = useState(false);
+  const [modelPose, setModelPose] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -82,11 +90,11 @@ export function VirtualTryOn({
     setCameraActive(false);
   };
 
-  const startCamera = async () => {
+  const startCamera = async (facingMode: "user" | "environment" = "user") => {
     try {
       setCameraActive(true);
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" },
+        video: { facingMode },
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -146,7 +154,15 @@ export function VirtualTryOn({
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: SCENE_PROMPT[mode], referenceImages: refs }),
+        body: JSON.stringify({
+          prompt: [
+            SCENE_PROMPT[mode],
+            modelPose ? `Pose: ${MODEL_POSES.find((p) => p.id === modelPose)?.prompt ?? ""}` : "",
+          ]
+            .filter(Boolean)
+            .join("\n"),
+          referenceImages: refs,
+        }),
       });
 
       if (!res.ok) {
@@ -190,6 +206,54 @@ export function VirtualTryOn({
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Capture options */}
+        <div className="px-6 pt-4 pb-3 border-b border-zinc-800 space-y-3">
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={() => startCamera("user")}
+              className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wide rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center gap-1.5 transition"
+            >
+              <Camera className="w-4 h-4" />
+              Front Camera
+            </button>
+            <button
+              onClick={() => startCamera("environment")}
+              className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wide rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center gap-1.5 transition"
+            >
+              <Camera className="w-4 h-4" />
+              Back Camera
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wide rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center gap-1.5 transition"
+            >
+              <Upload className="w-4 h-4" />
+              Gallery
+            </button>
+          </div>
+
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-amber-400 mb-2">
+              Use a Model Pose
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {MODEL_POSES.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => setModelPose(modelPose === p.id ? null : p.id)}
+                  className={`px-2.5 py-2 text-[11px] rounded-lg border transition ${
+                    modelPose === p.id
+                      ? "border-amber-400 bg-amber-500/15 text-amber-300"
+                      : "border-zinc-700 bg-zinc-800/60 text-zinc-300 hover:border-zinc-500"
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Viewport Area */}
@@ -247,7 +311,7 @@ export function VirtualTryOn({
         <div className="p-6 border-t border-zinc-800 bg-zinc-950 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <button
-              onClick={startCamera}
+              onClick={() => startCamera("user")}
               className="px-3.5 py-2 text-xs font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center gap-1.5 transition"
             >
               <Camera className="w-4 h-4" />
