@@ -24,6 +24,17 @@ export type TryOnShade = {
 
 export type TryOnMode = "hands" | "room" | "wearable";
 
+export function tryOnModeForCategory(category?: string | null): TryOnMode {
+  const c = (category ?? "").toLowerCase();
+  if (c.includes("frame") || c.includes("vase") || c.includes("plant") || c.includes("indoor")) {
+    return "room";
+  }
+  if (c.includes("wear") || c.includes("accessor") || c.includes("jewel")) {
+    return "wearable";
+  }
+  return "hands";
+}
+
 const PHOTO_KEY = "omora-tryon-photo";
 
 type PoseId = "waist" | "walking" | "shoulder" | "closeup";
