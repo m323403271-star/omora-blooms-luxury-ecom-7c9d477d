@@ -12,7 +12,6 @@ import {
   X,
 } from "lucide-react";
 import { toast } from "sonner";
-import { cutoutCatalogImage } from "@/lib/tryon-cutout";
 
 export type TryOnShade = {
   slug: string;
@@ -23,6 +22,17 @@ export type TryOnShade = {
 };
 
 export type TryOnMode = "hands" | "room" | "wearable";
+
+export function tryOnModeForCategory(category?: string | null): TryOnMode {
+  const c = (category ?? "").toLowerCase();
+  if (c.includes("frame") || c.includes("vase") || c.includes("plant") || c.includes("indoor")) {
+    return "room";
+  }
+  if (c.includes("wear") || c.includes("accessor") || c.includes("jewel")) {
+    return "wearable";
+  }
+  return "hands";
+}
 
 const PHOTO_KEY = "omora-tryon-photo";
 
@@ -85,6 +95,7 @@ export function VirtualTryOn({
   productName,
   shades = [],
   activeShadeSlug,
+  activeSlug,
   onSelectShade,
   open,
   onClose,
@@ -93,6 +104,7 @@ export function VirtualTryOn({
   productName: string;
   shades?: TryOnShade[];
   activeShadeSlug?: string;
+  activeSlug?: string;
   onSelectShade?: (slug: string) => void;
   open: boolean;
   onClose: () => void;
@@ -108,7 +120,7 @@ export function VirtualTryOn({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const activeShade =
-    shades.find((s) => s.slug === activeShadeSlug) ?? shades[0];
+    shades.find((s) => s.slug === (activeShadeSlug ?? activeSlug)) ?? shades[0];
   const productImage = activeShade?.image ?? "";
 
   useEffect(() => {
