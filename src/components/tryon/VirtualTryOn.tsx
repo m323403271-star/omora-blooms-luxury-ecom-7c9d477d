@@ -154,7 +154,15 @@ export function VirtualTryOn({
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: SCENE_PROMPT[mode], referenceImages: refs }),
+        body: JSON.stringify({
+          prompt: [
+            SCENE_PROMPT[mode],
+            modelPose ? `Pose: ${MODEL_POSES.find((p) => p.id === modelPose)?.prompt ?? ""}` : "",
+          ]
+            .filter(Boolean)
+            .join("\n"),
+          referenceImages: refs,
+        }),
       });
 
       if (!res.ok) {
