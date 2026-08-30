@@ -1,16 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { Link } from "@tanstack/react-router";
-import {
-  Camera,
-  Download,
-  Image as ImageIcon,
-  Loader2,
-  RefreshCw,
-  Sparkles,
-  Upload,
-  X,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Camera, Download, Loader2, RefreshCw, Sparkles, Upload, X } from "lucide-react";
 import { toast } from "sonner";
 
 export type TryOnShade = {
@@ -36,57 +25,11 @@ export function tryOnModeForCategory(category?: string | null): TryOnMode {
 
 const PHOTO_KEY = "omora-tryon-photo";
 
-type PoseId = "waist" | "walking" | "shoulder" | "closeup";
-
-const POSES: Array<{
-  id: PoseId;
-  label: string;
-  posture: string;
-}> = [
-  {
-    id: "waist",
-    label: "Classic Waist Pose",
-    posture:
-      "standing naturally facing camera, holding the bouquet at waist/hip height with both hands cradling the stems",
-  },
-  {
-    id: "walking",
-    label: "Walking Pose",
-    posture:
-      "candid street-style walking shot, carrying the bouquet casually in one arm against the chest",
-  },
-  {
-    id: "shoulder",
-    label: "Over the Shoulder Pose",
-    posture:
-      "turned slightly away looking back over shoulder, resting the bouquet on the front shoulder cradled gently",
-  },
-  {
-    id: "closeup",
-    label: "Close-up Kissing Pose",
-    posture:
-      "close-up portrait from the chest up, holding the bouquet close to face, eyes softly closed, fingers gently touching blooms",
-  },
-];
-
-const WARDROBE =
-  "Wardrobe: dress in modern tailored smart-casual or luxury formal wear. Soft studio lighting, warm neutral background, luxury aesthetics.";
-
-function compositePrompt(pose: PoseId, hasPerson: boolean): string {
-  const p = POSES.find((x) => x.id === pose) ?? POSES[0];
-  const identity = hasPerson
-    ? "Maintain the person's exact face, facial structure, skin tone, hair, and identity from image 1. Position them in the pose."
-    : "Generate a high-fashion, realistic model matching the vibe of luxury floral gifting.";
-
-  return `Professional studio portrait photography. ${identity} 
-Pose requirement: ${p.posture}.
-The person is naturally holding the exact crochet flower bouquet shown in image 2 in their hands with realistic hand grip and fingers wrapping around the wrapping paper/stems.
-${WARDROBE}
-Photorealistic, ultra-detailed crochet textures, 8k resolution, cinematic soft lighting, no floating objects.`;
-}
-
 const SCENE_PROMPT: Record<TryOnMode, string> = {
-  hands: "Studio portrait holding luxury crochet bouquet naturally.",
+  hands: `Professional studio portrait photography. Maintain the person's exact face, facial structure, skin tone, hair, and identity from image 1.
+The person is naturally holding the exact crochet flower bouquet shown in image 2, standing naturally facing camera, holding the bouquet at waist height with both hands, fingers realistically wrapping around the stems.
+Wardrobe: modern tailored smart-casual or luxury formal wear. Soft studio lighting, warm neutral background, luxury aesthetics.
+Photorealistic, ultra-detailed crochet textures, 8k resolution, cinematic soft lighting, no floating objects.`,
   room: "Luxury bouquet displayed as centerpiece in an elegant modern living room.",
   wearable: "Model wearing crochet floral accessory seamlessly.",
 };
@@ -96,7 +39,6 @@ export function VirtualTryOn({
   shades = [],
   activeShadeSlug,
   activeSlug,
-  onSelectShade,
   open,
   onClose,
   mode = "hands",
@@ -113,7 +55,6 @@ export function VirtualTryOn({
   const [photo, setPhoto] = useState<string | null>(null);
   const [look, setLook] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [activePose, setActivePose] = useState<PoseId>("waist");
   const [cameraActive, setCameraActive] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -151,7 +92,7 @@ export function VirtualTryOn({
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
-    } catch (err) {
+    } catch {
       toast.error("Camera access denied or unavailable.");
       setCameraActive(false);
     }
@@ -177,9 +118,7 @@ export function VirtualTryOn({
     const reader = new FileReader();
     reader.onload = (event) => {
       const result = event.target?.result as string;
-      if (result) {
-        savePhoto(result);
-      }
+      if (result) savePhoto(result);
     };
     reader.readAsDataURL(file);
   };
@@ -191,33 +130,23 @@ export function VirtualTryOn({
     } catch {
       // ignore storage overflow
     }
-    if (triggerGen) {
-      generate(dataUrl, activePose);
-    }
+    if (triggerGen) generate(dataUrl);
   };
 
-  const generate = async (userPhoto: string | null, pose: PoseId) => {
+  const generate = async (userPhoto: string | null) => {
     if (loading) return;
     setLoading(true);
     setLook(null);
 
     try {
-      const isHands = mode === "hands";
       const refs: string[] = [];
       if (userPhoto) refs.push(userPhoto);
       if (productImage) refs.push(productImage);
 
-      const body = {
-        prompt: isHands
-          ? compositePrompt(pose, Boolean(userPhoto))
-          : SCENE_PROMPT[mode],
-        referenceImages: refs,
-      };
-
       const res = await fetch("/api/generate-image", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ prompt: SCENE_PROMPT[mode], referenceImages: refs }),
       });
 
       if (!res.ok) {
@@ -227,9 +156,7 @@ export function VirtualTryOn({
 
       const json = (await res.json()) as { data?: Array<{ b64_json?: string; url?: string }> };
       const item = json?.data?.[0];
-      const url = item?.b64_json
-        ? `data:image/png;base64,${item.b64_json}`
-        : item?.url;
+      const url = item?.b64_json ? `data:image/png;base64,${item.b64_json}` : item?.url;
 
       if (!url) {
         toast.error("No image returned from AI. Please retry.");
@@ -237,7 +164,7 @@ export function VirtualTryOn({
       }
 
       setLook(url);
-    } catch (e) {
+    } catch {
       toast.error("Generation error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -269,12 +196,7 @@ export function VirtualTryOn({
         <div className="relative aspect-[4/5] sm:aspect-[1/1] w-full bg-zinc-900 flex items-center justify-center overflow-hidden">
           {cameraActive ? (
             <div className="relative w-full h-full">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                className="w-full h-full object-cover"
-              />
+              <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
               <div className="absolute bottom-4 inset-x-0 flex justify-center gap-4">
                 <button
                   onClick={captureCamera}
@@ -298,13 +220,9 @@ export function VirtualTryOn({
             />
           ) : photo ? (
             <div className="relative w-full h-full">
-              <img
-                src={photo}
-                alt="User Upload"
-                className="w-full h-full object-cover opacity-70"
-              />
+              <img src={photo} alt="User Upload" className="w-full h-full object-cover opacity-70" />
               <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <span className="text-sm text-zinc-300">Ready to generate pose</span>
+                <span className="text-sm text-zinc-300">Ready to generate</span>
               </div>
             </div>
           ) : (
@@ -312,7 +230,7 @@ export function VirtualTryOn({
               <Sparkles className="w-12 h-12 mb-3 text-amber-400 animate-pulse" />
               <p className="text-base font-medium text-white">Upload your photo to try this bouquet</p>
               <p className="text-xs text-zinc-400 mt-1 max-w-xs">
-                Take a selfie or upload a photo to see realistic poses holding this bouquet.
+                Take a selfie or upload a photo to see yourself with this bouquet.
               </p>
             </div>
           )}
@@ -320,39 +238,10 @@ export function VirtualTryOn({
           {loading && (
             <div className="absolute inset-0 bg-black/75 backdrop-blur-sm flex flex-col items-center justify-center gap-3 z-10">
               <Loader2 className="w-8 h-8 text-amber-400 animate-spin" />
-              <p className="text-sm font-medium text-zinc-200">
-                Generating photorealistic look...
-              </p>
+              <p className="text-sm font-medium text-zinc-200">Generating photorealistic look...</p>
             </div>
           )}
         </div>
-
-        {/* Pose Selection */}
-        {mode === "hands" && (
-          <div className="px-6 py-3 border-t border-zinc-800/80 bg-zinc-900/40">
-            <span className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 block mb-2">
-              Choose a Pose
-            </span>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {POSES.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => {
-                    setActivePose(p.id);
-                    if (photo) generate(photo, p.id);
-                  }}
-                  className={`px-3 py-2 text-xs rounded-lg font-medium border text-left transition ${
-                    activePose === p.id
-                      ? "border-amber-400 bg-amber-400/10 text-amber-300"
-                      : "border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300"
-                  }`}
-                >
-                  {p.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Controls Footer */}
         <div className="p-6 border-t border-zinc-800 bg-zinc-950 flex flex-wrap items-center justify-between gap-3">
@@ -393,7 +282,7 @@ export function VirtualTryOn({
             )}
             <button
               disabled={loading || !photo}
-              onClick={() => generate(photo, activePose)}
+              onClick={() => generate(photo)}
               className="px-5 py-2 text-xs font-semibold rounded-lg bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black flex items-center gap-1.5 transition shadow-md"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
