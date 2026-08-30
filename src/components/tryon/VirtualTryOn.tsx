@@ -248,7 +248,7 @@ export function VirtualTryOn({
         <div className="p-6 border-t border-zinc-800 bg-zinc-950 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <button
-              onClick={startCamera}
+              onClick={() => startCamera("user")}
               className="px-3.5 py-2 text-xs font-medium rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center gap-1.5 transition"
             >
               <Camera className="w-4 h-4" />
