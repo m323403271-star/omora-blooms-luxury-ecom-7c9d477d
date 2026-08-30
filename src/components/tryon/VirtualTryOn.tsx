@@ -25,6 +25,13 @@ export function tryOnModeForCategory(category?: string | null): TryOnMode {
 
 const PHOTO_KEY = "omora-tryon-photo";
 
+const MODEL_POSES: { id: string; label: string; prompt: string }[] = [
+  { id: "waist", label: "Classic Waist Hold", prompt: "Standing naturally facing camera, holding the bouquet at waist height with both hands." },
+  { id: "walking", label: "Walking", prompt: "Mid-stride walking pose, carrying the bouquet at the side with one hand, relaxed and candid." },
+  { id: "shoulder", label: "Over the Shoulder", prompt: "Turned slightly away, glancing back over the shoulder, holding the bouquet near the shoulder." },
+  { id: "closeup", label: "Close-up Kissing", prompt: "Close-up portrait, gently holding the bouquet near the face as if kissing the blooms." },
+];
+
 const SCENE_PROMPT: Record<TryOnMode, string> = {
   hands: `Professional studio portrait photography. Maintain the person's exact face, facial structure, skin tone, hair, and identity from image 1.
 The person is naturally holding the exact crochet flower bouquet shown in image 2, standing naturally facing camera, holding the bouquet at waist height with both hands, fingers realistically wrapping around the stems.
