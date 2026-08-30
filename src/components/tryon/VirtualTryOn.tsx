@@ -208,6 +208,54 @@ export function VirtualTryOn({
           </button>
         </div>
 
+        {/* Capture options */}
+        <div className="px-6 pt-4 pb-3 border-b border-zinc-800 space-y-3">
+          <div className="grid grid-cols-3 gap-2">
+            <button
+              onClick={() => startCamera("user")}
+              className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wide rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center gap-1.5 transition"
+            >
+              <Camera className="w-4 h-4" />
+              Front Camera
+            </button>
+            <button
+              onClick={() => startCamera("environment")}
+              className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wide rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center gap-1.5 transition"
+            >
+              <Camera className="w-4 h-4" />
+              Back Camera
+            </button>
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="px-2 py-2 text-[11px] font-semibold uppercase tracking-wide rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center gap-1.5 transition"
+            >
+              <Upload className="w-4 h-4" />
+              Gallery
+            </button>
+          </div>
+
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-3">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-amber-400 mb-2">
+              Use a Model Pose
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {MODEL_POSES.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => setModelPose(modelPose === p.id ? null : p.id)}
+                  className={`px-2.5 py-2 text-[11px] rounded-lg border transition ${
+                    modelPose === p.id
+                      ? "border-amber-400 bg-amber-500/15 text-amber-300"
+                      : "border-zinc-700 bg-zinc-800/60 text-zinc-300 hover:border-zinc-500"
+                  }`}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Viewport Area */}
         <div className="relative aspect-[4/5] sm:aspect-[1/1] w-full bg-zinc-900 flex items-center justify-center overflow-hidden">
           {cameraActive ? (
