@@ -2,6 +2,16 @@ import { createFileRoute } from "@tanstack/react-router";
 
 type GeneratedImage = { b64_json?: string; url?: string };
 
+function readServerSecret(name: string): string | undefined {
+  const processValue = process.env[name]?.trim();
+  if (processValue) return processValue;
+
+  // TanStack Start uses process.env, while maintained Deno-based deployments
+  // expose the same encrypted secret through Deno.env. Never use a client key.
+  const deno = (globalThis as { Deno?: { env?: { get?: (key: string) => string | undefined } } }).Deno;
+  return deno?.env?.get?.(name)?.trim() || undefined;
+}
+
 async function generateWithFal(
   key: string,
   prompt: string,
@@ -87,9 +97,9 @@ export const Route = createFileRoute("/api/generate-image")({
 
         // Runtime secrets are read inside the request handler so Lovable Cloud
         // injects their current encrypted values on every invocation.
-        const falKey = process.env["FAL_KEY"]?.trim();
-        const geminiKey = process.env["GEMINI_API_KEY"];
-        const key = process.env["LOVABLE_API_KEY"];
+        const falKey = readServerSecret("FAL_KEY");
+        const geminiKey = readServerSecret("GEMINI_API_KEY");
+        const key = readServerSecret("LOVABLE_API_KEY");
 
 
         // Reference images, in order: [customer photo (identity lock),
