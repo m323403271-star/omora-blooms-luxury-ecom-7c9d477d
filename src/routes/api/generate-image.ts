@@ -1,5 +1,64 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+type GeneratedImage = { b64_json?: string; url?: string };
+
+async function generateWithFal(
+  key: string,
+  prompt: string,
+  refs: string[],
+): Promise<{ data: GeneratedImage[] }> {
+  const response = await fetch("https://fal.run/fal-ai/nano-banana/edit", {
+    method: "POST",
+    headers: {
+      Authorization: `Key ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      prompt,
+      image_urls: refs,
+      num_images: 1,
+      output_format: "png",
+    }),
+  });
+
+  if (!response.ok) {
+    console.error("[TryOn] fal.ai generation failed", response.status, (await response.text()).slice(0, 500));
+    throw new Error(`fal.ai generation failed (${response.status})`);
+  }
+
+  const result = (await response.json()) as {
+    images?: Array<{ url?: string }>;
+    image?: { url?: string };
+  };
+  const url = result.images?.[0]?.url ?? result.image?.url;
+  if (!url) throw new Error("fal.ai returned no image");
+  return { data: [{ url }] };
+}
+
+async function authenticateAndConsumeTrial(request: Request): Promise<number> {
+  const authorization = request.headers.get("authorization");
+  if (!authorization?.startsWith("Bearer ")) throw new Error("AUTH_REQUIRED");
+
+  const supabaseUrl = process.env["SUPABASE_URL"];
+  const publishableKey = process.env["SUPABASE_PUBLISHABLE_KEY"];
+  if (!supabaseUrl || !publishableKey) throw new Error("BACKEND_AUTH_NOT_CONFIGURED");
+
+  const userResponse = await fetch(`${supabaseUrl}/auth/v1/user`, {
+    headers: { apikey: publishableKey, Authorization: authorization },
+  });
+  if (!userResponse.ok) throw new Error("AUTH_REQUIRED");
+  const user = (await userResponse.json()) as { id?: string };
+  if (!user.id) throw new Error("AUTH_REQUIRED");
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data, error } = await supabaseAdmin.rpc("consume_tryon_trial", { _user_id: user.id });
+  if (error || typeof data !== "number") {
+    console.error("[TryOn] trial counter failed", error?.message);
+    throw new Error("TRIAL_COUNTER_FAILED");
+  }
+  return data;
+}
+
 /**
  * Try-On scene generator.
  * NOTE: this NEVER draws the product — it only generates an empty model/room
@@ -17,9 +76,20 @@ export const Route = createFileRoute("/api/generate-image")({
         if (!prompt || prompt.length > 3000) {
           return new Response("Invalid prompt", { status: 400 });
         }
+        let trialCount: number;
+        try {
+          trialCount = await authenticateAndConsumeTrial(request);
+        } catch (error) {
+          const code = error instanceof Error ? error.message : "";
+          if (code === "AUTH_REQUIRED") return new Response("Sign in to use Virtual Try-On", { status: 401 });
+          return new Response("Try-On usage tracking is unavailable", { status: 503 });
+        }
+
+        // Runtime secrets are read inside the request handler so Lovable Cloud
+        // injects their current encrypted values on every invocation.
+        const falKey = process.env["FAL_KEY"]?.trim();
         const geminiKey = process.env["GEMINI_API_KEY"];
         const key = process.env["LOVABLE_API_KEY"];
-        if (!key && !geminiKey) return new Response("Missing image generation key", { status: 500 });
 
 
         // Reference images, in order: [customer photo (identity lock),
@@ -27,6 +97,23 @@ export const Route = createFileRoute("/api/generate-image")({
         const refs = (referenceImages ?? (referenceImage ? [referenceImage] : []))
           .filter((u) => typeof u === "string" && /^(data:image\/|https?:\/\/)/.test(u))
           .slice(0, 3);
+
+        // The first four generations use the included providers. Starting
+        // with request five (the stored count is now > 4), use the merchant's
+        // encrypted fal.ai credential rather than skipping it.
+        if (trialCount > 4) {
+          if (!falKey) {
+            console.error("[TryOn] FAL_KEY is missing from the backend runtime");
+            return new Response("Virtual Try-On is temporarily unavailable", { status: 503 });
+          }
+          try {
+            return Response.json(await generateWithFal(falKey, prompt, refs));
+          } catch {
+            return new Response("Could not generate the look", { status: 502 });
+          }
+        }
+
+        if (!key && !geminiKey) return new Response("Missing image generation key", { status: 500 });
 
         // Preferred path: the merchant's own Google Gemini key (direct API).
         if (geminiKey) {
