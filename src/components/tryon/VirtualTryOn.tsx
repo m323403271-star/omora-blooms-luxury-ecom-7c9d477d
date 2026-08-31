@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { cutoutCatalogImage } from "@/lib/tryon.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 export type TryOnShade = {
   slug: string;
@@ -273,13 +274,29 @@ export function VirtualTryOn({
           }
         : { prompt: SCENE_PROMPT[mode] };
 
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData.session?.access_token;
+      if (!accessToken) {
+        toast.error("Please sign in to use Virtual Try-On.");
+        return;
+      }
+
       const res = await fetch("/api/generate-image", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify(body),
       });
       if (!res.ok) {
-        toast.error(res.status === 402 ? "AI credits are exhausted." : "Could not generate the look.");
+        toast.error(
+          res.status === 401
+            ? "Please sign in to use Virtual Try-On."
+            : res.status === 402
+              ? "AI credits are exhausted."
+              : "Could not generate the look.",
+        );
         return;
       }
       const json = (await res.json()) as { data?: Array<{ b64_json?: string; url?: string }> };
