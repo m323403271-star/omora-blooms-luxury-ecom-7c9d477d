@@ -671,7 +671,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      consume_tryon_trial: { Args: never; Returns: number }
+      consume_tryon_trial: { Args: { _user_id: string }; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
