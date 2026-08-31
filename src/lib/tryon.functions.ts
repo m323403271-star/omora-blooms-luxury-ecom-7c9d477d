@@ -13,7 +13,9 @@ const schema = z.object({ imageUrl: z.string().url().max(2000) });
 export const cutoutCatalogImage = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => schema.parse(data))
   .handler(async ({ data }) => {
-    const key = process.env["FAL_KEY"];
+    const processValue = process.env["FAL_KEY"]?.trim();
+    const deno = (globalThis as { Deno?: { env?: { get?: (key: string) => string | undefined } } }).Deno;
+    const key = processValue || deno?.env?.get?.("FAL_KEY")?.trim();
     if (!key) return { ok: false as const, error: "Try-On is not configured yet." };
 
     try {
