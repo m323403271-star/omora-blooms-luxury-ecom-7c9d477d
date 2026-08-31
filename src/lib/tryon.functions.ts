@@ -3,13 +3,6 @@ import { z } from "zod";
 
 const schema = z.object({ imageUrl: z.string().url().max(2000) });
 
-function readFalKey(): string | undefined {
-  const processValue = process.env["FAL_KEY"]?.trim();
-  if (processValue) return processValue;
-  const deno = (globalThis as { Deno?: { env?: { get?: (key: string) => string | undefined } } }).Deno;
-  return deno?.env?.get?.("FAL_KEY")?.trim() || undefined;
-}
-
 /**
  * Virtual Try-On asset pipeline.
  *
@@ -20,7 +13,9 @@ function readFalKey(): string | undefined {
 export const cutoutCatalogImage = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => schema.parse(data))
   .handler(async ({ data }) => {
-    const key = readFalKey();
+    const processValue = process.env["FAL_KEY"]?.trim();
+    const deno = (globalThis as { Deno?: { env?: { get?: (key: string) => string | undefined } } }).Deno;
+    const key = processValue || deno?.env?.get?.("FAL_KEY")?.trim();
     if (!key) return { ok: false as const, error: "Try-On is not configured yet." };
 
     try {
