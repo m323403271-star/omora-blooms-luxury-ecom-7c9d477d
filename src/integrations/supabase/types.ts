@@ -624,6 +624,27 @@ export type Database = {
         }
         Relationships: []
       }
+      tryon_usage: {
+        Row: {
+          created_at: string
+          trial_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          trial_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          trial_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -650,6 +671,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_tryon_trial: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
