@@ -157,6 +157,9 @@ function AdminReferrals() {
           <Link to="/admin/products" className="btn-outline-gold px-4 py-2.5 rounded-full text-sm inline-flex items-center gap-2">
             Product photos
           </Link>
+          <Link to="/admin/settings" className="btn-outline-gold px-4 py-2.5 rounded-full text-sm inline-flex items-center gap-2">
+            Try-On API key
+          </Link>
           <button onClick={() => setShowForm((s) => !s)} className="btn-gold px-5 py-2.5 rounded-full text-sm inline-flex items-center gap-2">
             <Plus className="h-4 w-4" /> New partner
           </button>
