@@ -47,6 +47,30 @@ export type Database = {
         }
         Relationships: []
       }
+      app_secrets: {
+        Row: {
+          created_at: string
+          name: string
+          updated_at: string
+          updated_by: string | null
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          name: string
+          updated_at?: string
+          updated_by?: string | null
+          value: string
+        }
+        Update: {
+          created_at?: string
+          name?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: string
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           active: boolean
@@ -692,6 +716,10 @@ export type Database = {
         }[]
       }
       loyalty_balance: { Args: never; Returns: number }
+      set_app_secret: {
+        Args: { _actor: string; _name: string; _value: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "partner"

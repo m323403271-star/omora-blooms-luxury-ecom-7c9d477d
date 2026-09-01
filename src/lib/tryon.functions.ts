@@ -13,9 +13,8 @@ const schema = z.object({ imageUrl: z.string().url().max(2000) });
 export const cutoutCatalogImage = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => schema.parse(data))
   .handler(async ({ data }) => {
-    const processValue = process.env["FAL_KEY"]?.trim();
-    const deno = (globalThis as { Deno?: { env?: { get?: (key: string) => string | undefined } } }).Deno;
-    const key = processValue || deno?.env?.get?.("FAL_KEY")?.trim();
+    const { resolveFalKey } = await import("@/lib/fal-key.server");
+    const key = await resolveFalKey();
     if (!key) return { ok: false as const, error: "Try-On is not configured yet." };
 
     try {

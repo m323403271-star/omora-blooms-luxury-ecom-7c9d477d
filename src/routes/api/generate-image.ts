@@ -95,9 +95,8 @@ export const Route = createFileRoute("/api/generate-image")({
           return new Response("Try-On usage tracking is unavailable", { status: 503 });
         }
 
-        // Runtime secrets are read inside the request handler so Lovable Cloud
-        // injects their current encrypted values on every invocation.
-        const falKey = readServerSecret("FAL_KEY");
+        // Runtime secrets are read inside the request handler so the current
+        // values are injected on every invocation.
         const geminiKey = readServerSecret("GEMINI_API_KEY");
         const key = readServerSecret("LOVABLE_API_KEY");
 
@@ -108,12 +107,15 @@ export const Route = createFileRoute("/api/generate-image")({
           .filter((u) => typeof u === "string" && /^(data:image\/|https?:\/\/)/.test(u))
           .slice(0, 3);
 
-        // The first four generations use the included providers. Starting
-        // with request five (the stored count is now > 4), use the merchant's
-        // encrypted fal.ai credential rather than skipping it.
+        // The first four generations use the included providers. From the
+        // fifth onward, bill the merchant's own fal.ai account — using the key
+        // saved in Admin → Try-On API Settings, falling back to the stored
+        // environment secret.
         if (trialCount > 4) {
+          const { resolveFalKey } = await import("@/lib/fal-key.server");
+          const falKey = await resolveFalKey();
           if (!falKey) {
-            console.error("[TryOn] FAL_KEY is missing from the backend runtime");
+            console.error("[TryOn] no fal.ai key configured (dashboard or environment)");
             return new Response("Virtual Try-On is temporarily unavailable", { status: 503 });
           }
           try {
