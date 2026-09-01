@@ -13,8 +13,11 @@ const saveSchema = z.object({
     .max(500, "That key looks too long."),
 });
 
-/** Confirms the caller is an admin, or throws. */
-async function assertAdmin(context: { supabase: { rpc: (fn: string, args: Record<string, unknown>) => Promise<{ data: unknown }> }; userId: string }) {
+/** Confirms the caller is an admin, or throws. Uses the caller's own client. */
+async function assertAdmin(context: {
+  supabase: SupabaseClient<Database>;
+  userId: string;
+}) {
   const { data } = await context.supabase.rpc("has_role", {
     _user_id: context.userId,
     _role: "admin",
