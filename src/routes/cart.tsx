@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert, Plane, StickyNote } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert, Plane, StickyNote, PhoneCall, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { saveCartAndCall } from "@/lib/bland.functions";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
@@ -37,6 +39,8 @@ function CartPage() {
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
   const [address, setAddress] = useState("");
+  const [savingCall, setSavingCall] = useState(false);
+  const saveCartCall = useServerFn(saveCartAndCall);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -81,6 +85,36 @@ function CartPage() {
     setPickup(id);
     if (id) setSelectedPickup(id);
   }
+
+  async function handleSaveToCart() {
+    if (items.length === 0) return;
+    if (fullName.trim().length < 2 || mobile.replace(/\D/g, "").length < 10) {
+      toast.error("Please add your full name and mobile number first.");
+      return;
+    }
+    setSavingCall(true);
+    try {
+      const itemsSummary = items
+        .map((i) => `${i.name} × ${i.quantity}`)
+        .join(", ")
+        .slice(0, 1500);
+      const res = await saveCartCall({
+        data: { name: fullName.trim(), phone: mobile.trim(), items: itemsSummary },
+      });
+      if (res?.ok) {
+        toast.success("Cart saved — our concierge will call you shortly.", {
+          description: "Personal assistance in Kannada, English or Hindi.",
+        });
+      } else {
+        toast.error(res?.error ?? "Could not reach our concierge line right now.");
+      }
+    } catch {
+      toast.error("Could not reach our concierge line right now.");
+    } finally {
+      setSavingCall(false);
+    }
+  }
+
 
   function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
     if (items.length === 0) return;
@@ -274,6 +308,23 @@ function CartPage() {
             <div className="mb-3">
               <DeliveryEtaChecker variant="checkout" title="Delivery SLA" locked />
             </div>
+
+            <div className="mb-3">
+              <button
+                type="button"
+                disabled={savingCall || items.length === 0}
+                onClick={handleSaveToCart}
+                className="btn-outline-gold w-full inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm disabled:opacity-60"
+              >
+                {savingCall
+                  ? <><Loader2 className="h-4 w-4 shrink-0 animate-spin" /> Connecting concierge…</>
+                  : <><PhoneCall className="h-4 w-4 shrink-0" /> Save to Cart & Get a Call</>}
+              </button>
+              <p className="mt-1.5 text-[11px] text-[color:var(--muted-foreground)] text-center">
+                Our concierge calls you in Kannada, English or Hindi to finish your order.
+              </p>
+            </div>
+
 
 
             <div className="space-y-1.5 md:space-y-3 text-sm">
