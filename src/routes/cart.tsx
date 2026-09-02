@@ -82,6 +82,36 @@ function CartPage() {
     if (id) setSelectedPickup(id);
   }
 
+  async function handleSaveToCart() {
+    if (items.length === 0) return;
+    if (fullName.trim().length < 2 || mobile.replace(/\D/g, "").length < 10) {
+      toast.error("Please add your full name and mobile number first.");
+      return;
+    }
+    setSavingCall(true);
+    try {
+      const itemsSummary = items
+        .map((i) => `${i.name} × ${i.quantity}`)
+        .join(", ")
+        .slice(0, 1500);
+      const res = await saveCartCall({
+        data: { name: fullName.trim(), phone: mobile.trim(), items: itemsSummary },
+      });
+      if (res?.ok) {
+        toast.success("Cart saved — our concierge will call you shortly.", {
+          description: "Personal assistance in Kannada, English or Hindi.",
+        });
+      } else {
+        toast.error(res?.error ?? "Could not reach our concierge line right now.");
+      }
+    } catch {
+      toast.error("Could not reach our concierge line right now.");
+    } finally {
+      setSavingCall(false);
+    }
+  }
+
+
   function handleCheckout(e: React.MouseEvent<HTMLAnchorElement>) {
     if (items.length === 0) return;
     if (pickupRequired && !pickup) {
