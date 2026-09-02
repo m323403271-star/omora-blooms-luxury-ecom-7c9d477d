@@ -107,25 +107,39 @@ export const Route = createFileRoute("/api/generate-image")({
           .filter((u) => typeof u === "string" && /^(data:image\/|https?:\/\/)/.test(u))
           .slice(0, 3);
 
-        // The first four generations use the included providers. From the
-        // fifth onward, bill the merchant's own fal.ai account — using the key
-        // saved in Admin → Try-On API Settings, falling back to the stored
-        // environment secret.
-        if (trialCount > 4) {
+        // The merchant's own fal.ai account is the universal safety net: it is
+        // used once the free trials are spent AND whenever the included
+        // providers fail (quota exhausted, no credits, rate limited, errors).
+        const tryFal = async (): Promise<Response | null> => {
           const { resolveFalKey } = await import("@/lib/fal-key.server");
           const falKey = await resolveFalKey();
           if (!falKey) {
             console.error("[TryOn] no fal.ai key configured (dashboard or environment)");
-            return new Response("Virtual Try-On is temporarily unavailable", { status: 503 });
+            return null;
           }
           try {
             return Response.json(await generateWithFal(falKey, prompt, refs));
-          } catch {
-            return new Response("Could not generate the look", { status: 502 });
+          } catch (e) {
+            console.error("[TryOn] fal.ai fallback failed", e instanceof Error ? e.message : e);
+            return null;
           }
+        };
+
+        if (trialCount > 4) {
+          const falResponse = await tryFal();
+          if (falResponse) return falResponse;
+          if (!key && !geminiKey) {
+            return new Response("Virtual Try-On is temporarily unavailable", { status: 503 });
+          }
+          // No usable fal key — fall through and try the included providers.
         }
 
-        if (!key && !geminiKey) return new Response("Missing image generation key", { status: 500 });
+        if (!key && !geminiKey) {
+          const falResponse = await tryFal();
+          if (falResponse) return falResponse;
+          return new Response("Missing image generation key", { status: 500 });
+        }
+
 
         // Preferred path: the merchant's own Google Gemini key (direct API).
         if (geminiKey) {
@@ -178,8 +192,13 @@ export const Route = createFileRoute("/api/generate-image")({
             lastError = "Gemini returned no image";
           }
           // Personal key failed — fall back to the built-in gateway when available.
-          if (!key) return new Response(lastError || "Gemini failed", { status: lastStatus });
+          if (!key) {
+            const falResponse = await tryFal();
+            if (falResponse) return falResponse;
+            return new Response(lastError || "Gemini failed", { status: lastStatus });
+          }
         }
+
 
         // Fallback: Lovable AI gateway.
         // With references we use a Gemini image model so it can inpaint the
@@ -209,8 +228,15 @@ export const Route = createFileRoute("/api/generate-image")({
 
 
         if (!upstream.ok) {
-          return new Response(await upstream.text(), { status: upstream.status });
+          const detail = await upstream.text();
+          console.error("[TryOn] gateway failed", upstream.status, detail.slice(0, 300));
+          // Credits exhausted, rate limited, or upstream error — use the
+          // merchant's saved fal.ai key instead of failing.
+          const falResponse = await tryFal();
+          if (falResponse) return falResponse;
+          return new Response(detail, { status: upstream.status });
         }
+
         return new Response(upstream.body, { headers: { "Content-Type": "application/json" } });
       },
     },
