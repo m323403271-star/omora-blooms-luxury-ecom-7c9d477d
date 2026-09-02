@@ -39,6 +39,8 @@ function CartPage() {
   const [fullName, setFullName] = useState("");
   const [mobile, setMobile] = useState("");
   const [address, setAddress] = useState("");
+  const [savingCall, setSavingCall] = useState(false);
+  const saveCartCall = useServerFn(saveCartAndCall);
   const navigate = useNavigate();
 
   useEffect(() => {
