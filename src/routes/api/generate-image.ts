@@ -192,8 +192,13 @@ export const Route = createFileRoute("/api/generate-image")({
             lastError = "Gemini returned no image";
           }
           // Personal key failed — fall back to the built-in gateway when available.
-          if (!key) return new Response(lastError || "Gemini failed", { status: lastStatus });
+          if (!key) {
+            const falResponse = await tryFal();
+            if (falResponse) return falResponse;
+            return new Response(lastError || "Gemini failed", { status: lastStatus });
+          }
         }
+
 
         // Fallback: Lovable AI gateway.
         // With references we use a Gemini image model so it can inpaint the
