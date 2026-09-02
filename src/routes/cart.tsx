@@ -1,6 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert, Plane, StickyNote } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { CreditCard, MessageCircle, Minus, Plus, Trash2, MapPin, ShieldAlert, Plane, StickyNote, PhoneCall, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { saveCartAndCall } from "@/lib/bland.functions";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/products";
 import { whatsappLink } from "@/lib/whatsapp";
