@@ -228,8 +228,15 @@ export const Route = createFileRoute("/api/generate-image")({
 
 
         if (!upstream.ok) {
-          return new Response(await upstream.text(), { status: upstream.status });
+          const detail = await upstream.text();
+          console.error("[TryOn] gateway failed", upstream.status, detail.slice(0, 300));
+          // Credits exhausted, rate limited, or upstream error — use the
+          // merchant's saved fal.ai key instead of failing.
+          const falResponse = await tryFal();
+          if (falResponse) return falResponse;
+          return new Response(detail, { status: upstream.status });
         }
+
         return new Response(upstream.body, { headers: { "Content-Type": "application/json" } });
       },
     },
