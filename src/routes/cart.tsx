@@ -309,6 +309,23 @@ function CartPage() {
               <DeliveryEtaChecker variant="checkout" title="Delivery SLA" locked />
             </div>
 
+            <div className="mb-3">
+              <button
+                type="button"
+                disabled={savingCall || items.length === 0}
+                onClick={handleSaveToCart}
+                className="btn-outline-gold w-full inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm disabled:opacity-60"
+              >
+                {savingCall
+                  ? <><Loader2 className="h-4 w-4 shrink-0 animate-spin" /> Connecting concierge…</>
+                  : <><PhoneCall className="h-4 w-4 shrink-0" /> Save to Cart & Get a Call</>}
+              </button>
+              <p className="mt-1.5 text-[11px] text-[color:var(--muted-foreground)] text-center">
+                Our concierge calls you in Kannada, English or Hindi to finish your order.
+              </p>
+            </div>
+
+
 
             <div className="space-y-1.5 md:space-y-3 text-sm">
               <div className="flex justify-between"><span className="text-[color:var(--muted-foreground)]">Subtotal</span><span>{formatPrice(total)}</span></div>
