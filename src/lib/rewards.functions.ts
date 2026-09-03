@@ -151,3 +151,49 @@ export const redeemPoints = createServerFn({ method: "POST" })
 
     return { code, discountInr: tier.discountInr };
   });
+
+/**
+ * Checkout redemption: converts a chosen number of points into a single-use
+ * discount code (1 point = ₹5, in blocks of 10, minimum 20 points).
+ * The balance is always recomputed server-side.
+ */
+export const redeemPointsForCheckout = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { points: number }) => ({ points: Math.floor(Number(input.points) || 0) }))
+  .handler(async ({ data, context }): Promise<{ code: string; discountInr: number; points: number }> => {
+    const points = data.points;
+    if (points < 20 || points % 10 !== 0) throw new Error("Redeem in blocks of 10 points (minimum 20)");
+
+    const { data: ledger, error } = await context.supabase.from("loyalty_ledger").select("delta");
+    if (error) throw new Error("Could not read your points balance");
+    const balance = (ledger ?? []).reduce((sum, r) => sum + r.delta, 0);
+    if (balance < points) throw new Error("Not enough points");
+
+    const discountInr = points * 5;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const code = makeCode();
+
+    const { error: codeError } = await supabaseAdmin.from("reward_codes").insert({
+      user_id: context.userId,
+      code,
+      points_cost: points,
+      discount_inr: discountInr,
+    });
+    if (codeError) throw new Error("Could not apply your points");
+
+    await supabaseAdmin.from("loyalty_ledger").insert({
+      user_id: context.userId,
+      delta: -points,
+      reason: `Redeemed ${points} points at checkout`,
+    });
+
+    await supabaseAdmin.from("coupons").insert({
+      code,
+      discount_type: "flat",
+      discount_value: discountInr,
+      max_uses: 1,
+      active: true,
+    });
+
+    return { code, discountInr, points };
+  });
