@@ -43,6 +43,7 @@ import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay
 import { Route as ApiRazorpayCreateOrderVariantRouteImport } from './routes/api/razorpay/create-order-variant'
 import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
 import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
+import { Route as ApiPublicOccasionRemindersRouteImport } from './routes/api/public/occasion-reminders'
 import { Route as ApiCouponValidateRouteImport } from './routes/api/coupon/validate'
 import { Route as AuthenticatedAdminWarehouseRouteImport } from './routes/_authenticated/admin.warehouse'
 import { Route as AuthenticatedAdminShowcaseRouteImport } from './routes/_authenticated/admin.showcase'
@@ -224,6 +225,12 @@ const ApiPublicRazorpayWebhookRoute =
     path: '/api/public/razorpay-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicOccasionRemindersRoute =
+  ApiPublicOccasionRemindersRouteImport.update({
+    id: '/api/public/occasion-reminders',
+    path: '/api/public/occasion-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiCouponValidateRoute = ApiCouponValidateRouteImport.update({
   id: '/api/coupon/validate',
   path: '/api/coupon/validate',
@@ -314,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/admin/showcase': typeof AuthenticatedAdminShowcaseRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/coupon/validate': typeof ApiCouponValidateRoute
+  '/api/public/occasion-reminders': typeof ApiPublicOccasionRemindersRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
@@ -358,6 +366,7 @@ export interface FileRoutesByTo {
   '/admin/showcase': typeof AuthenticatedAdminShowcaseRoute
   '/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/coupon/validate': typeof ApiCouponValidateRoute
+  '/api/public/occasion-reminders': typeof ApiPublicOccasionRemindersRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
@@ -404,6 +413,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/showcase': typeof AuthenticatedAdminShowcaseRoute
   '/_authenticated/admin/warehouse': typeof AuthenticatedAdminWarehouseRoute
   '/api/coupon/validate': typeof ApiCouponValidateRoute
+  '/api/public/occasion-reminders': typeof ApiPublicOccasionRemindersRoute
   '/api/public/razorpay-webhook': typeof ApiPublicRazorpayWebhookRoute
   '/api/razorpay/create-order': typeof ApiRazorpayCreateOrderRoute
   '/api/razorpay/create-order-variant': typeof ApiRazorpayCreateOrderVariantRoute
@@ -450,6 +460,7 @@ export interface FileRouteTypes {
     | '/admin/showcase'
     | '/admin/warehouse'
     | '/api/coupon/validate'
+    | '/api/public/occasion-reminders'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/create-order-variant'
@@ -494,6 +505,7 @@ export interface FileRouteTypes {
     | '/admin/showcase'
     | '/admin/warehouse'
     | '/api/coupon/validate'
+    | '/api/public/occasion-reminders'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/create-order-variant'
@@ -539,6 +551,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/showcase'
     | '/_authenticated/admin/warehouse'
     | '/api/coupon/validate'
+    | '/api/public/occasion-reminders'
     | '/api/public/razorpay-webhook'
     | '/api/razorpay/create-order'
     | '/api/razorpay/create-order-variant'
@@ -574,6 +587,7 @@ export interface RootRouteChildren {
   VarietiesSlugRoute: typeof VarietiesSlugRoute
   CollectionsIndexRoute: typeof CollectionsIndexRoute
   ApiCouponValidateRoute: typeof ApiCouponValidateRoute
+  ApiPublicOccasionRemindersRoute: typeof ApiPublicOccasionRemindersRoute
   ApiPublicRazorpayWebhookRoute: typeof ApiPublicRazorpayWebhookRoute
   ApiRazorpayCreateOrderRoute: typeof ApiRazorpayCreateOrderRoute
   ApiRazorpayCreateOrderVariantRoute: typeof ApiRazorpayCreateOrderVariantRoute
@@ -822,6 +836,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicRazorpayWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/occasion-reminders': {
+      id: '/api/public/occasion-reminders'
+      path: '/api/public/occasion-reminders'
+      fullPath: '/api/public/occasion-reminders'
+      preLoaderRoute: typeof ApiPublicOccasionRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/coupon/validate': {
       id: '/api/coupon/validate'
       path: '/api/coupon/validate'
@@ -946,6 +967,7 @@ const rootRouteChildren: RootRouteChildren = {
   VarietiesSlugRoute: VarietiesSlugRoute,
   CollectionsIndexRoute: CollectionsIndexRoute,
   ApiCouponValidateRoute: ApiCouponValidateRoute,
+  ApiPublicOccasionRemindersRoute: ApiPublicOccasionRemindersRoute,
   ApiPublicRazorpayWebhookRoute: ApiPublicRazorpayWebhookRoute,
   ApiRazorpayCreateOrderRoute: ApiRazorpayCreateOrderRoute,
   ApiRazorpayCreateOrderVariantRoute: ApiRazorpayCreateOrderVariantRoute,
