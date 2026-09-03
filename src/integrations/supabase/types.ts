@@ -178,6 +178,27 @@ export type Database = {
           },
         ]
       }
+      loyalty_points: {
+        Row: {
+          created_at: string
+          points_balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          points_balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          points_balance?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       partners: {
         Row: {
           active: boolean
@@ -664,6 +685,42 @@ export type Database = {
         Update: {
           created_at?: string
           trial_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_occasions: {
+        Row: {
+          created_at: string
+          flower_preference: string | null
+          id: string
+          last_reminded_at: string | null
+          name: string
+          occasion_date: string
+          relationship: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          flower_preference?: string | null
+          id?: string
+          last_reminded_at?: string | null
+          name: string
+          occasion_date: string
+          relationship?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          flower_preference?: string | null
+          id?: string
+          last_reminded_at?: string | null
+          name?: string
+          occasion_date?: string
+          relationship?: string
           updated_at?: string
           user_id?: string
         }
