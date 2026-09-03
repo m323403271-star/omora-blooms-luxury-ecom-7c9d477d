@@ -97,6 +97,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
           quantity: number;
           image: string | null;
           variant_slug: string | null;
+          variant_name: string | null;
           color_name: string | null;
           color_hex: string | null;
         }> = [];
@@ -130,6 +131,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
             quantity: qty,
             image,
             variant_slug: variant?.slug ?? null,
+            variant_name: variant?.name ?? null,
             color_name: variant?.color_name ?? null,
             color_hex: variant?.color_hex ?? null,
           });
