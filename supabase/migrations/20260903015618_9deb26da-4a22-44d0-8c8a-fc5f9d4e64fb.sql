@@ -1,0 +1,1 @@
+REVOKE ALL ON FUNCTION public.sync_loyalty_points() FROM PUBLIC, anon, authenticated;
