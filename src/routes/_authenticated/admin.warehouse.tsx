@@ -27,6 +27,7 @@ type OrderItem = {
   quantity: number;
   image?: string | null;
   variant_slug?: string | null;
+  variant_name?: string | null;
   color_name?: string | null;
   color_hex?: string | null;
 };
@@ -317,6 +318,9 @@ function OrderRowCard({ order, now, position }: { order: OrderRow; now: number; 
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-[color:var(--foreground)]">{it.name}</p>
+                {it.variant_name && it.variant_name !== it.name && (
+                  <p className="truncate text-[11px] text-[color:var(--gold)]">Shade: {it.variant_name}</p>
+                )}
                 <div className="mt-1 flex flex-wrap items-center gap-2">
                   <span className="text-[11px] rounded-full border hairline px-2 py-0.5 text-[color:var(--muted-foreground)]">
                     Qty {it.quantity}
