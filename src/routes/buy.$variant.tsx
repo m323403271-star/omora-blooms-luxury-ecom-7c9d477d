@@ -256,6 +256,25 @@ function BuyPage() {
     }
   }
 
+  // Loyalty redemption: points are converted server-side into a one-time coupon.
+  async function redeemLoyaltyPoints() {
+    const points = Math.floor(Number(pointsInput) || 0);
+    if (points < 20) { toast.error("Redeem at least 20 points"); return; }
+    setPointsBusy(true);
+    try {
+      const res = await redeemForCheckout({ data: { points } });
+      setCouponInput(res.code);
+      setCoupon({ code: res.code, discount: res.discountInr, label: `${points} points · ${formatPrice(res.discountInr)} off` });
+      setPointsInput("");
+      void refetchPoints();
+      toast.success(`${points} points redeemed — ${formatPrice(res.discountInr)} off`);
+    } catch (e) {
+      toast.error((e as Error).message || "Could not redeem your points");
+    } finally {
+      setPointsBusy(false);
+    }
+  }
+
   async function handleRazorpay() {
     if (!variant) return;
     if (!isFormValid) {
