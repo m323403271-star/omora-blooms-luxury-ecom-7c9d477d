@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Package, Loader2, ArrowRight } from "lucide-react";
 import { getMyOrders } from "@/lib/account.functions";
 import { RewardsPanel } from "@/components/site/RewardsPanel";
+import { OccasionsPanel } from "@/components/site/OccasionsPanel";
 import { formatPrice } from "@/lib/products";
 
 export const Route = createFileRoute("/_authenticated/account")({
@@ -44,6 +45,8 @@ function AccountPage() {
       </p>
 
       <RewardsPanel />
+
+      <OccasionsPanel />
 
 
       {isLoading && (

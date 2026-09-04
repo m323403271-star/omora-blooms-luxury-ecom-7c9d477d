@@ -16,6 +16,9 @@ import { saveOrderPhone } from "@/lib/order-owner";
 import { toast } from "sonner";
 import { isAirportPincode } from "@/lib/delivery";
 import { PICKUP_POINTS, findPickup } from "@/lib/pickup";
+import { useServerFn } from "@tanstack/react-start";
+import { redeemPointsForCheckout } from "@/lib/rewards.functions";
+import { getLoyaltyBalance } from "@/lib/occasions.functions";
 
 export const Route = createFileRoute("/buy/$variant")({
   head: ({ params }) => {
@@ -124,6 +127,14 @@ function BuyPage() {
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
   const [couponBusy, setCouponBusy] = useState(false);
+  const [pointsInput, setPointsInput] = useState("");
+  const [pointsBusy, setPointsBusy] = useState(false);
+  const redeemForCheckout = useServerFn(redeemPointsForCheckout);
+  const { data: loyalty, refetch: refetchPoints } = useQuery({
+    queryKey: ["my-points"],
+    queryFn: () => getLoyaltyBalance({}),
+    retry: false,
+  });
   const [tryOnOpen, setTryOnOpen] = useState(false);
   const savedRef = useRef("");
   const navigate = useNavigate();
@@ -253,6 +264,25 @@ function BuyPage() {
       toast.error("Could not check that coupon");
     } finally {
       setCouponBusy(false);
+    }
+  }
+
+  // Loyalty redemption: points are converted server-side into a one-time coupon.
+  async function redeemLoyaltyPoints() {
+    const points = Math.floor(Number(pointsInput) || 0);
+    if (points < 20) { toast.error("Redeem at least 20 points"); return; }
+    setPointsBusy(true);
+    try {
+      const res = await redeemForCheckout({ data: { points } });
+      setCouponInput(res.code);
+      setCoupon({ code: res.code, discount: res.discountInr, label: `${points} points · ${formatPrice(res.discountInr)} off` });
+      setPointsInput("");
+      void refetchPoints();
+      toast.success(`${points} points redeemed — ${formatPrice(res.discountInr)} off`);
+    } catch (e) {
+      toast.error((e as Error).message || "Could not redeem your points");
+    } finally {
+      setPointsBusy(false);
     }
   }
 
@@ -631,6 +661,33 @@ function BuyPage() {
                   </div>
                 )}
               </div>
+
+              {/* Loyalty points */}
+              {loyalty && loyalty.balance >= 20 && !coupon ? (
+                <div className="border-t hairline pt-3 md:pt-5">
+                  <p className="eyebrow mb-2 text-[color:var(--gold)]">Loyalty Points</p>
+                  <p className="mb-3 text-xs text-[color:var(--muted-foreground)]">
+                    {loyalty.balance} points available · 1 point = ₹5 (blocks of 10)
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      value={pointsInput}
+                      onChange={(e) => setPointsInput(e.target.value.replace(/\D/g, ""))}
+                      inputMode="numeric"
+                      placeholder="Points to redeem"
+                      className="flex-1 bg-[color:var(--noir)] hairline border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                    />
+                    <button
+                      type="button"
+                      onClick={redeemLoyaltyPoints}
+                      disabled={pointsBusy || !pointsInput}
+                      className="btn-outline-gold px-5 rounded-xl text-xs disabled:opacity-50"
+                    >
+                      {pointsBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Redeem"}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
 
               {/* Payment options */}
               <div className="border-t hairline pt-3 md:pt-5">
