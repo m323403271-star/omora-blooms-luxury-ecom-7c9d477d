@@ -124,6 +124,14 @@ function BuyPage() {
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
   const [couponBusy, setCouponBusy] = useState(false);
+  const [pointsInput, setPointsInput] = useState("");
+  const [pointsBusy, setPointsBusy] = useState(false);
+  const redeemForCheckout = useServerFn(redeemPointsForCheckout);
+  const { data: loyalty, refetch: refetchPoints } = useQuery({
+    queryKey: ["my-points"],
+    queryFn: () => getLoyaltyBalance({}),
+    retry: false,
+  });
   const [tryOnOpen, setTryOnOpen] = useState(false);
   const savedRef = useRef("");
   const navigate = useNavigate();
