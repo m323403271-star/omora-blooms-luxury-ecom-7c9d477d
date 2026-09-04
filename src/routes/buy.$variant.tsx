@@ -662,6 +662,33 @@ function BuyPage() {
                 )}
               </div>
 
+              {/* Loyalty points */}
+              {loyalty && loyalty.balance >= 20 && !coupon ? (
+                <div className="border-t hairline pt-3 md:pt-5">
+                  <p className="eyebrow mb-2 text-[color:var(--gold)]">Loyalty Points</p>
+                  <p className="mb-3 text-xs text-[color:var(--muted-foreground)]">
+                    {loyalty.balance} points available · 1 point = ₹5 (blocks of 10)
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      value={pointsInput}
+                      onChange={(e) => setPointsInput(e.target.value.replace(/\D/g, ""))}
+                      inputMode="numeric"
+                      placeholder="Points to redeem"
+                      className="flex-1 bg-[color:var(--noir)] hairline border rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
+                    />
+                    <button
+                      type="button"
+                      onClick={redeemLoyaltyPoints}
+                      disabled={pointsBusy || !pointsInput}
+                      className="btn-outline-gold px-5 rounded-xl text-xs disabled:opacity-50"
+                    >
+                      {pointsBusy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Redeem"}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+
               {/* Payment options */}
               <div className="border-t hairline pt-3 md:pt-5">
                 <p className="eyebrow mb-3 text-[color:var(--gold)]">Payment Option</p>
