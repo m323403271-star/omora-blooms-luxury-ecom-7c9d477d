@@ -199,6 +199,54 @@ export type Database = {
         }
         Relationships: []
       }
+      order_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          amount: number | null
+          channels: Json
+          created_at: string
+          customer_name: string | null
+          customer_phone: string | null
+          id: string
+          items_summary: string | null
+          payment_id: string | null
+          pincode: string | null
+          priority: string | null
+          razorpay_order_id: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          amount?: number | null
+          channels?: Json
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          items_summary?: string | null
+          payment_id?: string | null
+          pincode?: string | null
+          priority?: string | null
+          razorpay_order_id?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          amount?: number | null
+          channels?: Json
+          created_at?: string
+          customer_name?: string | null
+          customer_phone?: string | null
+          id?: string
+          items_summary?: string | null
+          payment_id?: string | null
+          pincode?: string | null
+          priority?: string | null
+          razorpay_order_id?: string | null
+        }
+        Relationships: []
+      }
       partners: {
         Row: {
           active: boolean
@@ -471,6 +519,42 @@ export type Database = {
           sort_order?: number
           tagline?: string | null
           tags?: string[] | null
+        }
+        Relationships: []
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          last_seen_at: string
+          p256dh: string
+          role_label: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          last_seen_at?: string
+          p256dh: string
+          role_label?: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          last_seen_at?: string
+          p256dh?: string
+          role_label?: string
+          user_agent?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -779,7 +863,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "partner"
+      app_role: "admin" | "partner" | "agent"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -907,7 +991,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "partner"],
+      app_role: ["admin", "partner", "agent"],
     },
   },
 } as const
