@@ -46,6 +46,8 @@ function AccountPage() {
 
       <RewardsPanel />
 
+      <OccasionsPanel />
+
 
       {isLoading && (
         <div className="flex items-center gap-3 text-sm text-[color:var(--muted-foreground)]">
