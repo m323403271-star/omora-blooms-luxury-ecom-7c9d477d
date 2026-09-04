@@ -16,6 +16,9 @@ import { saveOrderPhone } from "@/lib/order-owner";
 import { toast } from "sonner";
 import { isAirportPincode } from "@/lib/delivery";
 import { PICKUP_POINTS, findPickup } from "@/lib/pickup";
+import { useServerFn } from "@tanstack/react-start";
+import { redeemPointsForCheckout } from "@/lib/rewards.functions";
+import { getLoyaltyBalance } from "@/lib/occasions.functions";
 
 export const Route = createFileRoute("/buy/$variant")({
   head: ({ params }) => {
