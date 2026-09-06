@@ -133,6 +133,31 @@ export const Route = createFileRoute("/api/public/razorpay-webhook")({
           }
         }
 
+        if (nextStatus === "paid" && existing.status !== "paid") {
+          try {
+            const { data: row } = await supabaseAdmin
+              .from("payments")
+              .select("id, items, customer_name, customer_phone, pincode, order_total, amount, priority")
+              .eq("razorpay_order_id", orderId)
+              .maybeSingle();
+            if (row) {
+              const { dispatchNewOrderAlert } = await import("@/lib/alerts.server");
+              await dispatchNewOrderAlert({
+                razorpayOrderId: orderId,
+                paymentId: (row as { id: string }).id,
+                customerName: (row as { customer_name: string | null }).customer_name,
+                customerPhone: (row as { customer_phone: string | null }).customer_phone,
+                pincode: (row as { pincode: string | null }).pincode,
+                amount: (row as { order_total: number | null; amount: number }).order_total ?? (row as { amount: number }).amount,
+                priority: (row as { priority: string | null }).priority,
+                items: Array.isArray((row as { items: unknown }).items)
+                  ? ((row as { items: Array<{ name?: string; quantity?: number }> }).items)
+                  : [],
+              });
+            }
+          } catch (e) { console.error("Webhook order alert failed", e); }
+        }
+
         return Response.json({ ok: true, status: nextStatus });
       },
     },

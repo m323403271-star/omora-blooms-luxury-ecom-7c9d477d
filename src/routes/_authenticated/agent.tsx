@@ -14,6 +14,7 @@ import {
   Package,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import OrderAlertSiren from "@/components/site/OrderAlertSiren";
 import { toast } from "sonner";
 import { findPickup } from "@/lib/pickup";
 import { PriorityBadge } from "./admin.warehouse";
@@ -104,6 +105,7 @@ function AgentApp() {
 
   return (
     <div className="min-h-screen bg-[color:var(--noir)] pb-20">
+      <div className="max-w-2xl mx-auto px-4"><OrderAlertSiren /></div>
       <div className="sticky top-0 z-30 bg-[color:var(--noir)]/95 backdrop-blur border-b hairline">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
           <div>
