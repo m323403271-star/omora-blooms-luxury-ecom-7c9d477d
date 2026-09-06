@@ -15,6 +15,7 @@ import {
   StickyNote,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import OrderAlertSiren from "@/components/site/OrderAlertSiren";
 import { toast } from "sonner";
 import { findPickup } from "@/lib/pickup";
 import { OrderPreviewSender } from "@/components/site/OrderPreviewSender";
@@ -127,6 +128,7 @@ function WarehouseDashboard() {
 
   return (
     <div className="container-luxe py-8 md:py-12">
+      <OrderAlertSiren />
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <div>
           <p className="eyebrow mb-1">Dispatch Console</p>
