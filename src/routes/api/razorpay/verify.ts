@@ -63,7 +63,7 @@ export const Route = createFileRoute("/api/razorpay/verify")({
             .from("payments")
             .update({ razorpay_payment_id, status: "paid", error_message: null })
             .eq("razorpay_order_id", razorpay_order_id)
-            .select("coupon_code, items")
+            .select("id, coupon_code, items, customer_name, customer_phone, pincode, order_total, amount, priority")
             .maybeSingle();
 
           // Redeem the coupon and draw down shade stock once payment is confirmed.
@@ -88,6 +88,32 @@ export const Route = createFileRoute("/api/razorpay/verify")({
             }
           }
         } catch (e) { console.error("Payment status update failed", e); }
+
+        // Fire the high-priority alert fan-out (siren + push + SMS/WhatsApp/email).
+        try {
+          const { data: row } = await supabaseAdmin
+            .from("payments")
+            .select("id, items, customer_name, customer_phone, pincode, order_total, amount, priority")
+            .eq("razorpay_order_id", razorpay_order_id)
+            .maybeSingle();
+          if (row) {
+            const r = row as {
+              id: string; items: unknown; customer_name: string | null; customer_phone: string | null;
+              pincode: string | null; order_total: number | null; amount: number; priority: string | null;
+            };
+            const { dispatchNewOrderAlert } = await import("@/lib/alerts.server");
+            await dispatchNewOrderAlert({
+              razorpayOrderId: razorpay_order_id,
+              paymentId: r.id,
+              customerName: r.customer_name,
+              customerPhone: r.customer_phone,
+              pincode: r.pincode,
+              amount: r.order_total ?? r.amount,
+              priority: r.priority,
+              items: Array.isArray(r.items) ? (r.items as Array<{ name?: string; quantity?: number }>) : [],
+            });
+          }
+        } catch (e) { console.error("Order alert dispatch failed", e); }
 
         return Response.json({ ok: true, paymentId: razorpay_payment_id });
       },
