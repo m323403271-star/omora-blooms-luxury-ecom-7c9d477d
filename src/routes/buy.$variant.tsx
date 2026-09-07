@@ -476,12 +476,12 @@ function BuyPage() {
             </div>
 
             <div className="glass-card rounded-2xl p-2.5 md:p-6">
-              <p className="eyebrow mb-2.5 text-[color:var(--gold)]">Check Delivery</p>
+              <h2 className="eyebrow mb-2.5 text-[color:var(--gold)]">Check Delivery</h2>
               <DeliveryEtaChecker />
             </div>
 
             <div className="glass-card rounded-2xl p-2.5 md:p-6">
-              <p className="eyebrow mb-3 text-[color:var(--gold)]">Shipping Details</p>
+              <h2 className="eyebrow mb-3 text-[color:var(--gold)]">Shipping Details</h2>
               <div className="space-y-2.5 md:space-y-4">
                 <Field label="Full Name" icon={User} value={name} onChange={setName} placeholder="Your full name" required />
                 <Field label="Phone Number" icon={Phone} value={phone} onChange={setPhone} type="tel" placeholder="10-digit mobile number" required />
@@ -595,7 +595,7 @@ function BuyPage() {
           <aside className="lg:col-span-2">
             <div className="glass-card rounded-2xl p-2.5 md:p-6 lg:sticky lg:top-28 space-y-3 md:space-y-6">
               <div>
-                <p className="eyebrow mb-2.5 text-[color:var(--gold)]">Your Order</p>
+                <h2 className="eyebrow mb-2.5 text-[color:var(--gold)]">Your Order</h2>
                 {soldOut && (
                   <div className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-xs text-red-300">
                     This shade is currently sold out. Message us on WhatsApp and we'll craft it to order.
@@ -627,7 +627,7 @@ function BuyPage() {
 
               {/* Coupon */}
               <div className="border-t hairline pt-3 md:pt-5">
-                <p className="eyebrow mb-3 text-[color:var(--gold)]">Coupon Code</p>
+                <h2 className="eyebrow mb-3 text-[color:var(--gold)]">Coupon Code</h2>
                 {coupon ? (
                   <div className="flex items-center justify-between gap-3 rounded-xl border border-[color:var(--gold)]/40 bg-[color:var(--gold)]/5 px-4 py-3">
                     <span className="inline-flex items-center gap-2 text-sm">
@@ -665,7 +665,7 @@ function BuyPage() {
               {/* Loyalty points */}
               {loyalty && loyalty.balance >= 20 && !coupon ? (
                 <div className="border-t hairline pt-3 md:pt-5">
-                  <p className="eyebrow mb-2 text-[color:var(--gold)]">Loyalty Points</p>
+                  <h2 className="eyebrow mb-2 text-[color:var(--gold)]">Loyalty Points</h2>
                   <p className="mb-3 text-xs text-[color:var(--muted-foreground)]">
                     {loyalty.balance} points available · 1 point = ₹5 (blocks of 10)
                   </p>
@@ -691,7 +691,7 @@ function BuyPage() {
 
               {/* Payment options */}
               <div className="border-t hairline pt-3 md:pt-5">
-                <p className="eyebrow mb-3 text-[color:var(--gold)]">Payment Option</p>
+                <h2 className="eyebrow mb-3 text-[color:var(--gold)]">Payment Option</h2>
                 <div className="space-y-3">
                   <button
                     type="button"
