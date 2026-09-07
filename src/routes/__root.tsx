@@ -71,20 +71,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "OMORA BLOOMS — Luxury Handmade Bouquets That Last Forever" },
-      { name: "description", content: "Luxury handmade crochet & pipe cleaner bouquets, mother recovery kits, baby essentials and premium gift boxes — crafted to last forever." },
       { name: "author", content: "OMORA BLOOMS" },
       { name: "theme-color", content: "#173F3A" },
       { name: "google-site-verification", content: "GRQPsgq7L4BPucJDzYqtP1qlHZNWBHkeWRgYSwdR-mU" },
-      { property: "og:title", content: "OMORA BLOOMS — Luxury Handmade Bouquets That Last Forever" },
-      { property: "og:description", content: "Luxury handmade crochet & pipe cleaner bouquets, mother recovery kits, baby essentials and premium gift boxes — crafted to last forever." },
-      { property: "og:type", content: "website" },
       { property: "og:site_name", content: "OMORA BLOOMS" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "OMORA BLOOMS — Luxury Handmade Bouquets That Last Forever" },
-      { name: "twitter:description", content: "Luxury handmade crochet & pipe cleaner bouquets, mother recovery kits, baby essentials and premium gift boxes — crafted to last forever." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/533c9fec-a0ee-4af6-b723-e8b6418f7eb4/id-preview-d8737fa4--9b70daa9-6a74-48da-91ba-28f391def9de.lovable.app-1784644894065.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/533c9fec-a0ee-4af6-b723-e8b6418f7eb4/id-preview-d8737fa4--9b70daa9-6a74-48da-91ba-28f391def9de.lovable.app-1784644894065.png" },
     ],
     scripts: [
       {

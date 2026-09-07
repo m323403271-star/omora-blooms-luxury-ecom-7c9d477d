@@ -92,6 +92,7 @@ function ContactPage() {
 
       <section className="container-luxe pb-24 grid lg:grid-cols-5 gap-10">
         <form onSubmit={submit} className="lg:col-span-3 glass-card rounded-3xl p-6 md:p-10 space-y-4">
+          <h2 className="font-serif text-3xl mb-2">Send us a message</h2>
           <div className="grid md:grid-cols-2 gap-4">
             <Field label="Full name" value={state.name} onChange={(v) => setState({ ...state, name: v })} required />
             <Field label="Email" type="email" value={state.email} onChange={(v) => setState({ ...state, email: v })} required />
@@ -108,7 +109,7 @@ function ContactPage() {
 
         <aside className="lg:col-span-2 space-y-6">
           <div className="glass-card rounded-2xl p-6">
-            <p className="eyebrow mb-3">Concierge</p>
+            <h2 className="eyebrow mb-3">Concierge</h2>
             <div className="space-y-4 text-sm">
               <a href={whatsappLink("Hello OMORA BLOOMS!")} target="_blank" rel="noopener noreferrer" className="flex items-start gap-3 hover:text-[color:var(--gold)]">
                 <MessageCircle className="h-5 w-5 text-[color:var(--gold)] mt-0.5" />
@@ -141,7 +142,7 @@ function ContactPage() {
             </div>
           </div>
           <div className="glass-card rounded-2xl p-6">
-            <p className="eyebrow mb-2">Bespoke Orders</p>
+            <h2 className="eyebrow mb-2">Bespoke Orders</h2>
             <p className="font-serif text-2xl">Tell us your vision.</p>
             <p className="text-sm text-[color:var(--muted-foreground)] mt-2">Custom color palettes, personalized notes, corporate gifting, and wedding keepsakes — we make it happen.</p>
           </div>

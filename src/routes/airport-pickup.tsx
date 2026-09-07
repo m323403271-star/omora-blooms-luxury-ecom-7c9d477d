@@ -33,7 +33,8 @@ function AirportPickupPage() {
         </span>
       </div>
 
-      <div className="mt-10 grid md:grid-cols-3 gap-5">
+      <h2 className="font-serif text-2xl md:text-3xl mt-12 mb-2">Designated pickup points</h2>
+      <div className="mt-6 grid md:grid-cols-3 gap-5">
         {PICKUP_POINTS.map((p, i) => (
           <div key={p.id} className="glass-card rounded-2xl p-6">
             <div className="flex items-center gap-2 text-[color:var(--gold)]">
@@ -47,14 +48,15 @@ function AirportPickupPage() {
       </div>
 
       <div className="mt-10 rounded-2xl border hairline p-6 bg-[color:var(--card)]/40">
-        <p className="eyebrow mb-2">Security note</p>
+        <h2 className="eyebrow mb-2">Security note</h2>
         <p className="text-sm text-[color:var(--muted-foreground)]">
           Security rules restrict delivery executives from entering gate check-in areas. Please meet our delivery agent at your chosen Pickup Point.
           You'll receive live updates once your order is dispatched.
         </p>
       </div>
 
-      <div className="mt-10 flex flex-wrap gap-3">
+      <h2 className="font-serif text-2xl md:text-3xl mt-12 mb-4">Order for airport delivery</h2>
+      <div className="mt-2 flex flex-wrap gap-3">
         <Link to="/shop" className="btn-gold inline-block px-8 py-3 rounded-full text-sm">Shop now</Link>
         <Link to="/contact" className="btn-outline-gold inline-block px-8 py-3 rounded-full text-sm">Talk to concierge</Link>
       </div>
