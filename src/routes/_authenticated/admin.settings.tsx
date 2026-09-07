@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { KeyRound, Loader2, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
-import { getFalApiKeyStatus, saveFalApiKey } from "@/lib/admin-settings.functions";
+import { getAlertSettingsStatus, getFalApiKeyStatus, saveAlertSettings, saveFalApiKey } from "@/lib/admin-settings.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   head: () => ({
@@ -174,6 +174,99 @@ function AdminSettings() {
           this page. It cannot be read by customers, other staff, or anyone inspecting the site.
         </p>
       </div>
+
+      <AlertSettingsCard />
     </div>
   );
 }
+
+function AlertSettingsCard() {
+  const loadAlerts = useServerFn(getAlertSettingsStatus);
+  const saveAlerts = useServerFn(saveAlertSettings);
+  const [status, setStatus] = useState<Awaited<ReturnType<typeof getAlertSettingsStatus>> | null>(null);
+  const [form, setForm] = useState({
+    ALERT_ADMIN_PHONE: "",
+    ALERT_ADMIN_EMAIL: "",
+    ALERT_SMS_FROM: "",
+    ALERT_WHATSAPP_FROM: "",
+    RESEND_API_KEY: "",
+  });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    void loadAlerts().then(setStatus).catch(() => setStatus(null));
+  }, [loadAlerts]);
+
+  const fields: Array<[keyof typeof form, string, string]> = [
+    ["ALERT_ADMIN_PHONE", "Owner mobile number", "+919876543210"],
+    ["ALERT_ADMIN_EMAIL", "Owner email", "orders@omorablooms.in"],
+    ["ALERT_SMS_FROM", "SMS sender number", "+15017122661"],
+    ["ALERT_WHATSAPP_FROM", "WhatsApp sender number", "+14155238886"],
+    ["RESEND_API_KEY", "Email sending key", "re_..."],
+  ];
+
+  async function onSave() {
+    setSaving(true);
+    try {
+      const res = await saveAlerts({ data: form });
+      if (res.ok) {
+        toast.success("Alert settings saved.");
+        setForm({ ALERT_ADMIN_PHONE: "", ALERT_ADMIN_EMAIL: "", ALERT_SMS_FROM: "", ALERT_WHATSAPP_FROM: "", RESEND_API_KEY: "" });
+        setStatus(await loadAlerts());
+      } else toast.error(res.error);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="rounded-2xl border hairline bg-[color:var(--card)]/40 p-6 md:p-8 space-y-4 mt-6">
+      <div>
+        <p className="eyebrow mb-1">New order alerts</p>
+        <h2 className="font-serif text-2xl">Siren &amp; instant dispatch</h2>
+        <p className="text-sm text-[color:var(--muted-foreground)] mt-1">
+          Where new-order alerts are sent. Phone sirens are switched on from the warehouse screen on each device.
+        </p>
+      </div>
+
+      {status && (
+        <div className="flex flex-wrap gap-2 text-[11px]">
+          {[
+            ["Phone siren", status.pushReady],
+            ["SMS / WhatsApp", status.twilioReady && (status.ALERT_SMS_FROM || status.ALERT_WHATSAPP_FROM)],
+            ["Email", status.RESEND_API_KEY && status.ALERT_ADMIN_EMAIL],
+          ].map(([label, ok]) => (
+            <span
+              key={String(label)}
+              className={`rounded-full px-3 py-1 border ${ok ? "border-emerald-400/50 text-emerald-300" : "border-white/15 text-[color:var(--muted-foreground)]"}`}
+            >
+              {String(label)}: {ok ? "ready" : "not set"}
+            </span>
+          ))}
+        </div>
+      )}
+
+      {fields.map(([key, label, placeholder]) => (
+        <label key={key} className="block">
+          <span className="text-xs tracking-widest uppercase text-[color:var(--muted-foreground)]">{label}</span>
+          <input
+            value={form[key]}
+            onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+            placeholder={placeholder}
+            className="mt-1 w-full rounded-xl border hairline bg-[color:var(--noir)]/60 px-4 py-2.5 text-sm outline-none focus:border-[color:var(--gold)]"
+          />
+        </label>
+      ))}
+
+      <button
+        onClick={onSave}
+        disabled={saving || Object.values(form).every((v) => v.trim() === "")}
+        className="btn-gold w-full py-3 rounded-full text-sm inline-flex items-center justify-center gap-2 disabled:opacity-50"
+      >
+        {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+        {saving ? "Saving…" : "Save alert settings"}
+      </button>
+    </div>
+  );
+}
+
