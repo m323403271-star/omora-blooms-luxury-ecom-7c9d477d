@@ -71,12 +71,12 @@ function Field({
   required?: boolean;
 }) {
   return (
-    <div>
-      <label className="flex items-center gap-1.5 text-[11px] tracking-[0.18em] uppercase text-[color:var(--gold)] mb-1.5">
+    <label className="block">
+      <span className="flex items-center gap-1.5 text-[11px] tracking-[0.18em] uppercase text-[color:var(--gold)] mb-1.5">
         <Icon className="h-3.5 w-3.5" />
         {label}
         {required && <span className="text-[color:var(--destructive)]">*</span>}
-      </label>
+      </span>
       <input
         type={type}
         value={value}
