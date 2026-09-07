@@ -85,7 +85,7 @@ function Field({
         required={required}
         className="w-full bg-[color:var(--noir)] hairline border rounded-xl px-3 py-2.5 text-sm text-[color:var(--foreground)] placeholder:text-[color:var(--muted-foreground)]/60 focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)] transition"
       />
-    </div>
+    </label>
   );
 }
 
