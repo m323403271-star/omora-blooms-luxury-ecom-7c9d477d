@@ -39,7 +39,7 @@ export function Header() {
             <Menu className="h-5 w-5" />
           </button>
 
-          <Logo size="md" className="md:order-1 flex items-center" imgClassName="h-10 md:h-12 w-auto object-contain p-0 border-0 shadow-none rounded-none" />
+          <Logo size="lg" className="md:order-1 flex items-center" imgClassName="h-16 w-16 md:h-20 md:w-20" />
 
           <nav className="hidden md:flex items-center gap-8 md:order-2 mx-auto absolute left-1/2 -translate-x-1/2">
             {NAV.map((n) => (
