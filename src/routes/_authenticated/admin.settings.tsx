@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { KeyRound, Loader2, ShieldCheck, CheckCircle2, AlertCircle } from "lucide-react";
-import { getFalApiKeyStatus, saveFalApiKey } from "@/lib/admin-settings.functions";
+import { getAlertSettingsStatus, getFalApiKeyStatus, saveAlertSettings, saveFalApiKey } from "@/lib/admin-settings.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
   head: () => ({
