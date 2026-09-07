@@ -23,9 +23,14 @@ import {  getStoredPincode , isAirportPincode as isAirportPincodeFn } from "@/li
 import { formatGiftForWhatsApp } from "@/lib/gifting";
 import { toast } from "sonner";
 import { CraftNote } from "@/components/site/CraftNote";
+import { pageSeo } from "@/lib/seo";
 
 export const Route = createFileRoute("/cart")({
-  head: () => ({ meta: [{ title: "Your Bag — OMORA BLOOMS" }] }),
+  head: () => pageSeo({
+    path: "/cart",
+    title: "Your Bag — OMORA BLOOMS",
+    description: "Review your OMORA BLOOMS bag of handmade keepsake bouquets and luxury gift boxes, then check out with express Bengaluru delivery.",
+  }),
   component: CartPage,
 });
 

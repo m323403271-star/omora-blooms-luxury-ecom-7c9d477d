@@ -7,7 +7,16 @@ import { getOrderPhone, saveOrderPhone, normalizeOrderPhone } from "@/lib/order-
 
 
 export const Route = createFileRoute("/order/$orderId")({
-  head: () => ({ meta: [{ title: "Order Status — OMORA BLOOMS" }] }),
+  head: () => ({
+    meta: [
+      { title: "Order Status — OMORA BLOOMS" },
+      { name: "description", content: "View the live status of your OMORA BLOOMS order, including payment confirmation and delivery progress." },
+      { property: "og:title", content: "Order Status — OMORA BLOOMS" },
+      { property: "og:description", content: "View the live status of your OMORA BLOOMS order, including payment confirmation and delivery progress." },
+      { property: "og:type", content: "website" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   component: OrderStatusPage,
 });
 
