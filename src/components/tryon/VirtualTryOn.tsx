@@ -208,8 +208,9 @@ export function VirtualTryOn({
         } else {
           toast.error(("error" in res && res.error) || "Could not prepare this shade.");
         }
-      } catch {
-        toast.error("Try-On is unavailable right now.");
+      } catch (e) {
+        const unauth = e instanceof Response ? e.status === 401 : String(e).includes("Unauthorized");
+        toast.error(unauth ? "Please sign in to use Virtual Try-On." : "Try-On is unavailable right now.");
       } finally {
         setBusy(false);
       }

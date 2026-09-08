@@ -113,8 +113,13 @@ function CartPage() {
       } else {
         toast.error(res?.error ?? "Could not reach our concierge line right now.");
       }
-    } catch {
-      toast.error("Could not reach our concierge line right now.");
+    } catch (e) {
+      const unauth = e instanceof Response ? e.status === 401 : String(e).includes("Unauthorized");
+      toast.error(
+        unauth
+          ? "Please sign in so our concierge can call you back."
+          : "Could not reach our concierge line right now.",
+      );
     } finally {
       setSavingCall(false);
     }
