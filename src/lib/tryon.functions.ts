@@ -1,7 +1,26 @@
 import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 const schema = z.object({ imageUrl: z.string().url().max(2000) });
+
+/** Only catalog artwork hosted by us may be sent to the paid cutout service. */
+function isAllowedCatalogUrl(raw: string): boolean {
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:") return false;
+    const supabaseHost = process.env["SUPABASE_URL"]
+      ? new URL(process.env["SUPABASE_URL"]).host
+      : "";
+    return (
+      (supabaseHost !== "" && url.host === supabaseHost) ||
+      url.host.endsWith(".lovable.app") ||
+      url.host.endsWith("omorablooms.in")
+    );
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Virtual Try-On asset pipeline.
