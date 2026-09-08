@@ -30,8 +30,12 @@ function isAllowedCatalogUrl(raw: string): boolean {
  * can be composited as a transparent PNG over the customer's own photo.
  */
 export const cutoutCatalogImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => schema.parse(data))
   .handler(async ({ data }) => {
+    if (!isAllowedCatalogUrl(data.imageUrl)) {
+      return { ok: false as const, error: "Only Omora catalog images can be used for Try-On." };
+    }
     const { resolveFalKey } = await import("@/lib/fal-key.server");
     const key = await resolveFalKey();
     if (!key) return { ok: false as const, error: "Try-On is not configured yet." };

@@ -17,6 +17,7 @@ function normalizePhone(raw: string) {
 }
 
 export const saveCartAndCall = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SaveCartCallInput.parse(input))
   .handler(async ({ data }) => {
     const apiKey = process.env["BLAND_API_KEY"];
