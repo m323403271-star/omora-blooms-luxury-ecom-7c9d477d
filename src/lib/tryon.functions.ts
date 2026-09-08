@@ -1,7 +1,26 @@
 import { createServerFn } from "@tanstack/react-start";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
 const schema = z.object({ imageUrl: z.string().url().max(2000) });
+
+/** Only catalog artwork hosted by us may be sent to the paid cutout service. */
+function isAllowedCatalogUrl(raw: string): boolean {
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:") return false;
+    const supabaseHost = process.env["SUPABASE_URL"]
+      ? new URL(process.env["SUPABASE_URL"]).host
+      : "";
+    return (
+      (supabaseHost !== "" && url.host === supabaseHost) ||
+      url.host.endsWith(".lovable.app") ||
+      url.host.endsWith("omorablooms.in")
+    );
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Virtual Try-On asset pipeline.
@@ -11,8 +30,12 @@ const schema = z.object({ imageUrl: z.string().url().max(2000) });
  * can be composited as a transparent PNG over the customer's own photo.
  */
 export const cutoutCatalogImage = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => schema.parse(data))
   .handler(async ({ data }) => {
+    if (!isAllowedCatalogUrl(data.imageUrl)) {
+      return { ok: false as const, error: "Only Omora catalog images can be used for Try-On." };
+    }
     const { resolveFalKey } = await import("@/lib/fal-key.server");
     const key = await resolveFalKey();
     if (!key) return { ok: false as const, error: "Try-On is not configured yet." };
