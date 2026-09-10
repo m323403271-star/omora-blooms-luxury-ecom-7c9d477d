@@ -71,6 +71,27 @@ export type Database = {
         }
         Relationships: []
       }
+      concierge_call_log: {
+        Row: {
+          created_at: string
+          id: string
+          ip: string | null
+          phone: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip?: string | null
+          phone: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip?: string | null
+          phone?: string
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           active: boolean
