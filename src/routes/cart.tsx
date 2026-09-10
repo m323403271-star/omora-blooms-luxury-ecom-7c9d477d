@@ -106,16 +106,22 @@ function CartPage() {
       const res = await saveCartCall({
         data: { name: fullName.trim(), phone: mobile.trim(), items: itemsSummary },
       });
+      console.info("Concierge call response", res);
       if (res?.ok) {
         toast.success("Calling you now — please keep your phone handy.", {
           description: "Personal assistance in Kannada, English or Hindi.",
         });
       } else {
-        toast.error(res?.error ?? "Could not reach our concierge line right now.");
+        const detail = res?.error ?? "Could not reach our concierge line right now.";
+        console.error("Concierge call failed", detail, (res as { debug?: unknown })?.debug);
+        toast.error(detail, { duration: 12000 });
       }
     } catch (e) {
       console.error("Concierge call failed", e);
-      toast.error("Could not reach our concierge line right now. Please try again.");
+      toast.error(
+        `Could not reach our concierge line: ${e instanceof Error ? e.message : String(e)}`,
+        { duration: 12000 },
+      );
     } finally {
       setSavingCall(false);
     }
