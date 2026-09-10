@@ -42,33 +42,7 @@ export const saveCartAndCall = createServerFn({ method: "POST" })
     }
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
 
-    try {
-      const { count: phoneCount } = await supabaseAdmin
-        .from("concierge_call_log")
-        .select("id", { count: "exact", head: true })
-        .eq("phone", phone)
-        .gte("created_at", since);
-      if ((phoneCount ?? 0) >= MAX_PER_PHONE_PER_HOUR) {
-        return {
-          ok: false as const,
-          error: "We've already scheduled a few calls to this number. Please try again later.",
-        };
-      }
-      if (ip) {
-        const { count: ipCount } = await supabaseAdmin
-          .from("concierge_call_log")
-          .select("id", { count: "exact", head: true })
-          .eq("ip", ip)
-          .gte("created_at", since);
-        if ((ipCount ?? 0) >= MAX_PER_IP_PER_HOUR) {
-          return { ok: false as const, error: "Too many call requests. Please try again later." };
-        }
-      }
-    } catch (err) {
-      console.error("Concierge rate-limit check failed", err);
-    }
 
     const task = `Luxury concierge for Omora Blooms calling ${data.name}. Speak Kannada (switch to EN/HI if user replies so). Assist with saved cart items (${data.items}), customizations, or express delivery. NEVER offer discounts proactively; ONLY if customer asks for price reduction, provide 5% off coupon code 'LUXURY5' for checkout.`;
 
