@@ -1,4 +1,5 @@
-import { createServerFn, getRequest } from "@tanstack/react-start";
+import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
 
 const SaveCartCallInput = z.object({
@@ -15,8 +16,11 @@ function normalizePhone(raw: string) {
   return `+${digits}`;
 }
 
+/** Guests may request a call-back, but only a few times per hour per number/network. */
+const MAX_PER_PHONE_PER_HOUR = 3;
+const MAX_PER_IP_PER_HOUR = 8;
+
 export const saveCartAndCall = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SaveCartCallInput.parse(input))
   .handler(async ({ data }) => {
     const apiKey = process.env["BLAND_API_KEY"];
@@ -26,6 +30,50 @@ export const saveCartAndCall = createServerFn({ method: "POST" })
     }
 
     const phone = normalizePhone(data.phone);
+    if (!/^\+\d{10,15}$/.test(phone)) {
+      return { ok: false as const, error: "Please enter a valid mobile number." };
+    }
+
+    let ip: string | null = null;
+    try {
+      const req = getRequest();
+      ip =
+        req.headers.get("cf-connecting-ip") ??
+        req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+        null;
+    } catch {
+      ip = null;
+    }
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const since = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+    try {
+      const { count: phoneCount } = await supabaseAdmin
+        .from("concierge_call_log")
+        .select("id", { count: "exact", head: true })
+        .eq("phone", phone)
+        .gte("created_at", since);
+      if ((phoneCount ?? 0) >= MAX_PER_PHONE_PER_HOUR) {
+        return {
+          ok: false as const,
+          error: "We've already scheduled a few calls to this number. Please try again later.",
+        };
+      }
+      if (ip) {
+        const { count: ipCount } = await supabaseAdmin
+          .from("concierge_call_log")
+          .select("id", { count: "exact", head: true })
+          .eq("ip", ip)
+          .gte("created_at", since);
+        if ((ipCount ?? 0) >= MAX_PER_IP_PER_HOUR) {
+          return { ok: false as const, error: "Too many call requests. Please try again later." };
+        }
+      }
+    } catch (err) {
+      console.error("Concierge rate-limit check failed", err);
+    }
+
     const task = `Luxury concierge for Omora Blooms calling ${data.name}. Speak Kannada (switch to EN/HI if user replies so). Assist with saved cart items (${data.items}), customizations, or express delivery. NEVER offer discounts proactively; ONLY if customer asks for price reduction, provide 5% off coupon code 'LUXURY5' for checkout.`;
 
     try {
@@ -53,6 +101,10 @@ export const saveCartAndCall = createServerFn({ method: "POST" })
         console.error("Bland AI call failed", res.status, detail.slice(0, 500));
         return { ok: false as const, error: "Our concierge line is busy. Please try again shortly." };
       }
+
+      await supabaseAdmin
+        .from("concierge_call_log")
+        .insert({ phone, ip } as never);
 
       return { ok: true as const };
     } catch (err) {
