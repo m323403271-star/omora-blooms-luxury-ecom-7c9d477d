@@ -16,10 +16,6 @@ function normalizePhone(raw: string) {
   return `+${digits}`;
 }
 
-/** Guests may request a call-back, but only a few times per hour per number/network. */
-const MAX_PER_PHONE_PER_HOUR = 3;
-const MAX_PER_IP_PER_HOUR = 8;
-
 export const saveCartAndCall = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => SaveCartCallInput.parse(input))
   .handler(async ({ data }) => {
