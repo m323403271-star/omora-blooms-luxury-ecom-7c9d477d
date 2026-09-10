@@ -22,7 +22,11 @@ export const saveCartAndCall = createServerFn({ method: "POST" })
     const apiKey = process.env["BLAND_API_KEY"];
     const personaId = process.env["BLAND_PERSONA_ID"];
     if (!apiKey || !personaId) {
-      return { ok: false as const, error: "Concierge calling is not configured yet." };
+      const missingKeys = [!apiKey && "BLAND_API_KEY", !personaId && "BLAND_PERSONA_ID"]
+        .filter(Boolean)
+        .join(", ");
+      console.error("Bland AI config missing", missingKeys);
+      return { ok: false as const, error: `Concierge calling is not configured yet (missing: ${missingKeys}).` };
     }
 
     const phone = normalizePhone(data.phone);
@@ -66,19 +70,37 @@ export const saveCartAndCall = createServerFn({ method: "POST" })
         }),
       });
 
-      if (!res.ok) {
-        const detail = await res.text();
-        console.error("Bland AI call failed", res.status, detail.slice(0, 500));
-        return { ok: false as const, error: "Our concierge line is busy. Please try again shortly." };
+      const raw = await res.text();
+      let parsed: unknown = null;
+      try { parsed = JSON.parse(raw); } catch { parsed = null; }
+      console.error("Bland AI response", {
+        status: res.status,
+        ok: res.ok,
+        body: raw.slice(0, 1000),
+      });
+
+      const apiStatus = (parsed as { status?: string } | null)?.status;
+      const apiMessage =
+        (parsed as { message?: string; error?: string; errors?: unknown } | null)?.message ??
+        (parsed as { error?: string } | null)?.error ??
+        null;
+
+      if (!res.ok || apiStatus === "error") {
+        return {
+          ok: false as const,
+          error: `Concierge call failed (HTTP ${res.status})${apiMessage ? `: ${apiMessage}` : `: ${raw.slice(0, 200) || "no response body"}`}`,
+          debug: { status: res.status, body: raw.slice(0, 1000) },
+        };
       }
 
       await supabaseAdmin
         .from("concierge_call_log")
         .insert({ phone, ip } as never);
 
-      return { ok: true as const };
+      return { ok: true as const, debug: { status: res.status, body: raw.slice(0, 500) } };
     } catch (err) {
       console.error("Bland AI call error", err);
-      return { ok: false as const, error: "Could not reach our concierge line right now." };
+      const msg = err instanceof Error ? `${err.name}: ${err.message}` : String(err);
+      return { ok: false as const, error: `Could not reach the calling service — ${msg}` };
     }
   });
