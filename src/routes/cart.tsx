@@ -107,19 +107,15 @@ function CartPage() {
         data: { name: fullName.trim(), phone: mobile.trim(), items: itemsSummary },
       });
       if (res?.ok) {
-        toast.success("Cart saved — our concierge will call you shortly.", {
+        toast.success("Calling you now — please keep your phone handy.", {
           description: "Personal assistance in Kannada, English or Hindi.",
         });
       } else {
         toast.error(res?.error ?? "Could not reach our concierge line right now.");
       }
     } catch (e) {
-      const unauth = e instanceof Response ? e.status === 401 : String(e).includes("Unauthorized");
-      toast.error(
-        unauth
-          ? "Please sign in so our concierge can call you back."
-          : "Could not reach our concierge line right now.",
-      );
+      console.error("Concierge call failed", e);
+      toast.error("Could not reach our concierge line right now. Please try again.");
     } finally {
       setSavingCall(false);
     }
@@ -327,7 +323,7 @@ function CartPage() {
                 className="btn-outline-gold w-full inline-flex items-center justify-center gap-2 py-3 rounded-full text-sm disabled:opacity-60"
               >
                 {savingCall
-                  ? <><Loader2 className="h-4 w-4 shrink-0 animate-spin" /> Connecting concierge…</>
+                  ? <><Loader2 className="h-4 w-4 shrink-0 animate-spin" /> Calling you now…</>
                   : <><PhoneCall className="h-4 w-4 shrink-0" /> Save to Cart & Get a Call</>}
               </button>
               <p className="mt-1.5 text-[11px] text-[color:var(--muted-foreground)] text-center">
