@@ -54,7 +54,7 @@ export const saveCartAndCall = createServerFn({ method: "POST" })
       const res = await fetch("https://api.bland.ai/v1/calls", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${apiKey}`,
+          Authorization: apiKey,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
