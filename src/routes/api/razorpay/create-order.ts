@@ -1,5 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac } from "node:crypto";
+import {
+  isLocalPaymentOrigin,
+  isProductionPaymentOrigin,
+  livePaymentUrl,
+  paymentOriginFromRequest,
+} from "@/lib/payment-origin";
 
 type Item = {
   id: string;
@@ -33,6 +39,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
             deliveryNotes?: string | null;
             couponCode?: string | null;
           };
+          checkoutOrigin?: string;
         };
         try {
           body = await request.json();
@@ -43,6 +50,21 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         const items = Array.isArray(body.items) ? body.items : [];
         if (items.length === 0 || items.length > 100) {
           return Response.json({ error: "Invalid items" }, { status: 400 });
+        }
+        const requestOrigin = paymentOriginFromRequest(request);
+        const originMatches = body.checkoutOrigin === requestOrigin;
+        if (
+          !originMatches ||
+          (!isProductionPaymentOrigin(requestOrigin) && !isLocalPaymentOrigin(requestOrigin))
+        ) {
+          return Response.json(
+            {
+              error: "Payment is available only on the official OMORA BLOOMS website.",
+              code: "payment_domain_mismatch",
+              liveUrl: livePaymentUrl("/cart"),
+            },
+            { status: 409 },
+          );
         }
         const meta = body.meta ?? {};
         const cleanTier = meta.customerTier === "prestige" ? "prestige" : "regular";
@@ -169,7 +191,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
             amount: amountPaise,
             currency: "INR",
             receipt,
-            notes: { ref: body.ref ?? "" },
+            notes: { ref: body.ref ?? "", website: requestOrigin ?? "" },
           }),
         });
 

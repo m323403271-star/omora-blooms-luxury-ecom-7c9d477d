@@ -1,6 +1,11 @@
 import { toast } from "sonner";
 import { getStoredRef } from "@/lib/referral";
 import type { CartItem } from "@/lib/cart";
+import {
+  isLocalPaymentOrigin,
+  isProductionPaymentOrigin,
+  livePaymentUrl,
+} from "@/lib/payment-origin";
 
 declare global {
   interface Window {
@@ -63,6 +68,12 @@ export async function startRazorpayCheckout(
   meta: CheckoutMeta = {},
 ): Promise<void> {
   if (items.length === 0) return;
+  const checkoutOrigin = window.location.origin;
+  if (!isProductionPaymentOrigin(checkoutOrigin) && !isLocalPaymentOrigin(checkoutOrigin)) {
+    toast.error("Secure payment opens on the live OMORA BLOOMS website.");
+    window.location.assign(livePaymentUrl("/cart"));
+    return;
+  }
   const ref = getStoredRef();
 
   const ok = await loadScript();
@@ -87,6 +98,7 @@ export async function startRazorpayCheckout(
         })),
         ref,
         meta,
+        checkoutOrigin,
       }),
     });
 
@@ -96,7 +108,11 @@ export async function startRazorpayCheckout(
     return;
   }
   if (!orderRes.ok) {
-    toast.error("Could not start payment");
+    const failure = (await orderRes.json().catch(() => null)) as
+      | { error?: string; liveUrl?: string }
+      | null;
+    toast.error(failure?.error || "Could not start payment");
+    if (failure?.liveUrl) window.location.assign(failure.liveUrl);
     return;
   }
   const order = (await orderRes.json()) as {
