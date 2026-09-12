@@ -4,7 +4,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 /**
  * Razorpay webhook receiver.
  * Configure in Razorpay Dashboard → Settings → Webhooks:
- *   URL:    https://<your-domain>/api/public/razorpay-webhook
+ *   URL:    https://omorablooms.in/api/public/razorpay-webhook
  *   Events: payment.captured, payment.authorized, payment.failed, order.paid
  *   Secret: value stored as RAZORPAY_WEBHOOK_SECRET
  */
