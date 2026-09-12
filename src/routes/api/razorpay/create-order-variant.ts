@@ -1,4 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  isLocalPaymentOrigin,
+  isProductionPaymentOrigin,
+  livePaymentUrl,
+  paymentOriginFromRequest,
+} from "@/lib/payment-origin";
 
 export const Route = createFileRoute("/api/razorpay/create-order-variant")({
   server: {
@@ -26,6 +32,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           colorHex?: string | null;
           couponCode?: string | null;
           customerEmail?: string | null;
+          checkoutOrigin?: string;
         };
         try {
           body = await request.json();
@@ -36,6 +43,21 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
         const { variantSlug } = body;
         if (!variantSlug || typeof variantSlug !== "string") {
           return Response.json({ error: "Missing required fields" }, { status: 400 });
+        }
+        const requestOrigin = paymentOriginFromRequest(request);
+        const originMatches = body.checkoutOrigin === requestOrigin;
+        if (
+          !originMatches ||
+          (!isProductionPaymentOrigin(requestOrigin) && !isLocalPaymentOrigin(requestOrigin))
+        ) {
+          return Response.json(
+            {
+              error: "Payment is available only on the official OMORA BLOOMS website.",
+              code: "payment_domain_mismatch",
+              liveUrl: livePaymentUrl(`/buy/${encodeURIComponent(variantSlug)}`),
+            },
+            { status: 409 },
+          );
         }
 
         const paymentMode: "full" | "advance" = body.paymentMode === "advance" ? "advance" : "full";
@@ -109,7 +131,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           typeof body.selectedImage === "string" &&
           body.selectedImage.length > 0 &&
           body.selectedImage.length < 2048 &&
-          variantImages.some((img) => img === body.selectedImage || img.split("?")[0] === body.selectedImage!.split("?")[0])
+          variantImages.some((img) => img === body.selectedImage || img.split("?")[0] === body.selectedImage?.split("?")[0])
         ) {
           resolvedImage = body.selectedImage;
         }
@@ -165,6 +187,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
               payment_mode: paymentMode,
               order_total: String(orderTotal),
               balance_due: String(balanceDue),
+              website: requestOrigin ?? "",
             },
           }),
         });

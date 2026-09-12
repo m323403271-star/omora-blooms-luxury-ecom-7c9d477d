@@ -19,6 +19,11 @@ import { PICKUP_POINTS, findPickup } from "@/lib/pickup";
 import { useServerFn } from "@tanstack/react-start";
 import { redeemPointsForCheckout } from "@/lib/rewards.functions";
 import { getLoyaltyBalance } from "@/lib/occasions.functions";
+import {
+  isLocalPaymentOrigin,
+  isProductionPaymentOrigin,
+  livePaymentUrl,
+} from "@/lib/payment-origin";
 
 export const Route = createFileRoute("/buy/$variant")({
   head: ({ params }) => {
@@ -292,6 +297,12 @@ function BuyPage() {
       toast.error("Please fill in all shipping details before paying.");
       return;
     }
+    const checkoutOrigin = window.location.origin;
+    if (!isProductionPaymentOrigin(checkoutOrigin) && !isLocalPaymentOrigin(checkoutOrigin)) {
+      toast.error("Secure payment opens on the live OMORA BLOOMS website.");
+      window.location.assign(livePaymentUrl(`/buy/${encodeURIComponent(variant.slug)}`));
+      return;
+    }
     setPaying(true);
     try {
       const ok = await loadRazorpay();
@@ -320,11 +331,16 @@ function BuyPage() {
           selectedImage: displayImage,
           colorName: variant.color_name,
           colorHex: variant.color_hex,
+          checkoutOrigin,
         }),
       });
 
       if (!orderRes.ok) {
-        toast.error("Could not start payment. Please order via WhatsApp.");
+        const failure = (await orderRes.json().catch(() => null)) as
+          | { error?: string; liveUrl?: string }
+          | null;
+        toast.error(failure?.error || "Could not start payment. Please order via WhatsApp.");
+        if (failure?.liveUrl) window.location.assign(failure.liveUrl);
         return;
       }
 
@@ -342,7 +358,7 @@ function BuyPage() {
         name: "OMORA BLOOMS",
         description: variant.name,
         theme: { color: "#C8A24A" },
-        prefill: { name, contact: phone },
+        prefill: { name, email: email.trim() || undefined, contact: phone },
         handler: async (response: unknown) => {
           const r = response as {
             razorpay_order_id: string;
