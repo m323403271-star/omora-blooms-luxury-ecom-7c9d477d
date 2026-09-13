@@ -220,6 +220,45 @@ export type Database = {
         }
         Relationships: []
       }
+      native_push_devices: {
+        Row: {
+          active: boolean
+          created_at: string
+          device_name: string | null
+          id: string
+          last_seen_at: string
+          platform: string
+          role_label: string
+          token: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          device_name?: string | null
+          id?: string
+          last_seen_at?: string
+          platform?: string
+          role_label: string
+          token: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          device_name?: string | null
+          id?: string
+          last_seen_at?: string
+          platform?: string
+          role_label?: string
+          token?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       order_alerts: {
         Row: {
           acknowledged_at: string | null
