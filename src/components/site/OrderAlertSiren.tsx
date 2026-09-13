@@ -6,9 +6,15 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   acknowledgeOrderAlert,
   getPushPublicKey,
+  saveNativePushDevice,
   savePushSubscription,
   sendTestOrderAlert,
 } from "@/lib/alerts.functions";
+import {
+  enableNativeOrderAlerts,
+  isNativeAndroid,
+  stopNativeOrderAlarm,
+} from "@/lib/native-order-alarm";
 
 type Alert = {
   id: string;
@@ -89,6 +95,7 @@ export default function OrderAlertSiren() {
   const ackAlert = useServerFn(acknowledgeOrderAlert);
   const loadKey = useServerFn(getPushPublicKey);
   const saveSub = useServerFn(savePushSubscription);
+  const saveNativeDevice = useServerFn(saveNativePushDevice);
   const testAlert = useServerFn(sendTestOrderAlert);
 
   const [pending, setPending] = useState<Alert[]>([]);
@@ -137,6 +144,10 @@ export default function OrderAlertSiren() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    if (isNativeAndroid()) {
+      setPushState("off");
+      return;
+    }
     if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
       setPushState("unsupported");
       return;
@@ -156,6 +167,17 @@ export default function OrderAlertSiren() {
     setBusy(true);
     try {
       await unlock();
+      if (isNativeAndroid()) {
+        const registration = await enableNativeOrderAlerts();
+        const result = await saveNativeDevice({ data: registration });
+        if (!result.ok) {
+          toast.error(result.error);
+          return;
+        }
+        setPushState("on");
+        toast.success("Native order alarm enabled on this Android device.");
+        return;
+      }
       const permission = await Notification.requestPermission();
       if (permission !== "granted") {
         toast.error("Allow notifications so alerts reach this phone.");
@@ -178,9 +200,9 @@ export default function OrderAlertSiren() {
       const json = sub.toJSON() as { endpoint?: string; keys?: { p256dh?: string; auth?: string } };
       const res = await saveSub({
         data: {
-          endpoint: json.endpoint!,
-          p256dh: json.keys!.p256dh!,
-          auth: json.keys!.auth!,
+          endpoint: json.endpoint ?? "",
+          p256dh: json.keys?.p256dh ?? "",
+          auth: json.keys?.auth ?? "",
           userAgent: navigator.userAgent.slice(0, 300),
         },
       });
@@ -201,6 +223,7 @@ export default function OrderAlertSiren() {
     try {
       const res = await ackAlert({ data: { alertId: id } });
       if (!res.ok) toast.error("Could not accept. Try again.");
+      else await stopNativeOrderAlarm(id);
       setPending((p) => p.filter((a) => a.id !== id));
       await load();
     } finally {
