@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
+import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -25,6 +26,8 @@ public class OrderAlarmService extends Service {
     private static final String ACTION_STOP = "in.omorablooms.staff.STOP_ORDER_ALARM";
     private static final String EXTRA_ALERT_ID = "alertId";
     private static volatile String activeAlertId = "";
+    private static final String PREFS = "omora_order_alarm";
+    private static final String PENDING_IDS = "pending_alert_ids";
 
     private MediaPlayer player;
     private PowerManager.WakeLock wakeLock;
@@ -35,6 +38,7 @@ public class OrderAlarmService extends Service {
             handler.postDelayed(this, 9 * 60 * 1000L);
         }
     };
+    private final Runnable stopTestAlarm = this::stopSelf;
 
     public static void stop(Context context, String alertId) {
         Intent stopIntent = new Intent(context, OrderAlarmService.class);
@@ -47,18 +51,28 @@ public class OrderAlarmService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && ACTION_STOP.equals(intent.getAction())) {
             String requestedId = intent.getStringExtra(EXTRA_ALERT_ID);
-            if (requestedId == null || requestedId.isEmpty() || requestedId.equals(activeAlertId)) stopSelf();
+            if (requestedId == null || requestedId.isEmpty()) {
+                clearPendingAlerts();
+                stopSelf();
+            } else {
+                removePendingAlert(requestedId);
+                if (pendingAlerts().isEmpty()) stopSelf();
+            }
             return START_NOT_STICKY;
         }
 
         activeAlertId = intent == null ? "" : safe(intent.getStringExtra(EXTRA_ALERT_ID));
+        if (!activeAlertId.isEmpty()) addPendingAlert(activeAlertId);
         String title = intent == null ? "" : safe(intent.getStringExtra("title"));
         String body = intent == null ? "" : safe(intent.getStringExtra("body"));
+        boolean isTest = intent != null && intent.getBooleanExtra("test", false);
         createChannel();
         startForeground(NOTIFICATION_ID, buildNotification(title, body));
         acquireWakeLock();
         handler.removeCallbacks(renewWakeLock);
         handler.postDelayed(renewWakeLock, 9 * 60 * 1000L);
+        handler.removeCallbacks(stopTestAlarm);
+        if (isTest) handler.postDelayed(stopTestAlarm, 20 * 1000L);
         startSiren();
         return START_STICKY;
     }
@@ -124,9 +138,31 @@ public class OrderAlarmService extends Service {
 
     private String safe(String value) { return value == null ? "" : value; }
 
+    private java.util.Set<String> pendingAlerts() {
+        SharedPreferences preferences = getSharedPreferences(PREFS, MODE_PRIVATE);
+        return new java.util.HashSet<>(preferences.getStringSet(PENDING_IDS, java.util.Collections.emptySet()));
+    }
+
+    private void addPendingAlert(String alertId) {
+        java.util.Set<String> ids = pendingAlerts();
+        ids.add(alertId);
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putStringSet(PENDING_IDS, ids).apply();
+    }
+
+    private void removePendingAlert(String alertId) {
+        java.util.Set<String> ids = pendingAlerts();
+        ids.remove(alertId);
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putStringSet(PENDING_IDS, ids).apply();
+    }
+
+    private void clearPendingAlerts() {
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().remove(PENDING_IDS).apply();
+    }
+
     @Override
     public void onDestroy() {
         handler.removeCallbacks(renewWakeLock);
+        handler.removeCallbacks(stopTestAlarm);
         if (player != null) {
             player.stop();
             player.release();

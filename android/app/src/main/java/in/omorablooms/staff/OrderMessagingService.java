@@ -23,6 +23,7 @@ public class OrderMessagingService extends FirebaseMessagingService {
         intent.putExtra("alertId", alertId);
         intent.putExtra("title", value(data, "title"));
         intent.putExtra("body", value(data, "body"));
+        intent.putExtra("test", "true".equals(data.get("test")));
         ContextCompat.startForegroundService(this, intent);
     }
 
