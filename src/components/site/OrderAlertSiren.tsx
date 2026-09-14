@@ -244,10 +244,10 @@ export default function OrderAlertSiren() {
         >
           {pushState === "on" ? <ShieldCheck className="h-3.5 w-3.5 text-[color:var(--gold)]" /> : <BellRing className="h-3.5 w-3.5" />}
           {pushState === "on"
-            ? "Phone alerts ON"
+            ? isNativeAndroid() ? "Native alarm ON" : "Phone alerts ON"
             : pushState === "unsupported"
               ? "Alerts unsupported on this browser"
-              : "Turn ON phone siren alerts"}
+              : isNativeAndroid() ? "Turn ON native alarm" : "Turn ON phone siren alerts"}
         </button>
         <button
           type="button"

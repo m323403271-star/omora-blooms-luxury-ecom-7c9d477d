@@ -65,6 +65,7 @@ async function sendNativeMessage(
                   title: payload.title,
                   body: payload.body,
                   path: payload.url ?? "/admin/warehouse",
+                  test: payload.tag?.startsWith("omora-test-") ? "true" : "false",
                 },
               },
             }),
