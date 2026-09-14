@@ -23,7 +23,6 @@ import androidx.core.app.NotificationManagerCompat;
 public class OrderAlarmService extends Service {
     private static final String CHANNEL_ID = "omora_urgent_orders_v1";
     private static final int NOTIFICATION_ID = 7801;
-    private static final String ACTION_STOP = "in.omorablooms.staff.STOP_ORDER_ALARM";
     private static final String EXTRA_ALERT_ID = "alertId";
     private static volatile String activeAlertId = "";
     private static final String PREFS = "omora_order_alarm";
@@ -41,26 +40,18 @@ public class OrderAlarmService extends Service {
     private final Runnable stopTestAlarm = this::stopSelf;
 
     public static void stop(Context context, String alertId) {
-        Intent stopIntent = new Intent(context, OrderAlarmService.class);
-        stopIntent.setAction(ACTION_STOP);
-        stopIntent.putExtra(EXTRA_ALERT_ID, alertId == null ? "" : alertId);
-        context.startService(stopIntent);
+        SharedPreferences preferences = context.getSharedPreferences(PREFS, MODE_PRIVATE);
+        java.util.Set<String> ids = new java.util.HashSet<>(
+            preferences.getStringSet(PENDING_IDS, java.util.Collections.emptySet())
+        );
+        if (alertId == null || alertId.isEmpty()) ids.clear();
+        else ids.remove(alertId);
+        preferences.edit().putStringSet(PENDING_IDS, ids).apply();
+        if (ids.isEmpty()) context.stopService(new Intent(context, OrderAlarmService.class));
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && ACTION_STOP.equals(intent.getAction())) {
-            String requestedId = intent.getStringExtra(EXTRA_ALERT_ID);
-            if (requestedId == null || requestedId.isEmpty()) {
-                clearPendingAlerts();
-                stopSelf();
-            } else {
-                removePendingAlert(requestedId);
-                if (pendingAlerts().isEmpty()) stopSelf();
-            }
-            return START_NOT_STICKY;
-        }
-
         activeAlertId = intent == null ? "" : safe(intent.getStringExtra(EXTRA_ALERT_ID));
         if (!activeAlertId.isEmpty()) addPendingAlert(activeAlertId);
         String title = intent == null ? "" : safe(intent.getStringExtra("title"));
@@ -147,16 +138,6 @@ public class OrderAlarmService extends Service {
         java.util.Set<String> ids = pendingAlerts();
         ids.add(alertId);
         getSharedPreferences(PREFS, MODE_PRIVATE).edit().putStringSet(PENDING_IDS, ids).apply();
-    }
-
-    private void removePendingAlert(String alertId) {
-        java.util.Set<String> ids = pendingAlerts();
-        ids.remove(alertId);
-        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putStringSet(PENDING_IDS, ids).apply();
-    }
-
-    private void clearPendingAlerts() {
-        getSharedPreferences(PREFS, MODE_PRIVATE).edit().remove(PENDING_IDS).apply();
     }
 
     @Override
