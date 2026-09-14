@@ -5,17 +5,17 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.AssetFileDescriptor;
 import android.media.AudioAttributes;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.PowerManager;
-import android.content.SharedPreferences;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -109,15 +109,23 @@ public class OrderAlarmService extends Service {
 
     private void startSiren() {
         if (player != null && player.isPlaying()) return;
-        player = MediaPlayer.create(this, R.raw.order_alarm);
-        if (player == null) return;
-        player.setAudioAttributes(new AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_ALARM)
-            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-            .build());
-        player.setLooping(true);
-        player.setVolume(1f, 1f);
-        player.start();
+        try (AssetFileDescriptor alarm = getResources().openRawResourceFd(R.raw.order_alarm)) {
+            player = new MediaPlayer();
+            player.setAudioAttributes(new AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_ALARM)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build());
+            player.setDataSource(
+                alarm.getFileDescriptor(), alarm.getStartOffset(), alarm.getLength()
+            );
+            player.setLooping(true);
+            player.setVolume(1f, 1f);
+            player.prepare();
+            player.start();
+        } catch (Exception error) {
+            if (player != null) player.release();
+            player = null;
+        }
     }
 
     private void acquireWakeLock() {
