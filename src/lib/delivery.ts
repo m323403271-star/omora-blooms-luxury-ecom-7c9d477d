@@ -32,6 +32,7 @@ export function isAirportPincode(pincode: string | null | undefined): boolean {
 }
 
 export const REGIONAL_PINCODES: Record<string, string> = {
+  "560064": "Yelahanka",
   "562101": "Regional Express Zone",
   "561203": "Regional Express Zone",
   "562129": "Regional Express Zone",
