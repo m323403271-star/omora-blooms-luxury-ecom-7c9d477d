@@ -138,7 +138,7 @@ export function checkDelivery(pincodeInput: string, tier: DeliveryTier = getCust
       serviceable: true,
       eta: isPrestige ? "45 Minutes – 1 Hour" : "1 – 2 Hours",
       label: isPrestige ? "Prestige Priority Delivery" : "Regional Express",
-      area: "Regional Express Zone",
+      area: REGIONAL_PINCODES[pincode],
       tier,
       badge: isPrestige ? "vip" : "blue",
       message: isPrestige
