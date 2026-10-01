@@ -9,114 +9,58 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TrackRouteImport } from './routes/track'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ShopRouteImport } from './routes/shop'
-import { Route as ShippingRouteImport } from './routes/shipping'
-import { Route as ReturnsRouteImport } from './routes/returns'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as FaqRouteImport } from './routes/faq'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as CartRouteImport } from './routes/cart'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AirportPickupRouteImport } from './routes/airport-pickup'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
-import { Route as VarietiesSlugRouteImport } from './routes/varieties.$slug'
-import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
-import { Route as OrderOrderIdRouteImport } from './routes/order.$orderId'
-import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
-import { Route as BuyVariantRouteImport } from './routes/buy.$variant'
-import { Route as ApiTrackRouteImport } from './routes/api/track'
-import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
-import { Route as ApiAbandonedCartRouteImport } from './routes/api/abandoned-cart'
-import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
-import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/agent'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AirportPickupRouteImport } from './routes/airport-pickup'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CartRouteImport } from './routes/cart'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as FaqRouteImport } from './routes/faq'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as ReturnsRouteImport } from './routes/returns'
+import { Route as ShippingRouteImport } from './routes/shipping'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as TrackRouteImport } from './routes/track'
 import { Route as AuthenticatedAccountRouteImport } from './routes/_authenticated/account'
-import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
-import { Route as ApiRazorpayStatusRouteImport } from './routes/api/razorpay/status'
-import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay/mark-status'
-import { Route as ApiRazorpayCreateOrderVariantRouteImport } from './routes/api/razorpay/create-order-variant'
-import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
-import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
-import { Route as ApiPublicOccasionRemindersRouteImport } from './routes/api/public/occasion-reminders'
-import { Route as ApiCouponValidateRouteImport } from './routes/api/coupon/validate'
-import { Route as AuthenticatedAdminWarehouseRouteImport } from './routes/_authenticated/admin.warehouse'
-import { Route as AuthenticatedAdminShowcaseRouteImport } from './routes/_authenticated/admin.showcase'
-import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
-import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
-import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
-import { Route as AuthenticatedAdminManageImagesRouteImport } from './routes/_authenticated/admin.manage-images'
-import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated/admin.coupons'
+import { Route as AuthenticatedAgentRouteImport } from './routes/_authenticated/agent'
+import { Route as AuthenticatedPartnerRouteImport } from './routes/_authenticated/partner'
+import { Route as ApiAbandonedCartRouteImport } from './routes/api/abandoned-cart'
+import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
+import { Route as ApiTrackRouteImport } from './routes/api/track'
+import { Route as BuyVariantRouteImport } from './routes/buy.$variant'
+import { Route as CollectionsIndexRouteImport } from './routes/collections.index'
+import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
+import { Route as OrderOrderIdRouteImport } from './routes/order.$orderId'
+import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
+import { Route as VarietiesSlugRouteImport } from './routes/varieties.$slug'
 import { Route as AuthenticatedAdminCartsRouteImport } from './routes/_authenticated/admin.carts'
+import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated/admin.coupons'
+import { Route as AuthenticatedAdminManageImagesRouteImport } from './routes/_authenticated/admin.manage-images'
+import { Route as AuthenticatedAdminProductsRouteImport } from './routes/_authenticated/admin.products'
+import { Route as AuthenticatedAdminReferralsRouteImport } from './routes/_authenticated/admin.referrals'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
+import { Route as AuthenticatedAdminShowcaseRouteImport } from './routes/_authenticated/admin.showcase'
+import { Route as AuthenticatedAdminWarehouseRouteImport } from './routes/_authenticated/admin.warehouse'
+import { Route as ApiCouponValidateRouteImport } from './routes/api/coupon/validate'
+import { Route as ApiPublicOccasionRemindersRouteImport } from './routes/api/public/occasion-reminders'
+import { Route as ApiPublicRazorpayWebhookRouteImport } from './routes/api/public/razorpay-webhook'
+import { Route as ApiRazorpayCreateOrderRouteImport } from './routes/api/razorpay/create-order'
+import { Route as ApiRazorpayCreateOrderVariantRouteImport } from './routes/api/razorpay/create-order-variant'
+import { Route as ApiRazorpayMarkStatusRouteImport } from './routes/api/razorpay/mark-status'
+import { Route as ApiRazorpayStatusRouteImport } from './routes/api/razorpay/status'
+import { Route as ApiRazorpayVerifyRouteImport } from './routes/api/razorpay/verify'
 
-const TrackRoute = TrackRouteImport.update({
-  id: '/track',
-  path: '/track',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShopRoute = ShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShippingRoute = ShippingRouteImport.update({
-  id: '/shipping',
-  path: '/shipping',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReturnsRoute = ReturnsRouteImport.update({
-  id: '/returns',
-  path: '/returns',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FaqRoute = FaqRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CartRoute = CartRouteImport.update({
-  id: '/cart',
-  path: '/cart',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AirportPickupRoute = AirportPickupRouteImport.update({
-  id: '/airport-pickup',
-  path: '/airport-pickup',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -124,63 +68,74 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const AirportPickupRoute = AirportPickupRouteImport.update({
+  id: '/airport-pickup',
+  path: '/airport-pickup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
-  id: '/collections/',
-  path: '/collections/',
+const CartRoute = CartRouteImport.update({
+  id: '/cart',
+  path: '/cart',
   getParentRoute: () => rootRouteImport,
 } as any)
-const VarietiesSlugRoute = VarietiesSlugRouteImport.update({
-  id: '/varieties/$slug',
-  path: '/varieties/$slug',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProductsSlugRoute = ProductsSlugRouteImport.update({
-  id: '/products/$slug',
-  path: '/products/$slug',
+const FaqRoute = FaqRouteImport.update({
+  id: '/faq',
+  path: '/faq',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OrderOrderIdRoute = OrderOrderIdRouteImport.update({
-  id: '/order/$orderId',
-  path: '/order/$orderId',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
-  id: '/collections/$slug',
-  path: '/collections/$slug',
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BuyVariantRoute = BuyVariantRouteImport.update({
-  id: '/buy/$variant',
-  path: '/buy/$variant',
+const ReturnsRoute = ReturnsRouteImport.update({
+  id: '/returns',
+  path: '/returns',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiTrackRoute = ApiTrackRouteImport.update({
-  id: '/api/track',
-  path: '/api/track',
+const ShippingRoute = ShippingRouteImport.update({
+  id: '/shipping',
+  path: '/shipping',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
-  id: '/api/generate-image',
-  path: '/api/generate-image',
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAbandonedCartRoute = ApiAbandonedCartRouteImport.update({
-  id: '/api/abandoned-cart',
-  path: '/api/abandoned-cart',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedPartnerRoute = AuthenticatedPartnerRouteImport.update({
-  id: '/partner',
-  path: '/partner',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrackRoute = TrackRouteImport.update({
+  id: '/track',
+  path: '/track',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAgentRoute = AuthenticatedAgentRouteImport.update({
@@ -188,82 +143,65 @@ const AuthenticatedAgentRoute = AuthenticatedAgentRouteImport.update({
   path: '/agent',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAccountRoute = AuthenticatedAccountRouteImport.update({
-  id: '/account',
-  path: '/account',
+const AuthenticatedPartnerRoute = AuthenticatedPartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const ApiRazorpayVerifyRoute = ApiRazorpayVerifyRouteImport.update({
-  id: '/api/razorpay/verify',
-  path: '/api/razorpay/verify',
+const ApiAbandonedCartRoute = ApiAbandonedCartRouteImport.update({
+  id: '/api/abandoned-cart',
+  path: '/api/abandoned-cart',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiRazorpayStatusRoute = ApiRazorpayStatusRouteImport.update({
-  id: '/api/razorpay/status',
-  path: '/api/razorpay/status',
+const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
+  id: '/api/generate-image',
+  path: '/api/generate-image',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiRazorpayMarkStatusRoute = ApiRazorpayMarkStatusRouteImport.update({
-  id: '/api/razorpay/mark-status',
-  path: '/api/razorpay/mark-status',
+const ApiTrackRoute = ApiTrackRouteImport.update({
+  id: '/api/track',
+  path: '/api/track',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiRazorpayCreateOrderVariantRoute =
-  ApiRazorpayCreateOrderVariantRouteImport.update({
-    id: '/api/razorpay/create-order-variant',
-    path: '/api/razorpay/create-order-variant',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiRazorpayCreateOrderRoute = ApiRazorpayCreateOrderRouteImport.update({
-  id: '/api/razorpay/create-order',
-  path: '/api/razorpay/create-order',
+const BuyVariantRoute = BuyVariantRouteImport.update({
+  id: '/buy/$variant',
+  path: '/buy/$variant',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicRazorpayWebhookRoute =
-  ApiPublicRazorpayWebhookRouteImport.update({
-    id: '/api/public/razorpay-webhook',
-    path: '/api/public/razorpay-webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicOccasionRemindersRoute =
-  ApiPublicOccasionRemindersRouteImport.update({
-    id: '/api/public/occasion-reminders',
-    path: '/api/public/occasion-reminders',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiCouponValidateRoute = ApiCouponValidateRouteImport.update({
-  id: '/api/coupon/validate',
-  path: '/api/coupon/validate',
+const CollectionsIndexRoute = CollectionsIndexRouteImport.update({
+  id: '/collections/',
+  path: '/collections/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAdminWarehouseRoute =
-  AuthenticatedAdminWarehouseRouteImport.update({
-    id: '/admin/warehouse',
-    path: '/admin/warehouse',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminShowcaseRoute =
-  AuthenticatedAdminShowcaseRouteImport.update({
-    id: '/admin/showcase',
-    path: '/admin/showcase',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminSettingsRoute =
-  AuthenticatedAdminSettingsRouteImport.update({
-    id: '/admin/settings',
-    path: '/admin/settings',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminReferralsRoute =
-  AuthenticatedAdminReferralsRouteImport.update({
-    id: '/admin/referrals',
-    path: '/admin/referrals',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminProductsRoute =
-  AuthenticatedAdminProductsRouteImport.update({
-    id: '/admin/products',
-    path: '/admin/products',
+const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
+  id: '/collections/$slug',
+  path: '/collections/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrderOrderIdRoute = OrderOrderIdRouteImport.update({
+  id: '/order/$orderId',
+  path: '/order/$orderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProductsSlugRoute = ProductsSlugRouteImport.update({
+  id: '/products/$slug',
+  path: '/products/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VarietiesSlugRoute = VarietiesSlugRouteImport.update({
+  id: '/varieties/$slug',
+  path: '/varieties/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminCartsRoute = AuthenticatedAdminCartsRouteImport.update({
+  id: '/admin/carts',
+  path: '/admin/carts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminCouponsRoute =
+  AuthenticatedAdminCouponsRouteImport.update({
+    id: '/admin/coupons',
+    path: '/admin/coupons',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAdminManageImagesRoute =
@@ -272,16 +210,78 @@ const AuthenticatedAdminManageImagesRoute =
     path: '/admin/manage-images',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdminCouponsRoute =
-  AuthenticatedAdminCouponsRouteImport.update({
-    id: '/admin/coupons',
-    path: '/admin/coupons',
+const AuthenticatedAdminProductsRoute =
+  AuthenticatedAdminProductsRouteImport.update({
+    id: '/admin/products',
+    path: '/admin/products',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdminCartsRoute = AuthenticatedAdminCartsRouteImport.update({
-  id: '/admin/carts',
-  path: '/admin/carts',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const AuthenticatedAdminReferralsRoute =
+  AuthenticatedAdminReferralsRouteImport.update({
+    id: '/admin/referrals',
+    path: '/admin/referrals',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/admin/settings',
+    path: '/admin/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminShowcaseRoute =
+  AuthenticatedAdminShowcaseRouteImport.update({
+    id: '/admin/showcase',
+    path: '/admin/showcase',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminWarehouseRoute =
+  AuthenticatedAdminWarehouseRouteImport.update({
+    id: '/admin/warehouse',
+    path: '/admin/warehouse',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const ApiCouponValidateRoute = ApiCouponValidateRouteImport.update({
+  id: '/api/coupon/validate',
+  path: '/api/coupon/validate',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicOccasionRemindersRoute =
+  ApiPublicOccasionRemindersRouteImport.update({
+    id: '/api/public/occasion-reminders',
+    path: '/api/public/occasion-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicRazorpayWebhookRoute =
+  ApiPublicRazorpayWebhookRouteImport.update({
+    id: '/api/public/razorpay-webhook',
+    path: '/api/public/razorpay-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiRazorpayCreateOrderRoute = ApiRazorpayCreateOrderRouteImport.update({
+  id: '/api/razorpay/create-order',
+  path: '/api/razorpay/create-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRazorpayCreateOrderVariantRoute =
+  ApiRazorpayCreateOrderVariantRouteImport.update({
+    id: '/api/razorpay/create-order-variant',
+    path: '/api/razorpay/create-order-variant',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiRazorpayMarkStatusRoute = ApiRazorpayMarkStatusRouteImport.update({
+  id: '/api/razorpay/mark-status',
+  path: '/api/razorpay/mark-status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRazorpayStatusRoute = ApiRazorpayStatusRouteImport.update({
+  id: '/api/razorpay/status',
+  path: '/api/razorpay/status',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiRazorpayVerifyRoute = ApiRazorpayVerifyRouteImport.update({
+  id: '/api/razorpay/verify',
+  path: '/api/razorpay/verify',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -598,102 +598,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/track': {
-      id: '/track'
-      path: '/track'
-      fullPath: '/track'
-      preLoaderRoute: typeof TrackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shop': {
-      id: '/shop'
-      path: '/shop'
-      fullPath: '/shop'
-      preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shipping': {
-      id: '/shipping'
-      path: '/shipping'
-      fullPath: '/shipping'
-      preLoaderRoute: typeof ShippingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/returns': {
-      id: '/returns'
-      path: '/returns'
-      fullPath: '/returns'
-      preLoaderRoute: typeof ReturnsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cart': {
-      id: '/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: typeof CartRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/airport-pickup': {
-      id: '/airport-pickup'
-      path: '/airport-pickup'
-      fullPath: '/airport-pickup'
-      preLoaderRoute: typeof AirportPickupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -703,81 +612,109 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/collections/': {
-      id: '/collections/'
-      path: '/collections'
-      fullPath: '/collections/'
-      preLoaderRoute: typeof CollectionsIndexRouteImport
+    '/airport-pickup': {
+      id: '/airport-pickup'
+      path: '/airport-pickup'
+      fullPath: '/airport-pickup'
+      preLoaderRoute: typeof AirportPickupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/varieties/$slug': {
-      id: '/varieties/$slug'
-      path: '/varieties/$slug'
-      fullPath: '/varieties/$slug'
-      preLoaderRoute: typeof VarietiesSlugRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/products/$slug': {
-      id: '/products/$slug'
-      path: '/products/$slug'
-      fullPath: '/products/$slug'
-      preLoaderRoute: typeof ProductsSlugRouteImport
+    '/cart': {
+      id: '/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof CartRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/order/$orderId': {
-      id: '/order/$orderId'
-      path: '/order/$orderId'
-      fullPath: '/order/$orderId'
-      preLoaderRoute: typeof OrderOrderIdRouteImport
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/collections/$slug': {
-      id: '/collections/$slug'
-      path: '/collections/$slug'
-      fullPath: '/collections/$slug'
-      preLoaderRoute: typeof CollectionsSlugRouteImport
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/buy/$variant': {
-      id: '/buy/$variant'
-      path: '/buy/$variant'
-      fullPath: '/buy/$variant'
-      preLoaderRoute: typeof BuyVariantRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/track': {
-      id: '/api/track'
-      path: '/api/track'
-      fullPath: '/api/track'
-      preLoaderRoute: typeof ApiTrackRouteImport
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/generate-image': {
-      id: '/api/generate-image'
-      path: '/api/generate-image'
-      fullPath: '/api/generate-image'
-      preLoaderRoute: typeof ApiGenerateImageRouteImport
+    '/returns': {
+      id: '/returns'
+      path: '/returns'
+      fullPath: '/returns'
+      preLoaderRoute: typeof ReturnsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/abandoned-cart': {
-      id: '/api/abandoned-cart'
-      path: '/api/abandoned-cart'
-      fullPath: '/api/abandoned-cart'
-      preLoaderRoute: typeof ApiAbandonedCartRouteImport
+    '/shipping': {
+      id: '/shipping'
+      path: '/shipping'
+      fullPath: '/shipping'
+      preLoaderRoute: typeof ShippingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/partner': {
-      id: '/_authenticated/partner'
-      path: '/partner'
-      fullPath: '/partner'
-      preLoaderRoute: typeof AuthenticatedPartnerRouteImport
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/track': {
+      id: '/track'
+      path: '/track'
+      fullPath: '/track'
+      preLoaderRoute: typeof TrackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/account': {
+      id: '/_authenticated/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AuthenticatedAccountRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/agent': {
@@ -787,109 +724,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAgentRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/account': {
-      id: '/_authenticated/account'
-      path: '/account'
-      fullPath: '/account'
-      preLoaderRoute: typeof AuthenticatedAccountRouteImport
+    '/_authenticated/partner': {
+      id: '/_authenticated/partner'
+      path: '/partner'
+      fullPath: '/partner'
+      preLoaderRoute: typeof AuthenticatedPartnerRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/api/razorpay/verify': {
-      id: '/api/razorpay/verify'
-      path: '/api/razorpay/verify'
-      fullPath: '/api/razorpay/verify'
-      preLoaderRoute: typeof ApiRazorpayVerifyRouteImport
+    '/api/abandoned-cart': {
+      id: '/api/abandoned-cart'
+      path: '/api/abandoned-cart'
+      fullPath: '/api/abandoned-cart'
+      preLoaderRoute: typeof ApiAbandonedCartRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/razorpay/status': {
-      id: '/api/razorpay/status'
-      path: '/api/razorpay/status'
-      fullPath: '/api/razorpay/status'
-      preLoaderRoute: typeof ApiRazorpayStatusRouteImport
+    '/api/generate-image': {
+      id: '/api/generate-image'
+      path: '/api/generate-image'
+      fullPath: '/api/generate-image'
+      preLoaderRoute: typeof ApiGenerateImageRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/razorpay/mark-status': {
-      id: '/api/razorpay/mark-status'
-      path: '/api/razorpay/mark-status'
-      fullPath: '/api/razorpay/mark-status'
-      preLoaderRoute: typeof ApiRazorpayMarkStatusRouteImport
+    '/api/track': {
+      id: '/api/track'
+      path: '/api/track'
+      fullPath: '/api/track'
+      preLoaderRoute: typeof ApiTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/razorpay/create-order-variant': {
-      id: '/api/razorpay/create-order-variant'
-      path: '/api/razorpay/create-order-variant'
-      fullPath: '/api/razorpay/create-order-variant'
-      preLoaderRoute: typeof ApiRazorpayCreateOrderVariantRouteImport
+    '/buy/$variant': {
+      id: '/buy/$variant'
+      path: '/buy/$variant'
+      fullPath: '/buy/$variant'
+      preLoaderRoute: typeof BuyVariantRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/razorpay/create-order': {
-      id: '/api/razorpay/create-order'
-      path: '/api/razorpay/create-order'
-      fullPath: '/api/razorpay/create-order'
-      preLoaderRoute: typeof ApiRazorpayCreateOrderRouteImport
+    '/collections/': {
+      id: '/collections/'
+      path: '/collections'
+      fullPath: '/collections/'
+      preLoaderRoute: typeof CollectionsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/razorpay-webhook': {
-      id: '/api/public/razorpay-webhook'
-      path: '/api/public/razorpay-webhook'
-      fullPath: '/api/public/razorpay-webhook'
-      preLoaderRoute: typeof ApiPublicRazorpayWebhookRouteImport
+    '/collections/$slug': {
+      id: '/collections/$slug'
+      path: '/collections/$slug'
+      fullPath: '/collections/$slug'
+      preLoaderRoute: typeof CollectionsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/occasion-reminders': {
-      id: '/api/public/occasion-reminders'
-      path: '/api/public/occasion-reminders'
-      fullPath: '/api/public/occasion-reminders'
-      preLoaderRoute: typeof ApiPublicOccasionRemindersRouteImport
+    '/order/$orderId': {
+      id: '/order/$orderId'
+      path: '/order/$orderId'
+      fullPath: '/order/$orderId'
+      preLoaderRoute: typeof OrderOrderIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/coupon/validate': {
-      id: '/api/coupon/validate'
-      path: '/api/coupon/validate'
-      fullPath: '/api/coupon/validate'
-      preLoaderRoute: typeof ApiCouponValidateRouteImport
+    '/products/$slug': {
+      id: '/products/$slug'
+      path: '/products/$slug'
+      fullPath: '/products/$slug'
+      preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/warehouse': {
-      id: '/_authenticated/admin/warehouse'
-      path: '/admin/warehouse'
-      fullPath: '/admin/warehouse'
-      preLoaderRoute: typeof AuthenticatedAdminWarehouseRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/varieties/$slug': {
+      id: '/varieties/$slug'
+      path: '/varieties/$slug'
+      fullPath: '/varieties/$slug'
+      preLoaderRoute: typeof VarietiesSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin/showcase': {
-      id: '/_authenticated/admin/showcase'
-      path: '/admin/showcase'
-      fullPath: '/admin/showcase'
-      preLoaderRoute: typeof AuthenticatedAdminShowcaseRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/settings': {
-      id: '/_authenticated/admin/settings'
-      path: '/admin/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/referrals': {
-      id: '/_authenticated/admin/referrals'
-      path: '/admin/referrals'
-      fullPath: '/admin/referrals'
-      preLoaderRoute: typeof AuthenticatedAdminReferralsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/products': {
-      id: '/_authenticated/admin/products'
-      path: '/admin/products'
-      fullPath: '/admin/products'
-      preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/manage-images': {
-      id: '/_authenticated/admin/manage-images'
-      path: '/admin/manage-images'
-      fullPath: '/admin/manage-images'
-      preLoaderRoute: typeof AuthenticatedAdminManageImagesRouteImport
+    '/_authenticated/admin/carts': {
+      id: '/_authenticated/admin/carts'
+      path: '/admin/carts'
+      fullPath: '/admin/carts'
+      preLoaderRoute: typeof AuthenticatedAdminCartsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/coupons': {
@@ -899,12 +808,103 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCouponsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/carts': {
-      id: '/_authenticated/admin/carts'
-      path: '/admin/carts'
-      fullPath: '/admin/carts'
-      preLoaderRoute: typeof AuthenticatedAdminCartsRouteImport
+    '/_authenticated/admin/manage-images': {
+      id: '/_authenticated/admin/manage-images'
+      path: '/admin/manage-images'
+      fullPath: '/admin/manage-images'
+      preLoaderRoute: typeof AuthenticatedAdminManageImagesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/products': {
+      id: '/_authenticated/admin/products'
+      path: '/admin/products'
+      fullPath: '/admin/products'
+      preLoaderRoute: typeof AuthenticatedAdminProductsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/referrals': {
+      id: '/_authenticated/admin/referrals'
+      path: '/admin/referrals'
+      fullPath: '/admin/referrals'
+      preLoaderRoute: typeof AuthenticatedAdminReferralsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/showcase': {
+      id: '/_authenticated/admin/showcase'
+      path: '/admin/showcase'
+      fullPath: '/admin/showcase'
+      preLoaderRoute: typeof AuthenticatedAdminShowcaseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/warehouse': {
+      id: '/_authenticated/admin/warehouse'
+      path: '/admin/warehouse'
+      fullPath: '/admin/warehouse'
+      preLoaderRoute: typeof AuthenticatedAdminWarehouseRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/coupon/validate': {
+      id: '/api/coupon/validate'
+      path: '/api/coupon/validate'
+      fullPath: '/api/coupon/validate'
+      preLoaderRoute: typeof ApiCouponValidateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/occasion-reminders': {
+      id: '/api/public/occasion-reminders'
+      path: '/api/public/occasion-reminders'
+      fullPath: '/api/public/occasion-reminders'
+      preLoaderRoute: typeof ApiPublicOccasionRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/razorpay-webhook': {
+      id: '/api/public/razorpay-webhook'
+      path: '/api/public/razorpay-webhook'
+      fullPath: '/api/public/razorpay-webhook'
+      preLoaderRoute: typeof ApiPublicRazorpayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/razorpay/create-order': {
+      id: '/api/razorpay/create-order'
+      path: '/api/razorpay/create-order'
+      fullPath: '/api/razorpay/create-order'
+      preLoaderRoute: typeof ApiRazorpayCreateOrderRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/razorpay/create-order-variant': {
+      id: '/api/razorpay/create-order-variant'
+      path: '/api/razorpay/create-order-variant'
+      fullPath: '/api/razorpay/create-order-variant'
+      preLoaderRoute: typeof ApiRazorpayCreateOrderVariantRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/razorpay/mark-status': {
+      id: '/api/razorpay/mark-status'
+      path: '/api/razorpay/mark-status'
+      fullPath: '/api/razorpay/mark-status'
+      preLoaderRoute: typeof ApiRazorpayMarkStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/razorpay/status': {
+      id: '/api/razorpay/status'
+      path: '/api/razorpay/status'
+      fullPath: '/api/razorpay/status'
+      preLoaderRoute: typeof ApiRazorpayStatusRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/razorpay/verify': {
+      id: '/api/razorpay/verify'
+      path: '/api/razorpay/verify'
+      fullPath: '/api/razorpay/verify'
+      preLoaderRoute: typeof ApiRazorpayVerifyRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
