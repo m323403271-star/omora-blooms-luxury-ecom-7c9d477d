@@ -40,7 +40,7 @@ function CollectionsIndex() {
     <div className="container-luxe py-16 md:py-24">
       <div className="text-center max-w-2xl mx-auto">
         <p className="eyebrow mb-4">Our Collections</p>
-        <h1 className="font-serif text-5xl md:text-6xl">Curated for every occasion</h1>
+        <h1 className="font-serif text-5xl md:text-6xl">OMORA BLOOMS Collections — Curated for Every Occasion</h1>
         <p className="mt-4 text-[color:var(--muted-foreground)]">Discover luxury handmade collections thoughtfully crafted for life's most meaningful moments.</p>
       </div>
       <h2 className="sr-only">Browse all OMORA BLOOMS collections</h2>

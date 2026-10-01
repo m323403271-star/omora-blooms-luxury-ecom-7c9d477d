@@ -46,7 +46,7 @@ function FaqPage() {
     <div className="container-luxe py-16 md:py-24">
       <div className="text-center max-w-2xl mx-auto">
         <p className="eyebrow mb-4">FAQ</p>
-        <h1 className="font-serif text-5xl md:text-6xl">Frequently Asked</h1>
+        <h1 className="font-serif text-5xl md:text-6xl">Frequently Asked Questions</h1>
         <p className="text-[color:var(--muted-foreground)] mt-4">Everything you need to know before ordering. Still curious? Message us anytime.</p>
       </div>
       <div className="mt-12 max-w-3xl mx-auto space-y-3">
