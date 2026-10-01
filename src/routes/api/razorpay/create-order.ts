@@ -67,7 +67,8 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
           );
         }
         const meta = body.meta ?? {};
-        const cleanTier = meta.customerTier === "prestige" ? "prestige" : "regular";
+        // Tier is never trusted from the browser; there is no verified entitlement yet.
+        const cleanTier = "regular" as const;
         const cleanPincode = typeof meta.pincode === "string" && /^[1-9]\d{5}$/.test(meta.pincode) ? meta.pincode : null;
         const cleanPickup = typeof meta.pickupPointId === "string" ? meta.pickupPointId.slice(0, 60) : null;
         const cleanName = typeof meta.customerName === "string" ? meta.customerName.slice(0, 120) : null;

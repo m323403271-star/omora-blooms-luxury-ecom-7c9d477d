@@ -41,11 +41,7 @@ export const Route = createFileRoute("/api/public/occasion-reminders")({
             .update({ last_reminded_at: new Date().toISOString() })
             .in("id", pending.map((o) => o.id));
 
-          for (const o of pending) {
-            console.log(
-              `[occasion-reminder] ${o.relationship || "Someone"} — ${o.name} on ${o.occasion_date} (prefers ${o.flower_preference ?? "any bouquet"}) for user ${o.user_id}`,
-            );
-          }
+          console.log(`[occasion-reminder] ${pending.length} reminder(s) due on ${target}`);
         }
 
         return Response.json({ date: target, reminded: pending.length });
