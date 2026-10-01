@@ -46,6 +46,14 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    // Consolidate on the primary domain: permanently redirect www to apex.
+    try {
+      const url = new URL(request.url);
+      if (url.hostname === "www.omorablooms.in") {
+        url.hostname = "omorablooms.in";
+        return Response.redirect(url.toString(), 301);
+      }
+    } catch { /* ignore malformed URLs */ }
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
