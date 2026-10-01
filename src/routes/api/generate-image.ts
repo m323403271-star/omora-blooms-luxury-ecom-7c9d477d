@@ -103,8 +103,25 @@ export const Route = createFileRoute("/api/generate-image")({
 
         // Reference images, in order: [customer photo (identity lock),
         // exact catalog product (texture lock)]. Any of them may be omitted.
+        const supabaseHost = (() => {
+          try { return process.env["SUPABASE_URL"] ? new URL(process.env["SUPABASE_URL"]).host : ""; } catch { return ""; }
+        })();
+        const isAllowedRef = (u: unknown): u is string => {
+          if (typeof u !== "string" || u.length > 15_000_000) return false;
+          if (/^data:image\/(png|jpe?g|webp);base64,/.test(u)) return true;
+          try {
+            const url = new URL(u);
+            if (url.protocol !== "https:") return false;
+            return (
+              (supabaseHost !== "" && url.host === supabaseHost) ||
+              url.host.endsWith(".lovable.app") ||
+              url.host === "omorablooms.in" ||
+              url.host.endsWith(".omorablooms.in")
+            );
+          } catch { return false; }
+        };
         const refs = (referenceImages ?? (referenceImage ? [referenceImage] : []))
-          .filter((u) => typeof u === "string" && /^(data:image\/|https?:\/\/)/.test(u))
+          .filter(isAllowedRef)
           .slice(0, 3);
 
         // The merchant's own fal.ai account is the universal safety net: it is

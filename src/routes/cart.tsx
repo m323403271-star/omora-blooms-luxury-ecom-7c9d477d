@@ -97,6 +97,12 @@ function CartPage() {
       toast.error("Please add your full name and mobile number first.");
       return;
     }
+    const { data: sess } = await supabase.auth.getSession();
+    if (!sess.session) {
+      toast.error("Please sign in to request a concierge call.");
+      navigate({ to: "/auth" });
+      return;
+    }
     setSavingCall(true);
     try {
       const itemsSummary = items

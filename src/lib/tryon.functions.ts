@@ -49,10 +49,10 @@ export const cutoutCatalogImage = createServerFn({ method: "POST" })
 
       if (!res.ok) {
         const body = await res.text();
+        console.error("[TryOn] cutout failed", res.status, body.slice(0, 300));
         return {
           ok: false as const,
-          error: res.status === 401 ? "Try-On credentials are invalid." : `Cutout failed (${res.status}).`,
-          detail: body.slice(0, 300),
+          error: res.status === 401 ? "Try-On credentials are invalid." : "Cutout failed. Please try again.",
         };
       }
 
@@ -68,6 +68,7 @@ export const cutoutCatalogImage = createServerFn({ method: "POST" })
       const buf = Buffer.from(await img.arrayBuffer());
       return { ok: true as const, png: `data:image/png;base64,${buf.toString("base64")}` };
     } catch (e) {
-      return { ok: false as const, error: e instanceof Error ? e.message : "Try-On failed." };
+      console.error("[TryOn] cutout error", e instanceof Error ? e.message : e);
+      return { ok: false as const, error: "Try-On failed. Please try again." };
     }
   });

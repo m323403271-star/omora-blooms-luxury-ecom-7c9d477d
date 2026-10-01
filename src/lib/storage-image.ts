@@ -1,8 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
-
 export const PRODUCT_BUCKET = "product-images";
-
-const SIGN_TTL = 60 * 60 * 24 * 7; // 7 days
 
 /** Extract the storage object path from a stored value (public URL, signed URL, or raw path). */
 export function productImagePath(value: string): string | null {
@@ -38,14 +34,8 @@ export async function signProductImages(values: string[]): Promise<Record<string
   if (paths.length === 0) return map;
 
   try {
-    const { data, error } = await supabase.storage
-      .from(PRODUCT_BUCKET)
-      .createSignedUrls(paths, SIGN_TTL);
-    if (error || !data) return map;
-    const byPath: Record<string, string> = {};
-    for (const item of data) {
-      if (item.signedUrl && item.path) byPath[item.path] = item.signedUrl;
-    }
+    const { signProductImagePaths } = await import("@/lib/storage-sign.functions");
+    const byPath = await signProductImagePaths({ data: { paths: paths.slice(0, 200) } });
     for (const [value, path] of pathByValue) {
       if (byPath[path]) map[value] = byPath[path];
     }
