@@ -35,24 +35,11 @@ export const Route = createFileRoute("/api/abandoned-cart")({
 
         try {
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-          // One open record per phone: refresh it instead of piling up duplicates.
-          const { data: existing } = await supabaseAdmin
+          // Append-only: never overwrite an existing record chosen by phone number,
+          // since the caller cannot prove they own it.
+          await supabaseAdmin
             .from("abandoned_carts")
-            .select("id")
-            .eq("customer_phone", phone)
-            .eq("recovered", false)
-            .maybeSingle();
-
-          if (existing) {
-            await supabaseAdmin
-              .from("abandoned_carts")
-              .update({ customer_name: name, items: items as never, total })
-              .eq("id", existing.id);
-          } else {
-            await supabaseAdmin
-              .from("abandoned_carts")
-              .insert({ customer_phone: phone, customer_name: name, items: items as never, total } as never);
-          }
+            .insert({ customer_phone: phone, customer_name: name, items: items as never, total } as never);
         } catch (e) {
           console.error("Abandoned cart save failed", e);
         }

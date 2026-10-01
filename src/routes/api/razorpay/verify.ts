@@ -36,13 +36,7 @@ export const Route = createFileRoute("/api/razorpay/verify")({
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
         if (a.length !== b.length || !timingSafeEqual(a, b)) {
-          try {
-            await supabaseAdmin.from("payments").update({
-              razorpay_payment_id,
-              status: "failed",
-              error_message: "Invalid signature",
-            }).eq("razorpay_order_id", razorpay_order_id);
-          } catch (e) { console.error("Payment status update failed", e); }
+          // Unverified callers must not change stored order state.
           return Response.json({ ok: false, error: "Invalid signature" }, { status: 400 });
         }
 

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const SaveCartCallInput = z.object({
   name: z.string().trim().min(2).max(120),
@@ -17,6 +18,7 @@ function normalizePhone(raw: string) {
 }
 
 export const saveCartAndCall = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SaveCartCallInput.parse(input))
   .handler(async ({ data }) => {
     const apiKey = process.env["BLAND_API_KEY"];
