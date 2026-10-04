@@ -16,6 +16,7 @@ import giftboxImg from "@/assets/collection-giftbox.jpg";
 import babyImg from "@/assets/collection-baby.jpg";
 import motherImg from "@/assets/collection-mother.jpg";
 import weddingImg from "@/assets/collection-wedding.jpg";
+import freshFlowerAsset from "@/assets/fresh-bouquet.jpg.asset.json";
 
 type CategoryCard = {
   title: string;
@@ -73,6 +74,7 @@ function Rail({ cards }: { cards: CategoryCard[] }) {
 
 export function HomeCategoryGrid() {
   const topRow: CategoryCard[] = [
+    { title: "Fresh Flowers & Loose Flowers", subtitle: "Freshly gathered", image: freshFlowerAsset.url, slug: "fresh-flowers" },
     { title: "Crochet Bouquets", subtitle: "Handcrafted, everlasting", image: crochetImg, slug: "crochet-bouquets" },
     { title: "Pipe Cleaner Bouquets", subtitle: "Whimsical florals", image: pipecleanerImg, slug: "pipe-cleaner-bouquets" },
     { title: "Luxury Airport Welcome Bouquets", subtitle: "Grand homecomings", image: airportImg, slug: "airport-collection" },
