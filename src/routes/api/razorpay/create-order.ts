@@ -82,7 +82,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         const ids = items.map((i) => String(i.id));
         const { data: products, error } = await supabaseAdmin
           .from("products")
-          .select("id, name, price, image_url, images")
+          .select("id, name, price, image_url, images, category")
           .in("id", ids);
         if (error || !products) {
           return Response.json({ error: "Product lookup failed" }, { status: 500 });
@@ -94,6 +94,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         );
         type VariantRow = {
           slug: string;
+          product_id: string;
           name: string;
           price: number;
           color_name: string | null;
@@ -104,7 +105,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         if (variantSlugs.length > 0) {
           const { data: vRows } = await supabaseAdmin
             .from("product_variants")
-            .select("slug, name, price, color_name, color_hex, images")
+            .select("slug, product_id, name, price, color_name, color_hex, images")
             .in("slug", variantSlugs)
             .eq("active", true);
           variants = (vRows ?? []) as unknown as VariantRow[];
@@ -130,6 +131,12 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
           const qty = Math.max(1, Math.min(100, Math.floor(Number(it.quantity) || 1)));
 
           const variant = it.variantSlug ? variants.find((v) => v.slug === it.variantSlug) : undefined;
+          if (it.variantSlug && (!variant || variant.product_id !== p.id)) {
+            return Response.json({ error: "Invalid product selection" }, { status: 400 });
+          }
+          if (p.category === "fresh-flowers" && String(p.name).startsWith("Loose ") && !variant) {
+            return Response.json({ error: "Please select a weight" }, { status: 400 });
+          }
           const unitPrice = variant ? Number(variant.price) : Number(p.price);
           totalRupees += unitPrice * qty;
 
