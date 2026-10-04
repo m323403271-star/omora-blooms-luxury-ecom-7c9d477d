@@ -499,6 +499,12 @@ export type Collection = {
 
 export const COLLECTIONS: Collection[] = [
   {
+    slug: "fresh-flowers",
+    name: "Fresh Flowers & Loose Flowers",
+    tagline: "Fresh bouquets and flowers by weight",
+    image: "/__l5e/assets-v1/13022a8c-bde7-4ebd-845c-d7c4864412d2/fresh-bouquet.jpg",
+  },
+  {
     slug: "crochet-bouquets",
     name: "Crochet Bouquets",
     tagline: "Handmade to last forever",
