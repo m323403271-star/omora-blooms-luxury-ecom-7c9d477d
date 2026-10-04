@@ -156,7 +156,7 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
 
           clean.push({
             id: p.id,
-            name: variant ? `${p.name} — ${variant.name}` : p.name,
+            name: variant ? variant.name : p.name,
             price: unitPrice,
             quantity: qty,
             image,

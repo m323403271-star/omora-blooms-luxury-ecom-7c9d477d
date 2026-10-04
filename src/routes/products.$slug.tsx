@@ -33,7 +33,7 @@ export const Route = createFileRoute("/products/$slug")({
     const title = product?.name ?? params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     const desc =
       product?.description ??
-      `Shop ${title} — handmade luxury bouquet by OMORA BLOOMS. Everlasting crochet & pipe-cleaner flowers, gift-boxed with same-day delivery in Bengaluru.`;
+      `Shop ${title} at OMORA BLOOMS. Explore flowers, bouquets and gifts with delivery in Bengaluru.`;
     const rawImage = product ? resolveProductImage(product.images?.[0] || product.image_url) : undefined;
     const image = rawImage?.startsWith("http") ? rawImage : undefined;
     const seo = pageSeo({
@@ -96,7 +96,7 @@ function ProductPage() {
   const [activeMediaId, setActiveMediaId] = useState<string | null>(null);
   const [tryOnOpen, setTryOnOpen] = useState(false);
 
-  const selectedWeight = weightVariants?.find((v) => v.slug === weightSlug) ?? weightVariants?.[0];
+  const selectedWeight = weightVariants?.find((v) => v.slug === weightSlug) ?? weightVariants?.find((v) => !isSoldOut(v)) ?? weightVariants?.[0];
   const unitPrice = (isLoose ? selectedWeight?.price ?? product.price : product.price) + addOnTotal;
   const related = data.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
@@ -223,7 +223,7 @@ function ProductPage() {
           )}
 
           <GiftAndBouquetCustomizer
-            basePrice={product.price}
+            basePrice={isLoose ? selectedWeight?.price ?? product.price : product.price}
             onChange={({ gift: g, bouquet: b, addOnTotal: a }) => {
               setGift(g);
               setBouquet(b);
@@ -257,11 +257,11 @@ function ProductPage() {
             </a>
           </div>
 
-          <CraftNote className="mt-2" />
+          {!isLoose && product.category !== "fresh-flowers" && <CraftNote className="mt-2" />}
 
           <div className="mt-3 md:mt-10 grid grid-cols-2 gap-2 text-xs">
-            <Feature icon={Sparkles} title="Handmade to order" copy="Crafted by our artisans" />
-            <Feature icon={Heart} title="Everlasting" copy="Made to last forever" />
+            <Feature icon={Sparkles} title={product.category === "fresh-flowers" ? "Freshly selected" : "Handmade to order"} copy={product.category === "fresh-flowers" ? "Seasonal flowers" : "Crafted by our artisans"} />
+            <Feature icon={Heart} title={product.category === "fresh-flowers" ? "Thoughtful gifting" : "Everlasting"} copy={product.category === "fresh-flowers" ? "Picked for your occasion" : "Made to last forever"} />
             <Feature icon={Truck} title="Same-day delivery" copy="Order before 12 PM" />
             <Feature icon={ShieldCheck} title="Luxury packaging" copy="Signature gift box" />
           </div>

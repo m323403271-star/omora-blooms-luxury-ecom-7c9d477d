@@ -94,7 +94,7 @@ export function HomeCategoryGrid() {
       <div className="text-center max-w-2xl mx-auto mb-5 md:mb-12">
         <p className="eyebrow mb-2 md:mb-3 text-[color:var(--gold)]">Shop by Collection</p>
         <h2 className="font-serif text-2xl md:text-5xl leading-tight tracking-tight">
-          Handcrafted, Everlasting Luxury
+          Flowers & Thoughtful Gifting
         </h2>
       </div>
 
