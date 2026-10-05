@@ -1,2 +1,2 @@
-- [ ] Remove the recently added Fresh Flowers & Loose Flowers section, products, and weight choices.
-- [ ] Verify the remaining shop and checkout still work.
+- [x] Remove the recently added Fresh Flowers & Loose Flowers section, products, and weight choices.
+- [x] Verify the remaining shop and checkout still work.
