@@ -1,2 +1,2 @@
-- [ ] Add Fresh Flowers & Loose Flowers collection with purchasable products and ½ kg / 1 kg selections.
-- [ ] Verify existing cart and checkout preserve selected weight and price.
+- [ ] Remove the recently added Fresh Flowers & Loose Flowers section, products, and weight choices.
+- [ ] Verify the remaining shop and checkout still work.
