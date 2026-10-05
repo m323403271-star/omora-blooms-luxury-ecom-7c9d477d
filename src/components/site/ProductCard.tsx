@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 import { formatPrice, resolveProductImage, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
@@ -7,7 +7,6 @@ import { TryOnBadge } from "@/components/site/TryOnBadge";
 
 export function ProductCard({ product }: { product: Product }) {
   const { add } = useCart();
-  const navigate = useNavigate();
   const img = resolveProductImage(product.image_url);
   const onSale = Boolean(product.compare_at_price);
   const isBestseller = product.tags?.includes("bestseller");
@@ -49,13 +48,9 @@ export function ProductCard({ product }: { product: Product }) {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              if (product.slug.startsWith("loose-")) {
-                navigate({ to: "/products/$slug", params: { slug: product.slug } });
-                return;
-              }
               add({ id: product.id, slug: product.slug, name: product.name, price: product.price, image: img });
             }}
-            aria-label={product.slug.startsWith("loose-") ? `Choose weight for ${product.name}` : `Add ${product.name} to bag`}
+            aria-label={`Add ${product.name} to bag`}
             className="absolute bottom-3 right-3 h-10 w-10 rounded-full bg-gold-gradient text-[color:var(--noir)] grid place-items-center opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all shadow-lg"
           >
             <Plus className="h-4 w-4" />

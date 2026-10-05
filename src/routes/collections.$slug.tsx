@@ -61,10 +61,9 @@ export const Route = createFileRoute("/collections/$slug")({
 
 function ItemCard({ product }: { product: Product }) {
   const img = resolveProductImage(product.images?.[0] || product.image_url);
-  const isFresh = product.category === "fresh-flowers";
   return (
     <Link
-      to={isFresh ? "/products/$slug" : "/varieties/$slug"}
+      to="/varieties/$slug"
       params={{ slug: product.slug }}
       className="group block overflow-hidden rounded-2xl hairline border bg-[color:var(--card)] hover:ring-1 hover:ring-[color:var(--gold)]/60 transition"
     >
