@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useSuspenseQuery, useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { MessageCircle, ShoppingBag, Heart, Truck, ShieldCheck, Sparkles, Minus, Plus } from "lucide-react";
 import { formatPrice, productsQuery, resolveProductImage, type Product } from "@/lib/products";
@@ -23,7 +23,6 @@ import { PdpAdminUpload } from "@/components/site/PdpAdminUpload";
 import { CraftNote } from "@/components/site/CraftNote";
 import { pageSeo, SITE_URL } from "@/lib/seo";
 import { VirtualTryOn, tryOnModeForCategory } from "@/components/tryon/VirtualTryOn";
-import { activeVariantsQuery, isSoldOut } from "@/lib/product-variants";
 
 
 export const Route = createFileRoute("/products/$slug")({
@@ -33,7 +32,7 @@ export const Route = createFileRoute("/products/$slug")({
     const title = product?.name ?? params.slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
     const desc =
       product?.description ??
-      `Shop ${title} at OMORA BLOOMS. Explore flowers, bouquets and gifts with delivery in Bengaluru.`;
+      `Shop ${title} — handmade luxury bouquet by OMORA BLOOMS. Everlasting crochet & pipe-cleaner flowers, gift-boxed with same-day delivery in Bengaluru.`;
     const rawImage = product ? resolveProductImage(product.images?.[0] || product.image_url) : undefined;
     const image = rawImage?.startsWith("http") ? rawImage : undefined;
     const seo = pageSeo({
@@ -86,24 +85,20 @@ function ProductPage() {
   const collection = collectionBySlug(product.category);
   const img = resolveProductImage(product.images?.[0] || product.image_url);
   const { add } = useCart();
-  const isLoose = product.slug.startsWith("loose-") && product.category === "fresh-flowers";
-  const { data: weightVariants } = useQuery(activeVariantsQuery(isLoose ? product.id : undefined));
   const [qty, setQty] = useState(1);
-  const [weightSlug, setWeightSlug] = useState("");
   const [gift, setGift] = useState<GiftOptions | null>(null);
   const [bouquet, setBouquet] = useState<CustomBouquet | null>(null);
   const [addOnTotal, setAddOnTotal] = useState(0);
   const [activeMediaId, setActiveMediaId] = useState<string | null>(null);
   const [tryOnOpen, setTryOnOpen] = useState(false);
 
-  const selectedWeight = weightVariants?.find((v) => v.slug === weightSlug) ?? weightVariants?.find((v) => !isSoldOut(v)) ?? weightVariants?.[0];
-  const unitPrice = (isLoose ? selectedWeight?.price ?? product.price : product.price) + addOnTotal;
+  const unitPrice = product.price + addOnTotal;
   const related = data.filter((p) => p.category === product.category && p.id !== product.id).slice(0, 4);
 
   const waMessage = useMemo(() => {
-    const base = `Hello OMORA BLOOMS! I'd like to order:\n\n${product.name}${isLoose ? ` (${selectedWeight?.name.split(" — ").pop() ?? "½ kg"})` : ""} × ${qty} — ${formatPrice(unitPrice * qty)}`;
+    const base = `Hello OMORA BLOOMS! I'd like to order:\n\n${product.name} × ${qty} — ${formatPrice(unitPrice * qty)}`;
     return base + formatGiftForWhatsApp(gift, bouquet) + `\n\nPlease confirm availability.`;
-  }, [product.name, qty, unitPrice, gift, bouquet, isLoose, selectedWeight]);
+  }, [product.name, qty, unitPrice, gift, bouquet]);
 
   // Universal gallery: use uploaded product.images if provided (future admin uploads),
   // otherwise synthesize a 3–4 photo gallery from the main image, collection cover,
@@ -188,7 +183,7 @@ function ProductPage() {
           {product.tagline && <p className="mt-2 text-sm md:text-base text-[color:var(--muted-foreground)]">{product.tagline}</p>}
           <div className="mt-2 md:mt-6 flex items-baseline gap-2 flex-wrap">
             <span className="text-2xl md:text-3xl text-[color:var(--gold)] font-medium">{formatPrice(unitPrice)}</span>
-            {!isLoose && product.compare_at_price && (
+            {product.compare_at_price && (
               <span className="text-base text-[color:var(--muted-foreground)] line-through">{formatPrice(product.compare_at_price)}</span>
             )}
             {addOnTotal > 0 && (
@@ -204,26 +199,8 @@ function ProductPage() {
             <p className="mt-2 md:mt-6 text-sm md:text-base text-[color:var(--muted-foreground)] leading-relaxed">{product.description}</p>
           )}
 
-          {isLoose && (
-            <label className="mt-3 block text-xs uppercase text-[color:var(--gold)]">
-              Select weight
-              <select
-                aria-label="Select weight"
-                value={selectedWeight?.slug ?? ""}
-                onChange={(e) => setWeightSlug(e.target.value)}
-                className="mt-2 w-full rounded-lg border hairline bg-[color:var(--card)] px-3 py-2.5 text-sm text-[color:var(--foreground)] focus:outline-none focus:ring-1 focus:ring-[color:var(--gold)]"
-              >
-                {(weightVariants ?? []).map((v) => (
-                  <option key={v.id} value={v.slug} disabled={isSoldOut(v)}>
-                    {v.name.split(" — ").pop()} — {formatPrice(v.price)}{isSoldOut(v) ? " · Sold out" : ""}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-
           <GiftAndBouquetCustomizer
-            basePrice={isLoose ? selectedWeight?.price ?? product.price : product.price}
+            basePrice={product.price}
             onChange={({ gift: g, bouquet: b, addOnTotal: a }) => {
               setGift(g);
               setBouquet(b);
@@ -241,9 +218,8 @@ function ProductPage() {
 
           <div className="mt-2 flex flex-row w-full gap-2">
             <button
-              onClick={() => add({ id: product.id, slug: product.slug, name: isLoose ? `${product.name} — ${selectedWeight?.name.split(" — ").pop() ?? ""}` : product.name, price: unitPrice, image: selectedImage, gift, bouquet, variantSlug: isLoose ? selectedWeight?.slug : undefined }, qty)}
-              disabled={isLoose && (!selectedWeight || isSoldOut(selectedWeight))}
-              className="btn-gold flex-1 min-w-0 py-3 px-3 rounded-full text-sm inline-flex items-center justify-center gap-2 disabled:opacity-50"
+              onClick={() => add({ id: product.id, slug: product.slug, name: product.name, price: unitPrice, image: selectedImage, gift, bouquet }, qty)}
+              className="btn-gold flex-1 min-w-0 py-3 px-3 rounded-full text-sm inline-flex items-center justify-center gap-2"
             >
               <ShoppingBag className="h-4 w-4 shrink-0" /> Add to Bag
             </button>
@@ -257,11 +233,11 @@ function ProductPage() {
             </a>
           </div>
 
-          {!isLoose && product.category !== "fresh-flowers" && <CraftNote className="mt-2" />}
+          <CraftNote className="mt-2" />
 
           <div className="mt-3 md:mt-10 grid grid-cols-2 gap-2 text-xs">
-            <Feature icon={Sparkles} title={product.category === "fresh-flowers" ? "Freshly selected" : "Handmade to order"} copy={product.category === "fresh-flowers" ? "Seasonal flowers" : "Crafted by our artisans"} />
-            <Feature icon={Heart} title={product.category === "fresh-flowers" ? "Thoughtful gifting" : "Everlasting"} copy={product.category === "fresh-flowers" ? "Picked for your occasion" : "Made to last forever"} />
+            <Feature icon={Sparkles} title="Handmade to order" copy="Crafted by our artisans" />
+            <Feature icon={Heart} title="Everlasting" copy="Made to last forever" />
             <Feature icon={Truck} title="Same-day delivery" copy="Order before 12 PM" />
             <Feature icon={ShieldCheck} title="Luxury packaging" copy="Signature gift box" />
           </div>
