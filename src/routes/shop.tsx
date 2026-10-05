@@ -13,7 +13,7 @@ export const Route = createFileRoute("/shop")({
     ...pageSeo({
       path: "/shop",
       title: "Shop — OMORA BLOOMS",
-      description: "Browse OMORA BLOOMS fresh and loose flowers, handmade bouquets, gift boxes and curated hampers.",
+      description: "Browse our luxury handmade bouquets, gift boxes and curated hampers. Crafted to last forever.",
     }),
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(productsQuery),
@@ -45,7 +45,7 @@ function ShopPage() {
       <section className="container-luxe pt-14 pb-10 text-center">
         <p className="eyebrow mb-4">The Boutique</p>
         <h1 className="font-serif text-5xl md:text-6xl">Shop the Collection</h1>
-        <p className="mt-4 text-[color:var(--muted-foreground)] max-w-xl mx-auto">Discover fresh flowers, crochet blooms, luxury gift boxes and curated hampers.</p>
+        <p className="mt-4 text-[color:var(--muted-foreground)] max-w-xl mx-auto">Every piece handmade to order — crochet flowers, pipe cleaner blooms, luxury gift boxes and curated hampers.</p>
       </section>
 
       <section className="container-luxe">
