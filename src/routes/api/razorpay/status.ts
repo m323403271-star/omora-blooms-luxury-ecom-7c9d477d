@@ -1,11 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-function normalizePhone(raw: string) {
-  const digits = raw.replace(/\D/g, "");
-  return digits.length > 10 ? digits.slice(-10) : digits;
-}
-
 function tokenMatches(expected: string, provided: unknown) {
   const a = Buffer.from(expected);
   const b = Buffer.from(typeof provided === "string" ? provided : "");
@@ -19,7 +14,7 @@ export const Route = createFileRoute("/api/razorpay/status")({
         const keySecret = process.env.RAZORPAY_KEY_SECRET;
         if (!keySecret) return Response.json({ error: "Not configured" }, { status: 500 });
 
-        let body: { orderId?: string; statusToken?: string; phone?: string };
+        let body: { orderId?: string; statusToken?: string };
         try {
           body = await request.json();
         } catch {
@@ -30,47 +25,50 @@ export const Route = createFileRoute("/api/razorpay/status")({
           return Response.json({ error: "Missing orderId" }, { status: 400 });
         }
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data, error } = await supabaseAdmin
-          .from("payments")
-          .select(
-            "razorpay_order_id, razorpay_payment_id, amount, currency, status, items, error_message, delivery_notes, created_at, updated_at, customer_phone, user_id",
-          )
-          .eq("razorpay_order_id", orderId)
-          .maybeSingle();
-
-        if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
-
         // Ownership proof #1: capability token issued to the browser that created the order.
         const expected = createHmac("sha256", keySecret).update(`status:${orderId}`).digest("hex");
         let authorized = tokenMatches(expected, body.statusToken);
 
-        // Ownership proof #2: the phone number used at checkout.
-        if (!authorized && body.phone && data?.customer_phone) {
-          const phone = normalizePhone(body.phone);
-          authorized =
-            phone.length === 10 && normalizePhone(String(data.customer_phone)) === phone;
+        const authHeader = request.headers.get("Authorization") ?? "";
+        const jwt = authHeader.replace(/^Bearer\s+/i, "").trim();
+        let authenticatedUserId: string | null = null;
+        if (jwt) {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data: userRes } = await supabaseAdmin.auth.getUser(jwt);
+          authenticatedUserId = userRes.user?.id ?? null;
         }
 
-        // Ownership proof #3: signed-in user who owns the order.
-        if (!authorized && data?.user_id) {
-          const authHeader = request.headers.get("Authorization") ?? "";
-          const jwt = authHeader.replace(/^Bearer\s+/i, "").trim();
-          if (jwt) {
-            const { data: userRes } = await supabaseAdmin.auth.getUser(jwt);
-            if (userRes?.user?.id && userRes.user.id === data.user_id) authorized = true;
-          }
-        }
-
-        if (!authorized) {
+        if (!authorized && !authenticatedUserId) {
           return Response.json(
             { error: "Ownership verification required" },
             { status: 401 },
           );
         }
+
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: owner, error: ownerError } = await supabaseAdmin
+          .from("payments")
+          .select("user_id")
+          .eq("razorpay_order_id", orderId)
+          .maybeSingle();
+        if (ownerError) return Response.json({ error: "Lookup failed" }, { status: 500 });
+        if (!owner) return Response.json({ error: "Not found" }, { status: 404 });
+
+        if (!authorized && authenticatedUserId !== owner.user_id) {
+          return Response.json({ error: "Ownership verification required" }, { status: 401 });
+        }
+
+        const { data, error } = await supabaseAdmin
+          .from("payments")
+          .select(
+            "razorpay_order_id, razorpay_payment_id, amount, currency, status, items, error_message, delivery_notes, created_at, updated_at",
+          )
+          .eq("razorpay_order_id", orderId)
+          .maybeSingle();
+        if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
         if (!data) return Response.json({ error: "Not found" }, { status: 404 });
 
-        const { customer_phone: _p, user_id: _u, ...safe } = data;
+        const safe = data;
         return Response.json(safe);
       },
     },

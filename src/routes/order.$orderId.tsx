@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer, StickyNote } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer, StickyNote, Copy } from "lucide-react";
 import { formatPrice } from "@/lib/products";
 import { getPickupForOrder } from "@/lib/pickup";
-import { getOrderPhone, saveOrderPhone, normalizeOrderPhone } from "@/lib/order-owner";
+import { getOrderToken, saveOrderToken } from "@/lib/order-owner";
 
 
 export const Route = createFileRoute("/order/$orderId")({
@@ -48,13 +48,13 @@ function OrderStatusPage() {
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
   const pickup = getPickupForOrder(orderId);
-  const [phone, setPhone] = useState("");
-  const [needsPhone, setNeedsPhone] = useState(false);
+  const [statusToken, setStatusToken] = useState("");
+  const [needsToken, setNeedsToken] = useState(false);
 
-  async function load(phoneOverride?: string) {
-    const proof = normalizeOrderPhone(phoneOverride ?? phone ?? "");
-    if (proof.length !== 10) {
-      setNeedsPhone(true);
+  async function load(tokenOverride?: string) {
+    const proof = (tokenOverride ?? statusToken ?? "").trim();
+    if (!/^[a-f0-9]{64}$/i.test(proof)) {
+      setNeedsToken(true);
       setLoading(false);
       return;
     }
@@ -64,15 +64,15 @@ function OrderStatusPage() {
       const r = await fetch("/api/razorpay/status", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId, phone: proof }),
+        body: JSON.stringify({ orderId, statusToken: proof }),
       });
       if (!r.ok) {
-        setNeedsPhone(true);
-        setErr(r.status === 404 ? "We couldn't find an order matching that ID and phone number." : "Could not load status.");
+        setNeedsToken(true);
+        setErr(r.status === 401 ? "That tracking token is not valid for this order." : r.status === 404 ? "We couldn't find that order." : "Could not load status.");
         setData(null);
       } else {
-        setNeedsPhone(false);
-        saveOrderPhone(orderId, proof);
+        setNeedsToken(false);
+        saveOrderToken(orderId, proof);
         setData((await r.json()) as PaymentRow);
       }
     } catch {
@@ -83,9 +83,9 @@ function OrderStatusPage() {
   }
 
   useEffect(() => {
-    const stored = getOrderPhone(orderId);
-    if (stored) { setPhone(stored); void load(stored); }
-    else { setNeedsPhone(true); setLoading(false); }
+    const stored = getOrderToken(orderId);
+    if (stored) { setStatusToken(stored); void load(stored); }
+    else { setNeedsToken(true); setLoading(false); }
     /* eslint-disable-next-line react-hooks/exhaustive-deps */
   }, [orderId]);
   useEffect(() => {
@@ -108,22 +108,22 @@ function OrderStatusPage() {
       <h1 className="font-serif text-4xl md:text-5xl mb-2">Your order</h1>
       <p className="text-[color:var(--muted-foreground)] text-sm mb-10">Order ID: <span className="font-mono">{orderId}</span></p>
 
-      {needsPhone && !data ? (
+      {needsToken && !data ? (
         <div className="glass-card rounded-2xl p-8 max-w-md">
           <p className="eyebrow mb-2">Verify it's you</p>
           <p className="text-sm text-[color:var(--muted-foreground)] mb-4">
-            For your privacy, enter the phone number used at checkout to view this order.
+            For your privacy, enter the private tracking token issued when this order was created.
           </p>
           <form
-            onSubmit={(e) => { e.preventDefault(); void load(phone); }}
+            onSubmit={(e) => { e.preventDefault(); void load(statusToken); }}
             className="flex flex-col sm:flex-row gap-3"
           >
             <input
-              type="tel"
-              inputMode="numeric"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              placeholder="10-digit mobile number"
+              type="password"
+              autoComplete="off"
+              value={statusToken}
+              onChange={(e) => setStatusToken(e.target.value)}
+              placeholder="64-character tracking token"
               className="flex-1 rounded-full bg-transparent border border-[color:var(--gold)]/30 px-5 py-2.5 text-sm outline-none focus:border-[color:var(--gold)]"
             />
             <button type="submit" className="btn-outline-gold px-6 py-2.5 rounded-full text-sm">View order</button>
@@ -156,6 +156,20 @@ function OrderStatusPage() {
               </div>
               {data.error_message && (
                 <p className="mt-4 text-xs opacity-80">Reason: {data.error_message}</p>
+              )}
+              {statusToken && (
+                <details className="mt-4 border-t border-current/15 pt-3">
+                  <summary className="cursor-pointer text-xs">Show private tracking token</summary>
+                  <p className="mt-2 text-[11px] opacity-75">Keep this token private. It can be used with your Order ID to view this order on another device.</p>
+                  <code className="mt-2 block break-all rounded-lg bg-black/20 p-2 text-[10px]">{statusToken}</code>
+                  <button
+                    type="button"
+                    onClick={() => void navigator.clipboard?.writeText(statusToken)}
+                    className="btn-outline-gold mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs"
+                  >
+                    <Copy className="h-3.5 w-3.5" /> Copy token
+                  </button>
+                </details>
               )}
             </div>
 

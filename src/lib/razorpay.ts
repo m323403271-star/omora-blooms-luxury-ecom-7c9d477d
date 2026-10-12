@@ -1,5 +1,6 @@
 import { toast } from "sonner";
 import { getStoredRef } from "@/lib/referral";
+import { saveOrderToken } from "@/lib/order-owner";
 import type { CartItem } from "@/lib/cart";
 import {
   isLocalPaymentOrigin,
@@ -118,10 +119,12 @@ export async function startRazorpayCheckout(
   const order = (await orderRes.json()) as {
     orderId: string;
     orderToken?: string;
+    statusToken?: string;
     amount: number;
     currency: string;
     keyId: string;
   };
+  if (order.statusToken) saveOrderToken(order.orderId, order.statusToken);
 
   const markStatus = (status: "failed" | "cancelled" | "pending", err?: string) => {
     fetch("/api/razorpay/mark-status", {
