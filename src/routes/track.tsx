@@ -42,15 +42,15 @@ const STATUS: Record<string, { label: string; tone: string; icon: typeof Clock; 
 
 function TrackPage() {
   const [orderId, setOrderId] = useState("");
-  const [phone, setPhone] = useState("");
+  const [statusToken, setStatusToken] = useState("");
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [orders, setOrders] = useState<Order[] | null>(null);
 
   async function search(e: React.FormEvent) {
     e.preventDefault();
-    if (!orderId.trim() || !phone.trim()) {
-      setErr("Enter both your Order ID and the phone number used at checkout.");
+    if (!orderId.trim() || !/^[a-f0-9]{64}$/i.test(statusToken.trim())) {
+      setErr("Enter your Order ID and the private tracking token issued with it.");
       return;
     }
     setLoading(true);
@@ -60,7 +60,7 @@ function TrackPage() {
       const r = await fetch("/api/track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId: orderId.trim(), phone: phone.trim() }),
+        body: JSON.stringify({ orderId: orderId.trim(), statusToken: statusToken.trim() }),
       });
       const j = await r.json();
       if (!r.ok) setErr(j.error ?? "Could not look up your order.");
@@ -77,7 +77,7 @@ function TrackPage() {
       <p className="eyebrow mb-3">Order Tracking</p>
       <h1 className="font-serif text-3xl md:text-5xl mb-3">Track your order</h1>
       <p className="text-sm text-[color:var(--muted-foreground)] max-w-xl mb-8">
-        Enter your Order ID together with the phone number you used at checkout to see the live status of your OMORA BLOOMS order.
+        Enter your Order ID and private tracking token to see your live order status.
       </p>
 
       <form onSubmit={search} className="glass-card rounded-2xl p-5 md:p-6 max-w-2xl">
@@ -91,13 +91,14 @@ function TrackPage() {
             aria-label="Order ID"
           />
           <input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            inputMode="tel"
-            maxLength={15}
-            placeholder="10-digit mobile number"
+            value={statusToken}
+            onChange={(e) => setStatusToken(e.target.value)}
+            type="password"
+            autoComplete="off"
+            maxLength={64}
+            placeholder="Private tracking token"
             className="flex-1 bg-transparent border hairline rounded-full px-5 py-3 text-sm outline-none focus:border-[color:var(--gold)]"
-            aria-label="Phone number used at checkout"
+            aria-label="Private tracking token"
           />
         </div>
         <button

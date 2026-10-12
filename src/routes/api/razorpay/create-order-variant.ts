@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createHmac } from "node:crypto";
 import {
   isLocalPaymentOrigin,
   isProductionPaymentOrigin,
@@ -199,6 +200,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
         }
 
         const order = (await rzpRes.json()) as { id: string; amount: number; currency: string };
+        const statusToken = createHmac("sha256", keySecret).update(`status:${order.id}`).digest("hex");
 
         // Log to payments table (best effort)
         try {
@@ -243,6 +245,7 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
 
         return Response.json({
           orderId: order.id,
+          statusToken,
           amount: order.amount,
           currency: order.currency,
           keyId,

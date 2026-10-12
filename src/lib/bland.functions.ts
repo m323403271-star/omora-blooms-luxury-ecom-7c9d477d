@@ -20,7 +20,7 @@ function normalizePhone(raw: string) {
 export const saveCartAndCall = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => SaveCartCallInput.parse(input))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const apiKey = process.env["BLAND_API_KEY"];
     const personaId = process.env["BLAND_PERSONA_ID"];
     if (!apiKey || !personaId) {
@@ -31,9 +31,19 @@ export const saveCartAndCall = createServerFn({ method: "POST" })
       return { ok: false as const, error: `Concierge calling is not configured yet (missing: ${missingKeys}).` };
     }
 
+    const { data: authResult, error: authError } = await context.supabase.auth.getUser();
+    const authenticatedUser = authResult.user;
+    if (authError || !authenticatedUser?.phone || !authenticatedUser.phone_confirmed_at) {
+      return { ok: false as const, error: "Verify a phone number on your account before requesting a concierge call." };
+    }
+
     const phone = normalizePhone(data.phone);
+    const verifiedPhone = normalizePhone(authenticatedUser.phone);
     if (!/^\+\d{10,15}$/.test(phone)) {
       return { ok: false as const, error: "Please enter a valid mobile number." };
+    }
+    if (phone !== verifiedPhone) {
+      return { ok: false as const, error: "Concierge calls can only be made to your verified account phone number." };
     }
 
     let ip: string | null = null;
@@ -60,7 +70,7 @@ export const saveCartAndCall = createServerFn({ method: "POST" })
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          phone_number: phone,
+          phone_number: verifiedPhone,
           persona_id: personaId,
           language: "kn",
           task,

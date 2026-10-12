@@ -12,7 +12,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { VariantGallery } from "@/components/site/VariantGallery";
 import { DeliveryEtaChecker } from "@/components/site/DeliveryEtaChecker";
 import { whatsappLink } from "@/lib/whatsapp";
-import { saveOrderPhone } from "@/lib/order-owner";
+import { saveOrderToken } from "@/lib/order-owner";
 import { toast } from "sonner";
 import { isAirportPincode } from "@/lib/delivery";
 import { PICKUP_POINTS, findPickup } from "@/lib/pickup";
@@ -346,9 +346,10 @@ function BuyPage() {
 
       const order = (await orderRes.json()) as {
         orderId: string; amount: number; currency: string; keyId: string;
+        statusToken?: string;
       };
 
-      saveOrderPhone(order.orderId, phone);
+      if (order.statusToken) saveOrderToken(order.orderId, order.statusToken);
 
       const rzp = new window.Razorpay!({
         key: order.keyId,
