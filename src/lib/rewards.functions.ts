@@ -106,7 +106,7 @@ export const getRewardsOverview = createServerFn({ method: "GET" })
 
 function makeCode(): string {
   const raw = crypto.randomUUID().replace(/-/g, "").toUpperCase();
-  return `BLOOM${raw.slice(0, 6)}`;
+  return `BLOOM${raw}`;
 }
 
 /** Spends points from the caller's balance and issues a one-time discount code. */

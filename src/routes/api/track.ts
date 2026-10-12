@@ -1,16 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createHmac, timingSafeEqual } from "node:crypto";
 
-type Body = { orderId?: string; phone?: string };
-
-function normalizePhone(raw: string) {
-  const digits = raw.replace(/\D/g, "");
-  return digits.length > 10 ? digits.slice(-10) : digits;
-}
+type Body = { orderId?: string; statusToken?: string };
 
 export const Route = createFileRoute("/api/track")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        const keySecret = process.env.RAZORPAY_KEY_SECRET;
+        if (!keySecret) return Response.json({ error: "Not configured" }, { status: 500 });
+
         let body: Body;
         try {
           body = (await request.json()) as Body;
@@ -19,20 +18,20 @@ export const Route = createFileRoute("/api/track")({
         }
 
         const orderId = body.orderId?.trim() ?? "";
-        const phoneRaw = body.phone?.trim() ?? "";
 
-        // Ownership proof: the order ID AND the phone used at checkout must match.
-        if (!orderId || !phoneRaw) {
+        if (!orderId || orderId.length > 80) {
           return Response.json(
-            { error: "Provide both your Order ID and the phone number used at checkout" },
+            { error: "Provide a valid Order ID" },
             { status: 400 },
           );
         }
-        if (orderId.length > 80) return Response.json({ error: "Invalid order ID" }, { status: 400 });
 
-        const phone = normalizePhone(phoneRaw);
-        if (phone.length !== 10) {
-          return Response.json({ error: "Enter a valid 10-digit phone number" }, { status: 400 });
+        const expected = createHmac("sha256", keySecret).update(`status:${orderId}`).digest("hex");
+        const provided = typeof body.statusToken === "string" ? body.statusToken : "";
+        const expectedBytes = Buffer.from(expected);
+        const providedBytes = Buffer.from(provided);
+        if (expectedBytes.length !== providedBytes.length || !timingSafeEqual(expectedBytes, providedBytes)) {
+          return Response.json({ error: "Order ID and tracking token do not match" }, { status: 401 });
         }
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -40,20 +39,14 @@ export const Route = createFileRoute("/api/track")({
         const { data, error } = await supabaseAdmin
           .from("payments")
           .select(
-            "razorpay_order_id, amount, currency, status, items, delivery_notes, pickup_point_id, priority, created_at, updated_at, customer_phone",
+            "razorpay_order_id, amount, currency, status, items, delivery_notes, pickup_point_id, priority, created_at, updated_at",
           )
           .eq("razorpay_order_id", orderId)
           .maybeSingle();
 
         if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
         if (!data) return Response.json({ orders: [] });
-
-        if (normalizePhone(String(data.customer_phone ?? "")) !== phone) {
-          return Response.json({ orders: [] });
-        }
-
-        const { customer_phone: _p, ...rest } = data;
-        return Response.json({ orders: [rest] });
+        return Response.json({ orders: [data] });
 
       },
     },

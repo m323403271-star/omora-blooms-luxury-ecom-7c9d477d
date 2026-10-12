@@ -1,11 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-function normalizePhone(raw: string) {
-  const digits = raw.replace(/\D/g, "");
-  return digits.length > 10 ? digits.slice(-10) : digits;
-}
-
 function tokenMatches(expected: string, provided: unknown) {
   const a = Buffer.from(expected);
   const b = Buffer.from(typeof provided === "string" ? provided : "");
@@ -19,7 +14,7 @@ export const Route = createFileRoute("/api/razorpay/status")({
         const keySecret = process.env.RAZORPAY_KEY_SECRET;
         if (!keySecret) return Response.json({ error: "Not configured" }, { status: 500 });
 
-        let body: { orderId?: string; statusToken?: string; phone?: string };
+        let body: { orderId?: string; statusToken?: string };
         try {
           body = await request.json();
         } catch {
@@ -45,14 +40,7 @@ export const Route = createFileRoute("/api/razorpay/status")({
         const expected = createHmac("sha256", keySecret).update(`status:${orderId}`).digest("hex");
         let authorized = tokenMatches(expected, body.statusToken);
 
-        // Ownership proof #2: the phone number used at checkout.
-        if (!authorized && body.phone && data?.customer_phone) {
-          const phone = normalizePhone(body.phone);
-          authorized =
-            phone.length === 10 && normalizePhone(String(data.customer_phone)) === phone;
-        }
-
-        // Ownership proof #3: signed-in user who owns the order.
+        // Alternate ownership proof: a verified signed-in account that owns the order.
         if (!authorized && data?.user_id) {
           const authHeader = request.headers.get("Authorization") ?? "";
           const jwt = authHeader.replace(/^Bearer\s+/i, "").trim();

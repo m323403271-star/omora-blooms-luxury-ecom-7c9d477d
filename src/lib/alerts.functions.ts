@@ -63,20 +63,38 @@ export const savePushSubscription = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const role = await assertStaff(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("push_subscriptions").upsert(
-      {
-        user_id: context.userId,
-        endpoint: data.endpoint,
-        p256dh: data.p256dh,
-        auth: data.auth,
-        role_label: role,
-        user_agent: data.userAgent ?? null,
-        last_seen_at: new Date().toISOString(),
-      } as never,
-      { onConflict: "endpoint" },
-    );
-    if (error) {
-      console.error("[Alerts] could not save device", error.message);
+    const subscription = {
+      user_id: context.userId,
+      endpoint: data.endpoint,
+      p256dh: data.p256dh,
+      auth: data.auth,
+      role_label: role,
+      user_agent: data.userAgent ?? null,
+      last_seen_at: new Date().toISOString(),
+    } as never;
+
+    // Insert first; on a duplicate endpoint only refresh a row owned by this caller.
+    // Never let a privileged upsert transfer an existing subscription between staff.
+    const { error: insertError } = await supabaseAdmin
+      .from("push_subscriptions")
+      .insert(subscription);
+    if (insertError?.code === "23505") {
+      const { data: updated, error: updateError } = await supabaseAdmin
+        .from("push_subscriptions")
+        .update(subscription)
+        .eq("endpoint", data.endpoint)
+        .eq("user_id", context.userId)
+        .select("endpoint")
+        .maybeSingle();
+      if (updateError) {
+        console.error("[Alerts] could not refresh device", updateError.message);
+        return { ok: false as const, error: "Could not register this device." };
+      }
+      if (!updated) {
+        return { ok: false as const, error: "This device subscription belongs to another staff account." };
+      }
+    } else if (insertError) {
+      console.error("[Alerts] could not save device", insertError.message);
       return { ok: false as const, error: "Could not register this device." };
     }
     return { ok: true as const };

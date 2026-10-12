@@ -14,8 +14,6 @@ export const Route = createFileRoute("/api/razorpay/verify")({
           razorpay_order_id?: string;
           razorpay_payment_id?: string;
           razorpay_signature?: string;
-          ref?: string | null;
-          items?: Array<{ id: string; quantity: number }>;
         };
         try {
           body = await request.json();
@@ -40,28 +38,39 @@ export const Route = createFileRoute("/api/razorpay/verify")({
           return Response.json({ ok: false, error: "Invalid signature" }, { status: 400 });
         }
 
-        // Log referred order if applicable (trusted server call recomputes totals)
-        if (body.ref && Array.isArray(body.items) && body.items.length > 0) {
-          try {
-            await supabaseAdmin.rpc("log_referred_order", {
-              _partner_code: body.ref,
-              _items: body.items.map((i) => ({ id: i.id, quantity: i.quantity })) as never,
-            });
-          } catch (e) {
-            console.error("Referral log failed", e);
-          }
-        }
-
         try {
-          const { data: paid } = await supabaseAdmin
+          const { data: paid, error: paidError } = await supabaseAdmin
             .from("payments")
             .update({ razorpay_payment_id, status: "paid", error_message: null })
             .eq("razorpay_order_id", razorpay_order_id)
-            .select("id, coupon_code, items, customer_name, customer_phone, pincode, order_total, amount, priority")
+            .neq("status", "paid")
+            .select("id, coupon_code, ref_code, items, customer_name, customer_phone, pincode, order_total, amount, priority")
             .maybeSingle();
+
+          if (paidError) throw paidError;
 
           // Redeem the coupon and draw down shade stock once payment is confirmed.
           if (paid) {
+            // Commission input comes only from this order's persisted checkout data,
+            // never from fields the payment-verification caller can alter.
+            const refCode = typeof paid.ref_code === "string" ? paid.ref_code : null;
+            const persistedItems = Array.isArray(paid.items)
+              ? paid.items as Array<{ id?: unknown; quantity?: unknown }>
+              : [];
+            const referralItems = persistedItems
+              .filter((item) => typeof item.id === "string" && /^[0-9a-f-]{36}$/i.test(item.id))
+              .map((item) => ({
+                id: item.id as string,
+                quantity: Math.max(1, Math.min(100, Math.floor(Number(item.quantity) || 1))),
+              }));
+            if (refCode && referralItems.length) {
+              const { error: referralError } = await supabaseAdmin.rpc("log_referred_order", {
+                _partner_code: refCode,
+                _items: referralItems as never,
+              });
+              if (referralError) console.error("Referral log failed", referralError.message);
+            }
+
             const { markCouponRedeemed } = await import("@/lib/coupon.server");
             await markCouponRedeemed((paid as { coupon_code: string | null }).coupon_code);
 
