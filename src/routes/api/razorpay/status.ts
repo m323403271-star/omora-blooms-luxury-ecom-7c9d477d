@@ -25,43 +25,50 @@ export const Route = createFileRoute("/api/razorpay/status")({
           return Response.json({ error: "Missing orderId" }, { status: 400 });
         }
 
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const { data, error } = await supabaseAdmin
-          .from("payments")
-          .select(
-            "razorpay_order_id, razorpay_payment_id, amount, currency, status, items, error_message, delivery_notes, created_at, updated_at, customer_phone, user_id",
-          )
-          .eq("razorpay_order_id", orderId)
-          .maybeSingle();
-
-        if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
-
         // Ownership proof #1: capability token issued to the browser that created the order.
         const expected = createHmac("sha256", keySecret).update(`status:${orderId}`).digest("hex");
-        if (typeof body.statusToken !== "string" || !/^[a-f0-9]{64}$/i.test(body.statusToken)) {
-          return Response.json({ error: "Ownership verification required" }, { status: 401 });
-        }
         let authorized = tokenMatches(expected, body.statusToken);
 
-        // Alternate ownership proof: a verified signed-in account that owns the order.
-        if (!authorized && data?.user_id) {
-          const authHeader = request.headers.get("Authorization") ?? "";
-          const jwt = authHeader.replace(/^Bearer\s+/i, "").trim();
-          if (jwt) {
-            const { data: userRes } = await supabaseAdmin.auth.getUser(jwt);
-            if (userRes?.user?.id && userRes.user.id === data.user_id) authorized = true;
-          }
+        const authHeader = request.headers.get("Authorization") ?? "";
+        const jwt = authHeader.replace(/^Bearer\s+/i, "").trim();
+        let authenticatedUserId: string | null = null;
+        if (jwt) {
+          const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+          const { data: userRes } = await supabaseAdmin.auth.getUser(jwt);
+          authenticatedUserId = userRes.user?.id ?? null;
         }
 
-        if (!authorized) {
+        if (!authorized && !authenticatedUserId) {
           return Response.json(
             { error: "Ownership verification required" },
             { status: 401 },
           );
         }
+
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const { data: owner, error: ownerError } = await supabaseAdmin
+          .from("payments")
+          .select("user_id")
+          .eq("razorpay_order_id", orderId)
+          .maybeSingle();
+        if (ownerError) return Response.json({ error: "Lookup failed" }, { status: 500 });
+        if (!owner) return Response.json({ error: "Not found" }, { status: 404 });
+
+        if (!authorized && authenticatedUserId !== owner.user_id) {
+          return Response.json({ error: "Ownership verification required" }, { status: 401 });
+        }
+
+        const { data, error } = await supabaseAdmin
+          .from("payments")
+          .select(
+            "razorpay_order_id, razorpay_payment_id, amount, currency, status, items, error_message, delivery_notes, created_at, updated_at",
+          )
+          .eq("razorpay_order_id", orderId)
+          .maybeSingle();
+        if (error) return Response.json({ error: "Lookup failed" }, { status: 500 });
         if (!data) return Response.json({ error: "Not found" }, { status: 404 });
 
-        const { customer_phone: _p, user_id: _u, ...safe } = data;
+        const safe = data;
         return Response.json(safe);
       },
     },
