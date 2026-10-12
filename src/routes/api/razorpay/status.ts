@@ -38,6 +38,9 @@ export const Route = createFileRoute("/api/razorpay/status")({
 
         // Ownership proof #1: capability token issued to the browser that created the order.
         const expected = createHmac("sha256", keySecret).update(`status:${orderId}`).digest("hex");
+        if (typeof body.statusToken !== "string" || !/^[a-f0-9]{64}$/i.test(body.statusToken)) {
+          return Response.json({ error: "Ownership verification required" }, { status: 401 });
+        }
         let authorized = tokenMatches(expected, body.statusToken);
 
         // Alternate ownership proof: a verified signed-in account that owns the order.

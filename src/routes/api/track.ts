@@ -28,6 +28,9 @@ export const Route = createFileRoute("/api/track")({
 
         const expected = createHmac("sha256", keySecret).update(`status:${orderId}`).digest("hex");
         const provided = typeof body.statusToken === "string" ? body.statusToken : "";
+        if (!/^[a-f0-9]{64}$/i.test(provided)) {
+          return Response.json({ error: "Order ID and tracking token do not match" }, { status: 401 });
+        }
         const expectedBytes = Buffer.from(expected);
         const providedBytes = Buffer.from(provided);
         if (expectedBytes.length !== providedBytes.length || !timingSafeEqual(expectedBytes, providedBytes)) {

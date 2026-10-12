@@ -103,7 +103,7 @@ export const Route = createFileRoute("/api/public/razorpay-webhook")({
         if (nextStatus === "paid") update.error_message = null;
         else if (errorMessage !== null) update.error_message = errorMessage;
 
-        const { error: updateError } = await supabaseAdmin
+        const { data: transitioned, error: updateError } = await supabaseAdmin
           .from("payments")
           .update(update)
           .eq("razorpay_order_id", orderId)
@@ -114,6 +114,9 @@ export const Route = createFileRoute("/api/public/razorpay-webhook")({
         if (updateError) {
           console.error("Webhook payment update failed", updateError);
           return new Response("DB update failed", { status: 500 });
+        }
+        if (!transitioned) {
+          return Response.json({ ok: true, skipped: "order already updated" });
         }
 
         // If newly paid via webhook (tab closed before /verify ran), log referral
