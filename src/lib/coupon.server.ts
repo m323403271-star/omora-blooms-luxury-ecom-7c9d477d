@@ -9,11 +9,6 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 export async function validateCoupon(rawCode: string, amount: number): Promise<CouponResult> {
   const code = String(rawCode || "").trim().toUpperCase().slice(0, 40);
   if (!code) return { valid: false, reason: "Enter a coupon code" };
-  // Codes issued before the entropy fix were only six hex characters after
-  // BLOOM. Keep them from being guessed and redeemed after deployment.
-  if (/^BLOOM[0-9A-F]{6}$/.test(code)) {
-    return { valid: false, reason: "This reward code has expired. Please contact our concierge." };
-  }
   if (!Number.isFinite(amount) || amount <= 0) return { valid: false, reason: "Invalid order amount" };
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

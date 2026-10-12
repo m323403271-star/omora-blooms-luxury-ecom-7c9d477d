@@ -106,7 +106,10 @@ export const Route = createFileRoute("/api/public/razorpay-webhook")({
         const { error: updateError } = await supabaseAdmin
           .from("payments")
           .update(update)
-          .eq("razorpay_order_id", orderId);
+          .eq("razorpay_order_id", orderId)
+          .neq("status", "paid")
+          .select("id")
+          .maybeSingle();
 
         if (updateError) {
           console.error("Webhook payment update failed", updateError);
