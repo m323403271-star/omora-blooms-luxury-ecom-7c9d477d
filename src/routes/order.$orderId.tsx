@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer, StickyNote } from "lucide-react";
+import { CheckCircle2, Clock, XCircle, AlertCircle, RefreshCw, ArrowLeft, MapPin, Timer, StickyNote, Copy } from "lucide-react";
 import { formatPrice } from "@/lib/products";
 import { getPickupForOrder } from "@/lib/pickup";
 import { getOrderToken, saveOrderToken } from "@/lib/order-owner";
@@ -156,6 +156,20 @@ function OrderStatusPage() {
               </div>
               {data.error_message && (
                 <p className="mt-4 text-xs opacity-80">Reason: {data.error_message}</p>
+              )}
+              {statusToken && (
+                <details className="mt-4 border-t border-current/15 pt-3">
+                  <summary className="cursor-pointer text-xs">Show private tracking token</summary>
+                  <p className="mt-2 text-[11px] opacity-75">Keep this token private. It can be used with your Order ID to view this order on another device.</p>
+                  <code className="mt-2 block break-all rounded-lg bg-black/20 p-2 text-[10px]">{statusToken}</code>
+                  <button
+                    type="button"
+                    onClick={() => void navigator.clipboard?.writeText(statusToken)}
+                    className="btn-outline-gold mt-2 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs"
+                  >
+                    <Copy className="h-3.5 w-3.5" /> Copy token
+                  </button>
+                </details>
               )}
             </div>
 

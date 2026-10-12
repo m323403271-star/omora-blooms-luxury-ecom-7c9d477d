@@ -55,14 +55,28 @@ export const Route = createFileRoute("/api/razorpay/verify")({
             // never from fields the payment-verification caller can alter.
             const refCode = typeof paid.ref_code === "string" ? paid.ref_code : null;
             const persistedItems = Array.isArray(paid.items)
-              ? paid.items as Array<{ id?: unknown; quantity?: unknown }>
+              ? paid.items as Array<{ id?: unknown; variant_slug?: unknown; quantity?: unknown }>
               : [];
-            const referralItems = persistedItems
-              .filter((item) => typeof item.id === "string" && /^[0-9a-f-]{36}$/i.test(item.id))
-              .map((item) => ({
-                id: item.id as string,
+            const variantSlugs = [...new Set(persistedItems
+              .map((item) => typeof item.variant_slug === "string" ? item.variant_slug : null)
+              .filter((slug): slug is string => Boolean(slug)))];
+            const variantProductIds = new Map<string, string>();
+            if (variantSlugs.length) {
+              const { data: variantRows } = await supabaseAdmin
+                .from("product_variants")
+                .select("slug, product_id")
+                .in("slug", variantSlugs);
+              for (const row of variantRows ?? []) variantProductIds.set(row.slug, row.product_id);
+            }
+            const referralItems = persistedItems.flatMap((item) => {
+              const id = typeof item.id === "string" && /^[0-9a-f-]{36}$/i.test(item.id)
+                ? item.id
+                : typeof item.variant_slug === "string" ? variantProductIds.get(item.variant_slug) : undefined;
+              return id ? [{
+                id,
                 quantity: Math.max(1, Math.min(100, Math.floor(Number(item.quantity) || 1))),
-              }));
+              }] : [];
+            });
             if (refCode && referralItems.length) {
               const { error: referralError } = await supabaseAdmin.rpc("log_referred_order", {
                 _partner_code: refCode,

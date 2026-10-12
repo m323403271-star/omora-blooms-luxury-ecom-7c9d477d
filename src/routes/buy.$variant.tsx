@@ -128,6 +128,7 @@ function BuyPage() {
   const [paying, setPaying] = useState(false);
   const [success, setSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
+  const [statusToken, setStatusToken] = useState("");
   const [selectedImage, setSelectedImage] = useState<string>("");
   const [couponInput, setCouponInput] = useState("");
   const [coupon, setCoupon] = useState<{ code: string; discount: number; label: string } | null>(null);
@@ -345,11 +346,13 @@ function BuyPage() {
       }
 
       const order = (await orderRes.json()) as {
-        orderId: string; amount: number; currency: string; keyId: string;
-        statusToken?: string;
+        orderId: string; amount: number; currency: string; keyId: string; statusToken?: string;
       };
 
-      if (order.statusToken) saveOrderToken(order.orderId, order.statusToken);
+      if (order.statusToken) {
+        saveOrderToken(order.orderId, order.statusToken);
+        setStatusToken(order.statusToken);
+      }
 
       const rzp = new window.Razorpay!({
         key: order.keyId,
@@ -418,6 +421,16 @@ function BuyPage() {
         </p>
         {orderId ? (
           <p className="mt-4 text-xs tracking-[0.2em] uppercase text-[color:var(--gold)]">Order ID: {orderId}</p>
+        ) : null}
+        {statusToken ? (
+          <details className="mt-4 mx-auto max-w-xl text-left">
+            <summary className="cursor-pointer text-xs text-[color:var(--gold)]">Show private tracking token</summary>
+            <p className="mt-2 text-xs text-[color:var(--muted-foreground)]">Keep it private. Use it with your Order ID to view this order on another device.</p>
+            <code className="mt-2 block break-all rounded-lg border hairline p-3 text-[10px]">{statusToken}</code>
+            <button type="button" onClick={() => void navigator.clipboard?.writeText(statusToken)} className="btn-outline-gold mt-2 rounded-full px-4 py-2 text-xs">
+              Copy tracking token
+            </button>
+          </details>
         ) : null}
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Link to="/track" className="btn-gold inline-block px-8 py-3 rounded-full text-sm">

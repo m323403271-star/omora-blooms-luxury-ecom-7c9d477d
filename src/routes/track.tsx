@@ -89,7 +89,7 @@ function TrackPage() {
               const nextId = e.target.value;
               setOrderId(nextId);
               const savedToken = getOrderToken(nextId.trim());
-              if (savedToken) setStatusToken(savedToken);
+              setStatusToken(savedToken ?? "");
             }}
             maxLength={80}
             placeholder="order_XXXXXXXXXXXX"
