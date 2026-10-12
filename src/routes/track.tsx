@@ -3,14 +3,15 @@ import { useState } from "react";
 import { Search, Package, CheckCircle2, Clock, XCircle, AlertCircle, MapPin, StickyNote } from "lucide-react";
 import { formatPrice } from "@/lib/products";
 import { PICKUP_POINTS } from "@/lib/pickup";
+import { getOrderToken } from "@/lib/order-owner";
 
 export const Route = createFileRoute("/track")({
   head: () => ({
     meta: [
       { title: "Track Your Order — OMORA BLOOMS" },
-      { name: "description", content: "Check the live status of your OMORA BLOOMS order using your Order ID or the phone number used at checkout." },
+      { name: "description", content: "Check your OMORA BLOOMS order status using its Order ID and private tracking token." },
       { property: "og:title", content: "Track Your Order — OMORA BLOOMS" },
-      { property: "og:description", content: "Check the live status of your OMORA BLOOMS order using your Order ID or phone number." },
+      { property: "og:description", content: "Check your OMORA BLOOMS order status using its Order ID and private tracking token." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -84,7 +85,12 @@ function TrackPage() {
         <div className="flex flex-col sm:flex-row gap-3">
           <input
             value={orderId}
-            onChange={(e) => setOrderId(e.target.value)}
+            onChange={(e) => {
+              const nextId = e.target.value;
+              setOrderId(nextId);
+              const savedToken = getOrderToken(nextId.trim());
+              if (savedToken) setStatusToken(savedToken);
+            }}
             maxLength={80}
             placeholder="order_XXXXXXXXXXXX"
             className="flex-1 bg-transparent border hairline rounded-full px-5 py-3 text-sm outline-none focus:border-[color:var(--gold)]"

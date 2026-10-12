@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/react-start/server";
+import { getRequest, getRequestHeader } from "@tanstack/react-start/server";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -31,7 +31,12 @@ export const saveCartAndCall = createServerFn({ method: "POST" })
       return { ok: false as const, error: `Concierge calling is not configured yet (missing: ${missingKeys}).` };
     }
 
-    const { data: authResult, error: authError } = await context.supabase.auth.getUser();
+    const authHeader = getRequestHeader("authorization") ?? "";
+    const accessToken = authHeader.replace(/^Bearer\s+/i, "").trim();
+    if (!accessToken) {
+      return { ok: false as const, error: "Please sign in again before requesting a concierge call." };
+    }
+    const { data: authResult, error: authError } = await context.supabase.auth.getUser(accessToken);
     const authenticatedUser = authResult.user;
     if (authError || !authenticatedUser?.phone || !authenticatedUser.phone_confirmed_at) {
       return { ok: false as const, error: "Verify a phone number on your account before requesting a concierge call." };
