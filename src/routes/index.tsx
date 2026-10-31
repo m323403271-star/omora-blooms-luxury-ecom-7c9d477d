@@ -71,6 +71,7 @@ function HomePage() {
         if (s.id === "new") return <NewlyLaunchedSlider key={s.id} />;
         return <HomeShowcaseSection key={s.id} section={s} />;
       })}
+      <OneRupeeGiftCard />
       <HomeGiftingStories />
       <StoryBand />
       <FeatureGrid />
