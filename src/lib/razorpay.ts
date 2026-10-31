@@ -34,7 +34,7 @@ type RazorpayOptions = {
 
 const SCRIPT_SRC = "https://checkout.razorpay.com/v1/checkout.js";
 
-function loadScript(): Promise<boolean> {
+export function loadScript(): Promise<boolean> {
   return new Promise((resolve) => {
     if (typeof window === "undefined") return resolve(false);
     if (window.Razorpay) return resolve(true);

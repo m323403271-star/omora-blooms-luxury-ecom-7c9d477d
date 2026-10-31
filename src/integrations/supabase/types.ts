@@ -134,6 +134,39 @@ export type Database = {
         }
         Relationships: []
       }
+      gift_card_leads: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          razorpay_order_id: string | null
+          razorpay_payment_id: string | null
+          status: string
+          voucher_code: string | null
+          whatsapp: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          voucher_code?: string | null
+          whatsapp: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          razorpay_order_id?: string | null
+          razorpay_payment_id?: string | null
+          status?: string
+          voucher_code?: string | null
+          whatsapp?: string
+        }
+        Relationships: []
+      }
       inquiries: {
         Row: {
           created_at: string
