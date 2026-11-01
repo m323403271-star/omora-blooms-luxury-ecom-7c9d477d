@@ -20,7 +20,6 @@ import { HomeCategoryStrip } from "@/components/site/HomeCategoryStrip";
 import { HomeDealsGrid } from "@/components/site/HomeDealsGrid";
 import { HomeShowcaseSection } from "@/components/site/HomeShowcaseSection";
 import { HomeGiftingStories } from "@/components/site/HomeGiftingStories";
-import { OneRupeeGiftCard } from "@/components/site/OneRupeeGiftCard";
 import { HOME_SHOWCASE } from "@/lib/home-showcase";
 
 
