@@ -17,18 +17,14 @@ export type AccountOrder = {
 export const getMyOrders = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<AccountOrder[]> => {
-    const email = (context.claims as { email?: string }).email?.toLowerCase() ?? null;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const filters = [`user_id.eq.${context.userId}`];
-    if (email) filters.push(`customer_email.eq.${email}`);
 
     const { data, error } = await supabaseAdmin
       .from("payments")
       .select(
         "razorpay_order_id, status, amount, order_total, balance_due, currency, payment_mode, items, created_at",
       )
-      .or(filters.join(","))
+      .eq("user_id", context.userId)
       .order("created_at", { ascending: false })
       .limit(50);
 

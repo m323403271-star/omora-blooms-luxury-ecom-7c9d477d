@@ -31,17 +31,14 @@ export interface RewardsOverview {
  * because the ledger is deliberately write-locked for every client role — the
  * caller's identity comes from the verified bearer token, never from input.
  */
-async function syncEarnedPoints(userId: string, email: string | null) {
+async function syncEarnedPoints(userId: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-  const filters = [`user_id.eq.${userId}`];
-  if (email) filters.push(`customer_email.eq.${email}`);
 
   const { data: paidOrders } = await supabaseAdmin
     .from("payments")
     .select("id, amount, created_at")
     .eq("status", "paid")
-    .or(filters.join(","))
+    .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(100);
 
@@ -72,9 +69,8 @@ async function syncEarnedPoints(userId: string, email: string | null) {
 export const getRewardsOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<RewardsOverview> => {
-    const email = (context.claims as { email?: string }).email?.toLowerCase() ?? null;
     try {
-      await syncEarnedPoints(context.userId, email);
+      await syncEarnedPoints(context.userId);
     } catch (e) {
       console.error("Loyalty sync failed", e);
     }

@@ -83,7 +83,8 @@ export const Route = createFileRoute("/api/razorpay/create-order")({
         const { data: products, error } = await supabaseAdmin
           .from("products")
           .select("id, name, price, image_url, images")
-          .in("id", ids);
+          .in("id", ids)
+          .eq("available", true);
         if (error || !products) {
           return Response.json({ error: "Product lookup failed" }, { status: 500 });
         }
