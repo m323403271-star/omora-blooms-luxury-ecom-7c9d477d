@@ -35,14 +35,27 @@ export interface RewardsOverview {
 async function syncEarnedPoints(userId: string, verifiedEmail: string | null) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-  let ordersQuery = supabaseAdmin
+  const userOrdersResult = await supabaseAdmin
     .from("payments")
     .select("id, amount, created_at")
     .eq("status", "paid")
-  ordersQuery = verifiedEmail
-    ? ordersQuery.or(`user_id.eq.${userId},customer_email.eq.${verifiedEmail}`)
-    : ordersQuery.eq("user_id", userId);
-  const { data: paidOrders } = await ordersQuery.order("created_at", { ascending: false }).limit(100);
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(100);
+  const emailOrdersResult = verifiedEmail
+    ? await supabaseAdmin
+        .from("payments")
+        .select("id, amount, created_at")
+        .eq("status", "paid")
+        .eq("customer_email", verifiedEmail)
+        .order("created_at", { ascending: false })
+        .limit(100)
+    : null;
+  const paidOrdersById = new Map<string, NonNullable<typeof userOrdersResult.data>[number]>();
+  for (const order of [...(userOrdersResult.data ?? []), ...(emailOrdersResult?.data ?? [])]) {
+    paidOrdersById.set(order.id, order);
+  }
+  const paidOrders = [...paidOrdersById.values()];
 
   if (!paidOrders?.length) return;
 

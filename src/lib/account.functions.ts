@@ -14,7 +14,7 @@ export type AccountOrder = {
   created_at: string;
 };
 
-/** Orders belonging to the signed-in shopper, with email matching only after mailbox verification. */
+/** Orders belonging to the signed-in shopper, with verified mailbox matching when available. */
 export const getMyOrders = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<AccountOrder[]> => {
@@ -26,16 +26,33 @@ export const getMyOrders = createServerFn({ method: "GET" })
       : null;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    let query = supabaseAdmin
+    const userOrdersResult = await supabaseAdmin
       .from("payments")
       .select(
         "razorpay_order_id, status, amount, order_total, balance_due, currency, payment_mode, items, created_at",
-      );
-    query = verifiedEmail
-      ? query.or(`user_id.eq.${context.userId},customer_email.eq.${verifiedEmail}`)
-      : query.eq("user_id", context.userId);
-    const { data, error } = await query.order("created_at", { ascending: false }).limit(50);
+      )
+      .eq("user_id", context.userId)
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (userOrdersResult.error) throw new Error("Could not load your orders");
 
-    if (error) throw new Error("Could not load your orders");
-    return (data ?? []) as AccountOrder[];
+    const emailOrdersResult = verifiedEmail
+      ? await supabaseAdmin
+          .from("payments")
+          .select(
+            "razorpay_order_id, status, amount, order_total, balance_due, currency, payment_mode, items, created_at",
+          )
+          .eq("customer_email", verifiedEmail)
+          .order("created_at", { ascending: false })
+          .limit(50)
+      : null;
+    if (emailOrdersResult?.error) throw new Error("Could not load your orders");
+
+    const ordersById = new Map<string, AccountOrder>();
+    for (const order of [...(userOrdersResult.data ?? []), ...(emailOrdersResult?.data ?? [])]) {
+      ordersById.set(order.razorpay_order_id, order as AccountOrder);
+    }
+    return [...ordersById.values()]
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))
+      .slice(0, 50);
   });
