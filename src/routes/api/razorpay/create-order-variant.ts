@@ -88,11 +88,20 @@ export const Route = createFileRoute("/api/razorpay/create-order-variant")({
           });
           const { data } = await supabasePublic
             .from("product_variants")
-            .select("name, price, color_name, color_hex, images, stock, track_stock")
+            .select("name, product_id, price, color_name, color_hex, images, stock, track_stock")
             .eq("slug", variantSlug)
             .eq("active", true)
             .maybeSingle();
           if (data) {
+            const productId = (data as { product_id: string }).product_id;
+            const { data: parentProduct } = await supabasePublic
+              .from("products")
+              .select("available")
+              .eq("id", productId)
+              .maybeSingle();
+            if (!parentProduct?.available) {
+              return Response.json({ error: "This product is not currently available" }, { status: 409 });
+            }
             amount = Number((data as { price: number }).price);
             variantName = (data as { name: string }).name;
             variantColorName = (data as { color_name: string }).color_name || null;

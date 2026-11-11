@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeader } from "@tanstack/react-start/server";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { pointsForSpend, tierForPoints } from "@/lib/loyalty";
@@ -31,19 +32,30 @@ export interface RewardsOverview {
  * because the ledger is deliberately write-locked for every client role — the
  * caller's identity comes from the verified bearer token, never from input.
  */
-async function syncEarnedPoints(userId: string, email: string | null) {
+async function syncEarnedPoints(userId: string, verifiedEmail: string | null) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-  const filters = [`user_id.eq.${userId}`];
-  if (email) filters.push(`customer_email.eq.${email}`);
-
-  const { data: paidOrders } = await supabaseAdmin
+  const userOrdersResult = await supabaseAdmin
     .from("payments")
     .select("id, amount, created_at")
     .eq("status", "paid")
-    .or(filters.join(","))
+    .eq("user_id", userId)
     .order("created_at", { ascending: false })
     .limit(100);
+  const emailOrdersResult = verifiedEmail
+    ? await supabaseAdmin
+        .from("payments")
+        .select("id, amount, created_at")
+        .eq("status", "paid")
+        .eq("customer_email", verifiedEmail)
+        .order("created_at", { ascending: false })
+        .limit(100)
+    : null;
+  const paidOrdersById = new Map<string, NonNullable<typeof userOrdersResult.data>[number]>();
+  for (const order of [...(userOrdersResult.data ?? []), ...(emailOrdersResult?.data ?? [])]) {
+    paidOrdersById.set(order.id, order);
+  }
+  const paidOrders = [...paidOrdersById.values()];
 
   if (!paidOrders?.length) return;
 
@@ -72,9 +84,14 @@ async function syncEarnedPoints(userId: string, email: string | null) {
 export const getRewardsOverview = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }): Promise<RewardsOverview> => {
-    const email = (context.claims as { email?: string }).email?.toLowerCase() ?? null;
+    const authorization = getRequestHeader("authorization");
+    const token = authorization?.startsWith("Bearer ") ? authorization.slice(7) : "";
+    const { data: authData } = token ? await context.supabase.auth.getUser(token) : { data: { user: null } };
+    const verifiedEmail = authData.user?.email_confirmed_at
+      ? authData.user.email?.trim().toLowerCase() ?? null
+      : null;
     try {
-      await syncEarnedPoints(context.userId, email);
+      await syncEarnedPoints(context.userId, verifiedEmail);
     } catch (e) {
       console.error("Loyalty sync failed", e);
     }

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Star, BadgeCheck, Camera, Loader2, Upload, X, Play, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { signApprovedReviewMedia } from "@/lib/review-media.functions";
 import { toast } from "sonner";
 
 type MediaItem = { url: string; type: "image" | "video" };
@@ -77,7 +78,9 @@ export function ReviewSection({ productId, productName }: { productId: string; p
       .eq("approved", true)
       .order("created_at", { ascending: false });
     if (error) toast.error(error.message);
-    setReviews(((data ?? []) as unknown) as Review[]);
+    const rows = ((data ?? []) as unknown) as Review[];
+    const signedMedia = await signApprovedReviewMedia({ data: { productId } });
+    setReviews(rows.map((review) => ({ ...review, media: signedMedia[review.id] ?? [] })));
     setLoading(false);
   }
 
@@ -343,10 +346,7 @@ function ReviewForm({
         const key = `${userId}/${productId}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
         const { error } = await supabase.storage.from(BUCKET).upload(key, f, { contentType: f.type, upsert: false });
         if (error) { toast.error(error.message); continue; }
-        const { data: signed } = await supabase.storage.from(BUCKET).createSignedUrl(key, 60 * 60 * 24 * 365 * 5);
-        if (signed?.signedUrl) {
-          media.push({ url: signed.signedUrl, type: f.type.startsWith("video/") ? "video" : "image" });
-        }
+        media.push({ url: key, type: f.type.startsWith("video/") ? "video" : "image" });
       }
       const { error: iErr } = await supabase.from("reviews").insert({
         product_id: productId,

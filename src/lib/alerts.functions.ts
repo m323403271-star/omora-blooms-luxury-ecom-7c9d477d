@@ -37,18 +37,30 @@ export const saveNativePushDevice = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const role = await assertStaff(context);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("native_push_devices").upsert(
-      {
-        user_id: context.userId,
-        token: data.token,
-        platform: "android",
-        role_label: role,
-        active: true,
-        device_name: data.deviceName ?? null,
-        last_seen_at: new Date().toISOString(),
-      },
-      { onConflict: "token" },
-    );
+    const device = {
+      user_id: context.userId,
+      token: data.token,
+      platform: "android",
+      role_label: role,
+      active: true,
+      device_name: data.deviceName ?? null,
+      last_seen_at: new Date().toISOString(),
+    } as never;
+    const { error: insertError } = await supabaseAdmin.from("native_push_devices").insert(device);
+    let error = insertError;
+    if (insertError?.code === "23505") {
+      const { data: updated, error: updateError } = await supabaseAdmin
+        .from("native_push_devices")
+        .update(device)
+        .eq("token", data.token)
+        .eq("user_id", context.userId)
+        .select("id")
+        .maybeSingle();
+      error = updateError;
+      if (!updateError && !updated) {
+        return { ok: false as const, error: "This device belongs to another staff account." };
+      }
+    }
     if (error) {
       console.error("[Alerts] could not save native device", error.message);
       return { ok: false as const, error: "Could not register this Android device." };
