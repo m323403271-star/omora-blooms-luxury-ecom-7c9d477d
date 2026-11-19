@@ -4,22 +4,53 @@ import { z } from "zod";
 
 const schema = z.object({ imageUrl: z.string().url().max(2000) });
 
-/** Only catalog artwork hosted by us may be sent to the paid cutout service. */
-function isAllowedCatalogUrl(raw: string): boolean {
+/** Stable reference used to compare a submitted URL with a catalog image. */
+function catalogImageReference(raw: string, trustedStorageHost: string): string | null {
   try {
     const url = new URL(raw);
-    if (url.protocol !== "https:") return false;
-    const supabaseHost = process.env["SUPABASE_URL"]
-      ? new URL(process.env["SUPABASE_URL"]).host
-      : "";
-    return (
-      (supabaseHost !== "" && url.host === supabaseHost) ||
-      url.host.endsWith(".lovable.app") ||
-      url.host.endsWith("omorablooms.in")
-    );
+    if (url.protocol !== "https:" || url.username || url.password || (url.port && url.port !== "443")) return null;
+    const marker = "/product-images/";
+    const markerIndex = url.pathname.indexOf(marker);
+    if (trustedStorageHost && url.hostname.toLowerCase() === trustedStorageHost && markerIndex >= 0) {
+      const path = decodeURIComponent(url.pathname.slice(markerIndex + marker.length));
+      return path && !path.includes("..") ? `storage:${path}` : null;
+    }
+
+    const hostname = url.hostname.toLowerCase();
+    const isOmoraHost = hostname === "omorablooms.in" || hostname.endsWith(".omorablooms.in");
+    const isLovableSite = hostname === "omora-blooms-luxury-ecom.lovable.app" || hostname === "id-preview--9b70daa9-6a74-48da-91ba-28f391def9de.lovable.app";
+    if (!isOmoraHost && !isLovableSite) return null;
+    return `url:${hostname}${url.pathname}`;
   } catch {
-    return false;
+    return null;
   }
+}
+
+async function isCatalogImage(raw: string): Promise<boolean> {
+  const storageHost = process.env["SUPABASE_URL"]
+    ? new URL(process.env["SUPABASE_URL"]).hostname.toLowerCase()
+    : "";
+  const submittedReference = catalogImageReference(raw, storageHost);
+  if (!submittedReference) return false;
+
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const [productsResult, variantsResult] = await Promise.all([
+    supabaseAdmin.from("products").select("id, image_url, images").eq("available", true),
+    supabaseAdmin.from("product_variants").select("product_id, images, active").eq("active", true),
+  ]);
+  if (productsResult.error || variantsResult.error) return false;
+
+  const availableIds = new Set((productsResult.data ?? []).map((product) => product.id));
+  const catalogValues: string[] = [];
+  for (const product of productsResult.data ?? []) {
+    if (product.image_url) catalogValues.push(product.image_url);
+    catalogValues.push(...(product.images ?? []));
+  }
+  for (const variant of variantsResult.data ?? []) {
+    if (availableIds.has(variant.product_id)) catalogValues.push(...(variant.images ?? []));
+  }
+
+  return catalogValues.some((value) => catalogImageReference(value, storageHost) === submittedReference);
 }
 
 /**
@@ -33,7 +64,7 @@ export const cutoutCatalogImage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => schema.parse(data))
   .handler(async ({ data }) => {
-    if (!isAllowedCatalogUrl(data.imageUrl)) {
+    if (!(await isCatalogImage(data.imageUrl))) {
       return { ok: false as const, error: "Only Omora catalog images can be used for Try-On." };
     }
     const { resolveFalKey } = await import("@/lib/fal-key.server");

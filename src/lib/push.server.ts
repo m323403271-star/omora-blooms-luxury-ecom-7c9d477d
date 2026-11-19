@@ -116,9 +116,24 @@ export async function sendPushToStaff(payload: PushAlertPayload): Promise<{
   }
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: staffRoles, error: staffRolesError } = await supabaseAdmin
+    .from("user_roles")
+    .select("user_id")
+    .in("role", ["admin", "agent"]);
+  const staffUserIds = [...new Set((staffRoles ?? []).map((row) => row.user_id))];
+  if (staffRolesError || staffUserIds.length === 0) {
+    const native = await nativePromise;
+    return {
+      sent: native.sent,
+      failed: native.failed,
+      skipped: native.skipped ?? staffRolesError?.message ?? "no-staff-users",
+    };
+  }
+
   const { data, error } = await supabaseAdmin
     .from("push_subscriptions")
-    .select("id, endpoint, p256dh, auth");
+    .select("id, endpoint, p256dh, auth")
+    .in("user_id", staffUserIds);
 
   if (error || !data || data.length === 0) {
     const native = await nativePromise;

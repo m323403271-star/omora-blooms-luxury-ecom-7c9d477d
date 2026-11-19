@@ -8,6 +8,13 @@
       "when": 1793432208713,
       "tag": "0000_create_gift_card_leads",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1795060321825,
+      "tag": "0001_restrict_push_subscriptions_to_staff",
+      "breakpoints": true
     }
   ]
 }
