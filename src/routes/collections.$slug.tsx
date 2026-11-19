@@ -110,7 +110,7 @@ function CollectionPage() {
       : LOCAL_PRODUCTS.filter((p) => fallbackSlugs.includes(p.slug));
 
   return (
-    <div className="w-full max-w-full overflow-x-hidden">
+    <div className={`w-full max-w-full overflow-x-hidden${slug === "airport-collection" ? " airport-collection-page" : ""}`}>
       <section className="relative h-[28vh] min-h-[200px] md:h-[42vh] md:min-h-[320px] overflow-hidden bg-[color:var(--noir)]">
         {heroImg && (
           <img src={heroImg} alt={name} onError={handleImageError} className="absolute inset-0 h-full w-full object-cover opacity-70" />

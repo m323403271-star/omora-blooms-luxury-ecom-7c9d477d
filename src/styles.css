@@ -48,6 +48,9 @@
   --noir: oklch(0.3 0.032 178);           /* deep muted teal-green (dominant) */
   --gold: oklch(0.78 0.1 86);             /* champagne / soft metallic gold */
   --gold-soft: oklch(0.87 0.07 88);
+  --gold-bright: #F2D06B;
+  --gold-bright-soft: #E5C158;
+  --gold-border-bright: color-mix(in srgb, var(--gold-bright) 72%, transparent);
   --blush: oklch(0.9 0.03 88);            /* softened to warm champagne (no pink) */
   --blush-soft: oklch(0.96 0.015 88);
   --cream: oklch(0.97 0.012 88);          /* warm ivory / soft cream */
@@ -129,6 +132,37 @@
 
 @utility hairline {
   border-color: oklch(0.78 0.1 86 / 0.25);
+}
+
+.airport-collection-page {
+  --gold: var(--gold-bright);
+  --gold-soft: var(--gold-bright-soft);
+  --ring: var(--gold-bright);
+  --border: var(--gold-border-bright);
+  --input: color-mix(in srgb, var(--gold-bright) 45%, transparent);
+}
+
+.airport-collection-page .hairline {
+  border-color: var(--gold-border-bright);
+}
+
+body:has(.airport-collection-page) {
+  --gold: var(--gold-bright);
+  --gold-soft: var(--gold-bright-soft);
+  --ring: var(--gold-bright);
+  --border: var(--gold-border-bright);
+  --input: color-mix(in srgb, var(--gold-bright) 45%, transparent);
+}
+
+body:has(.airport-collection-page) .hairline {
+  border-color: var(--gold-border-bright);
+}
+
+body:has(.airport-collection-page) header a,
+body:has(.airport-collection-page) header button,
+body:has(.airport-collection-page) header svg,
+body:has(.airport-collection-page) footer a svg {
+  color: var(--gold-bright);
 }
 
 @utility btn-gold {
